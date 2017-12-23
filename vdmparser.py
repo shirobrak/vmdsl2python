@@ -10,12 +10,18 @@ from vdmlexer import tokens
 
 # 式構文
 def p_expression(p):
-    """expression : name
+    """expression : bracket_expr
+                  | name
                   | oldname 
                   | symbol_ltr"""
     print("p_expression")
     p[0] = p[1]
     
+# 括弧式
+def p_bracket_expr(p):
+    'bracket_expr : LPAR expression RPAR'
+    p[0] = [p[1],p[2],p[3]]
+
 # 名称
 def p_name(p):
     'name : IDENT part_name'
