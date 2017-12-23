@@ -11,6 +11,7 @@ from vdmlexer import tokens
 # 式構文
 def p_expression(p):
     """expression : bracket_expr
+                  | let_expr
                   | name
                   | oldname 
                   | symbol_ltr"""
@@ -21,6 +22,27 @@ def p_expression(p):
 def p_bracket_expr(p):
     'bracket_expr : LPAR expression RPAR'
     p[0] = [p[1],p[2],p[3]]
+
+# let式
+def p_let_expr(p):
+    'let_expr : LET local_definition let_expr_part IN expression'
+    if p[3] != None:
+        p[0] = p[1:]
+    else:
+        p[0] = p[1:3] + p[4:]
+
+# let式　繰り返し構文
+def p_let_expr_part(p):
+    """let_expr_part : COMMA local_definition
+                     | empty """
+    if p[1] == ',':
+        p[0] = [p[1],[p2]]
+
+# ローカル定義
+def p_local_definition(p):
+    'local_definition :'
+    p[0] = ["local_definition"]
+
 
 # 名称
 def p_name(p):
