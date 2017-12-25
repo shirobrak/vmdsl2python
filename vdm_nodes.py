@@ -504,6 +504,49 @@ class RecordUpdateExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 適用式
+class AppExpression(VdmslNode):
+    """ 適用式 """
+    _field = ('body', 'expr_list',)
+
+    def __init__(self, body, expr_list, lineno, lexpos):
+        self.body = body
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ItemChoiceExpression(VdmslNode):
+    """ 項目選択式 """
+    _field = ('body',)
+
+    def __init__(self, body, lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TupleChoiceExpression(VdmslNode):
+    """ 組選択式 """
+    _field = ('body',)
+
+    def __init__(self, body, lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class FuncInstExpression(VdmslNode):
+    """ 関数型インスタンス化 """
+    _field = ('name', 'type_list',)
+
+    def __init__(self, name, type_list, lineno, lexpos):
+        self.name = name
+        self.type_list = type_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
+
+
 
 # デバッグ用記述
 if __name__ == '__main__':
