@@ -3,7 +3,7 @@
 class VdmslNode(object):
     """ VDM-SLのASTノード基底クラス """
     _field = ()
-    _attributes = ('lineno', 'col_offset')
+    _attributes = ('lineno', 'lexpos')
 
 class NameBase(VdmslNode):
     """ 名称基底クラス """
