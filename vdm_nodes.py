@@ -594,6 +594,15 @@ class UnDefExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 事前条件式
+class PreCondExpression(VdmslNode):
+    """ 事前条件式 """
+    _field = ('expr_list',)
+
+    def __init__(self, expr_list, lineno, lexpos):
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
