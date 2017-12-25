@@ -611,6 +611,121 @@ class PreCondExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# パターン 
+class Pattern(VdmslNode):
+    """ パターン """
+    _fields = ('patterns',)
+
+    def __init__(self, patterns, lineno, lexpos):
+        self.patterns = patterns
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class PatternIdent(VdmslNode):
+    """ パターン識別子 """
+    _fields = ('pattern_ident',)
+
+    def __init__(self, pattern_ident, lineno, lexpos):
+        self.pattern_ident = pattern_ident
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MatchValue(VdmslNode):
+    """ 一致値 """
+    _fields = ('match_value',)
+
+    def __init__(self, match_value, lineno, lexpos):
+        self.match_value = match_value
+        self.lineno = lineno
+        self.lexpos = lexpose
+
+class SetEnumPattern(VdmslNode):
+    """ 集合列挙パターン """
+    _fields = ('pattern_list',)
+
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SetUnionPattern(VdmslNode):
+    """ 集合合併パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ColEnumPattern(VdmslNode):
+    """ 列列挙パターン """
+    _fields = ('pattern_list',)
+
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ColLinkPattern(VdmslNode):
+    """ 列連結パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapEnumPattern(VdmslNode):
+    """ 写像列挙パターン """
+    _fields = ('map_pattern_list',)
+
+    def __init__(self, map_pattern_list, lineno, lexpos):
+        self.map_pattern_list = map_pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapPattern(VdmslNode):
+    """ 写パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapMunionPattern(VdmslNode):
+    """ 写像併合パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TuplePattern(VdmslNode):
+    """ 組パターン """
+    _fields = ('pattern', 'pattern_list',)
+
+    def __init__(self, pattern, pattern_list, lineno, lexpos):
+        self.pattern = pattern
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class RecordPattern(VdmslNode):
+    """ レコードパターン """
+    _fields = ('name', 'pattern_list',)
+
+    def __init__(self, name, pattern_list, lineno, lexpos):
+        self.name = name
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 # デバッグ用記述
