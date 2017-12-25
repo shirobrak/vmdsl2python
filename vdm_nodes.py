@@ -814,6 +814,46 @@ class ValueDefinition(VdmslNode):
         self.lineno
         self.lexpos
 
+# 状態定義
+class StateDefinition(VdmslNode):
+    """ 状態定義 """
+    _fields = ('ident', 'item_list', 'inv_cond', 'init',)
+
+    def __init__(self, ident, item_list, inv_cond, init, lineno, lexpos):
+        self.ident = ident
+        self.item_list = item_list
+        self.inv_cond = inv_cond
+        self.init = init
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class InvCondition(VdmslNode):
+    """ 不変条件 """
+    _fields = ('inv_condition_init_function',)
+
+    def __init__(self, inv_condition_init_function, lineno, lexpos):
+        self.inv_condition_init_function = inv_condition_init_function
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class Initialization(VdmslNode):
+    """ 初期化 """
+    _fields = ('inv_condition_init_function',)
+
+    def __init__(self, inv_condition_init_function, lineno, lexpos):
+        self.inv_condition_init_function = inv_condition_init_function
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class InvCondInitFunc(VdmslNode):
+    """ 不変条件初期関数 """
+    _fields = ('pattern', 'expr',)
+
+    def __init__(self, pattern, expr, lineno, lexpos):
+        self.pattern = pattern
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
 
         
 
