@@ -1039,6 +1039,174 @@ class Error(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 関数定義
+class FuncDefinitionGroup(VdmslNode):
+    """ 関数定義群 """
+    _fields = ('function_definitions',)
+
+    def __init__(self, function_definitions, lineno, lexpos):
+        self.function_definitions = function_definitions
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class FuncDefinition(VdmslNode):
+    """ 関数定義 """
+    _fields = ('function_definition',)
+
+    def __init__(self, function_definition, lineno, lexpos):
+        self.function_definition = function_definition
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ExpFuncDefinition(VdmslNode):
+    """ 陽関数定義 """
+    _fields = ('ident1', 'type_variable_list', 'func_type', 'ident2', 'param_list', 
+               'func_body', 'pre_expr', 'post_expr', 'name',)
+    
+    def __init__(self, ident1, type_variable_list, func_type, ident2, param_list, 
+               func_body, pre_expr, post_expr, name, lineno, lexpos):
+        self.ident1 = ident1
+        self.type_variable_list = type_variable_list
+        self.func_type = func_type
+        self.ident2 = ident2
+        self.param_list = param_list
+        self.func_body = func_body
+        self.pre_expr = pre_expr
+        self.post_expr = post_expr
+        self.name = name
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ImpFuncDefinition(VdmslNode):
+    """ 陰関数定義 """
+    _fields = ('ident', 'type_variable_list', 'param_type', 
+               'ident_type_pair_list', 'pre_expr', 'post_expr',)
+    
+    def __init__(self, ident, type_variable_list, param_type, 
+                 ident_type_pair_list, pre_expr, post_expr, lineno, lexpos):
+        self.ident = ident
+        self.type_variable_list = type_variable_list
+        self.param_type = param_type
+        self.ident_type_pair_list = ident_type_pair_list
+        self.pre_expr = pre_expr
+        self.post_expr = post_expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ExpandExpFuncDefinition(VdmslNode):
+    """ 拡張陽関数定義 """
+    _fields = ('ident', 'type_variable_list', 'param_type', 'ident_type_pair_list',
+               'func_body', 'pre_expr', 'post_expr',)
+
+    def __init__(self, ident, type_variable_list, param_type, ident_type_pair_list,
+               func_body, pre_expr, post_expr, lineno, lexpos):
+        self.ident = ident
+        self.type_variable_list = type_variable_list
+        self.param_type = param_type
+        self.ident_type_pair_list = ident_type_pair_list
+        self.func_body = func_body
+        self.pre_expr = pre_expr
+        self.post_expr = post_expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TypeVariableList(VdmslNode):
+    """ 型変数リスト """
+    _fields = ('type_variable_idents',)
+
+    def __init__(self, type_variable_idents, lineno, lexpos):
+        self.type_variable_idents = type_variable_idents
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class IdentTypePairList(VdmslNode):
+    """ 識別子型ペアリスト """
+    _fields = ('ident_type_pairs',)
+
+    def __init__(self, ident_type_pairs, lineno, lexpos):
+        self.ident_type_pairs = ident_type_pairs
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class IdentTypePair(VdmslNode):
+    """ 識別子ペア """
+    _fields = ('ident', 'type',)
+
+    def __init__(self, ident, type, lineno, lexpos):
+        self.ident = ident
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ParamType(VdmslNode):
+    """ パラメーター型 """
+    _fields = ('pattern_type_pair_list',)
+
+    def __init__(self, pattern_type_pair_list, lineno, lexpos):
+        self.pattern_type_pair_list = pattern_type_pair_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class PatternTypePairList(VdmslNode):
+    """ パターン型ペアリスト """
+    _fields = ('pattern_type_pairs',)
+
+    def __init__(self, pattern_type_pairs, lineno, lexpos):
+        self.pattern_type_pairs = pattern_type_pairs
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class PatternTypePair(VdmslNode):
+    """ パターン型ペア """
+    _fields = ('pattern_list', 'type',)
+
+    def __init__(self, pattern_list, type, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class FuncionType(VdmslNode):
+    """ 関数型 """
+    _fields = ('function_type',)
+
+    def __init__(self, function_type, lineno, lexpos):
+        self.function_type = function_type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class PartialFunctionType(VdmslNode):
+    """ 部分関数型 """
+    _fields = ('any_type', 'type',)
+
+    def __init__(self, any_type, type, lineno, lexpos):
+        self.any_type = any_type
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class FunnFuntionType(VdmslNode):
+    """ 全関数型 """
+    _fields = ('any_type', 'type',)
+
+    def __init__(self, any_type, type, lineno, lexpos):
+        self.any_type = any_type
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class FunctionBody(VdmslNode):
+    """ 関数本体 """
+    _fields = ('expression',)
+
+    def __init__(self, expressions, lineno, lexpos):
+        self.expression = expression
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
+    
 
 
 
