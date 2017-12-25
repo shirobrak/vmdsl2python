@@ -584,6 +584,15 @@ class TypeJudgeExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 未定義式
+class UnDefExpression(VdmslNode):
+    """ 未定義式 """
+    _field = ('body')
+
+    def __init__(self, body, lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
