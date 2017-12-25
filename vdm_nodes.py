@@ -357,8 +357,18 @@ class Exist1Expression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# iota式
+class IotaExpression(VdmslNode):
+    """ iota式 """
+    _field = ('bind', 'body')
 
-    
+    def __init__(self, bind, body, lineno, lexpos):
+        self.bind = bind
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
         
         
 
