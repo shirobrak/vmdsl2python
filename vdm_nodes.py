@@ -26,6 +26,7 @@ class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
 
+# 式
 class Expression(VdmslNode):
     """ 式 """
     _field = ('value',)
@@ -35,6 +36,7 @@ class Expression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 括弧式
 class BracketExpression(VdmslNode):
     """ 括弧式 """
     _field = ('body',)
@@ -44,6 +46,7 @@ class BracketExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# let式
 class LetExpression(VdmslNode):
     """ let式 """
     _field = ('local_definition', 'body',)
@@ -65,6 +68,8 @@ class LetBeExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
  
+
+# def式
 class DefExpression(VdmslNode):
     """ def式 """
     _field = ('pattern_binding', 'body',)
@@ -74,6 +79,42 @@ class DefExpression(VdmslNode):
         self.body = body
         self.lineno = lineno
         self.lexpos = lexpos
+
+# 条件式
+class IfExpression(VdmslNode):
+    """ if式 """
+    _field = ('cond', 'body', 'elseif', 'else',)
+
+    def __init__(self, cond, then, elseif, else_, lineno, lexpos):
+        self.cond = cond
+        self.then = then
+        self.elseif = elseif
+        self.else_ = else_
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ElseIfExpression(VdmslNode):
+    """ elseif式 """
+    _field = ('cond', 'then',)
+
+    def __init__(self, cond, then, lineno, lexpos):
+        self.cond = cond
+        self.then = then
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class CasesExpression(VdmslNode):
+    """ cases式 """
+    _field = ('cond', 'case_group', 'other',)
+
+    def __init__(self, cond, case_group, other, lineno, lexpos):
+        self.cond = cond
+        self.case_group = case_group
+        self.other = other
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
 
 
 
