@@ -431,6 +431,7 @@ class SubseqExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 写像式
 class MapEnumExpression(VdmslNode):
     """ 写像列挙 """
     _field = ('map_list')
@@ -450,7 +451,6 @@ class MapExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
-
 class MapCompExpression(VdmslNode):
     """ 写像内包 """
     _field = ('map', 'bind_list', 'predicate',)
@@ -462,6 +462,17 @@ class MapCompExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
         
+# 組構成子式
+class TupleConExpression(VdmslNode):
+    """ 組構成子 """
+    _field = ('body', 'expr_list',)
+
+    def __init__(self, body, expr_list, lineno, lexpos):
+        self.body = body
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 # デバッグ用記述
 if __name__ == '__main__':
