@@ -114,6 +114,74 @@ class CasesExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 単項式
+class UnaryBaseExpression(VdmslNode):
+    """ 単項式基底クラス """
+    _field = ('op', 'right',)
+
+    def __init__(self, op, right, lineno, lexpos):
+        self.op = op
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class Plus(UnaryBaseExpression):
+    pass
+
+class Minus(UnaryBaseExpression):
+    pass
+
+class Abs(UnaryBaseExpression):
+    pass
+
+class Floor(UnaryBaseExpression):
+    pass
+
+class Not(UnaryBaseExpression):
+    pass
+
+class Card(UnaryBaseExpression):
+    pass
+
+class Power(UnaryBaseExpression):
+    pass
+
+class Dunion(UnaryBaseExpression):
+    pass
+
+class Dinter(UnaryBaseExpression):
+    pass
+
+class Hd(UnaryBaseExpression):
+    pass
+
+class Tl(UnaryBaseExpression):
+    pass
+
+class Len(UnaryBaseExpression):
+    pass
+
+class Elems(UnaryBaseExpression):
+    pass
+
+class Inds(UnaryBaseExpression):
+    pass
+
+class Conc(UnaryBaseExpression):
+    pass
+
+class Dom(UnaryBaseExpression):
+    pass
+
+class Rng(UnaryBaseExpression):
+    pass
+
+class Merge(UnaryBaseExpression):
+    pass
+
+class Inverse(UnaryBaseExpression):
+    pass
+
 
 
 
