@@ -726,6 +726,74 @@ class RecordPattern(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 束縛
+class Binding(VdmslNode):
+    """ 束縛 """
+    _fields = ('bindings',)
+
+    def __init__(self, bindings, lineno, lexpos):
+        self.bindings = bindings
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SetBinding(VdmslNode):
+    """ 集合束縛 """
+    _fields = ('pattern', 'expr',)
+
+    def __init__(self, pattern, expr, lineno, lexpos):
+        self.pattern = pattern
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TypeBinding(VdmslNode):
+    """ 型束縛 """
+    _fields = ('pattern', 'type',)
+
+    def __init__(self, pattern, type, lineno, lexpos):
+        self.pattern = pattern
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class BindingList(VdmslNode):
+    """ 束縛リスト """
+    _fields = ('multi_bindings',)
+
+    def __init__(self, multi_bindings, lineno, lexpos):
+        self.multi_bindings = multi_bindings
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MultiBinding(VdmslNode):
+    """ 多重束縛 """
+    _fields = ('bindings',)
+
+    def __init__(self, bindings, lineno, lexpos):
+        self.bindings = bindings
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MultiSetBinding(VdmslNode):
+    """ 多重集合束縛 """
+    _fields = ('pattern_list', 'expr',)
+
+    def __init__(self, pattern_list, expr, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.expr = expr
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class MultiTypeBinding(VdmslNode):
+    """ 多重型束縛 """
+    _fields = ('pattern_list', 'type',)
+
+    def __init__(self, pattern_list, type, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.type = type
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 # デバッグ用記述
