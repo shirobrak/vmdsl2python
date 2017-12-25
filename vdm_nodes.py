@@ -368,6 +368,39 @@ class IotaExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 集合式
+class SetEnumExpression(VdmslNode):
+    """ 集合列挙 """
+    _field = ('expr_list',)
+
+    def __init__(self, expr_list, lineno, lexpos):
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SetCompExpression(VdmslNode):
+    """ 集合内包 """
+    _field = ('body', 'bind_list', 'predicate',)
+
+    def __init__(self, body, bind_list, predicate, lineno, lexpos):
+        self.body = body
+        self.bind_list = bind_list
+        self.predicate = predicate
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SetRangeExpression(VdmslNode):
+    """ 集合範囲式 """
+    _field = ('start','end',)
+
+    def __init__(self, start, end, lineno, lexpos):
+        self.start = start
+        self.end = end
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+    
 
         
         
