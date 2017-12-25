@@ -399,6 +399,38 @@ class SetRangeExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 列式
+class ColEmunExpression(VdmslNode):
+    """ 列列挙 """
+    _field = ('expr_list',)
+
+    def __init__(self, expr_list, lineno, lexpos):
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ColCompExpression(VdmslNode):
+    """ 列内包 """
+    _field = ('body', 'set_bind', 'predicate',)
+
+    def __init__(self, body, set_bind, predicate, lineno, lexpos):
+        self.body = body
+        self.set_bind = set_bind
+        self.predicate = predicate
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SubseqExpression(VdmslNode):
+    """ 部分列 """
+    _field = ('column', 'start', 'end',)
+
+    def __init__(self, column, start, end, lineno, lexpos):
+        self.column = column
+        self.start = start
+        self.end = end
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
     
 
