@@ -65,6 +65,18 @@ class LetBeExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
  
+class DefExpression(VdmslNode):
+    """ def式 """
+    _field = ('pattern_binding', 'body',)
+
+    def __init__(self, pattern_binding, body, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
 
 # デバッグ用記述
 if __name__ == '__main__':
