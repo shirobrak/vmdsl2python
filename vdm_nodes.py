@@ -2,12 +2,19 @@
 
 class VdmslNode(object):
     """ VDM-SLのASTノード基底クラス """
-    _field = ()
+    _fields = ()
     _attributes = ('lineno', 'lexpos')
+
+    def __repr__(self):
+        return "{}({})".format(
+            self.__class__.__name__,
+            ', '.join(["%s=%s" % (field, getattr(self, field))
+                    for field in self._fields])
+    )
 
 class NameBase(VdmslNode):
     """ 名称基底クラス """
-    _field = ('name',)
+    _fields = ('name',)
 
     def __init__(self, name, lineno, lexpos):
         self.name = name
@@ -29,7 +36,7 @@ class SymbolLiteral(NameBase):
 # 式
 class Expression(VdmslNode):
     """ 式 """
-    _field = ('value',)
+    _fields = ('value',)
 
     def __init__(self, value, lineno, lexpos):
         self.value = value
@@ -39,7 +46,7 @@ class Expression(VdmslNode):
 # 括弧式
 class BracketExpression(VdmslNode):
     """ 括弧式 """
-    _field = ('body',)
+    _fields = ('body',)
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
@@ -49,7 +56,7 @@ class BracketExpression(VdmslNode):
 # let式
 class LetExpression(VdmslNode):
     """ let式 """
-    _field = ('local_definition', 'body',)
+    _fields = ('local_definition', 'body',)
 
     def __init__(self, local_definition, body, lineno, lexpos):
         self.local_definition = local_definition
@@ -59,7 +66,7 @@ class LetExpression(VdmslNode):
 
 class LetBeExpression(VdmslNode):
     """ letbe式 """
-    _field = ('binding', 'Option', 'body',)
+    _fields = ('binding', 'Option', 'body',)
 
     def __init__(self, binding, option, body, lineno, lexpos):
         self.binding = binding
@@ -72,7 +79,7 @@ class LetBeExpression(VdmslNode):
 # def式
 class DefExpression(VdmslNode):
     """ def式 """
-    _field = ('pattern_binding', 'body',)
+    _fields = ('pattern_binding', 'body',)
 
     def __init__(self, pattern_binding, body, lineno, lexpos):
         self.pattern_binding = pattern_binding
@@ -83,7 +90,7 @@ class DefExpression(VdmslNode):
 # 条件式
 class IfExpression(VdmslNode):
     """ if式 """
-    _field = ('cond', 'body', 'elseif', 'else',)
+    _fields = ('cond', 'body', 'elseif', 'else',)
 
     def __init__(self, cond, then, elseif, else_, lineno, lexpos):
         self.cond = cond
@@ -95,7 +102,7 @@ class IfExpression(VdmslNode):
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
-    _field = ('cond', 'then',)
+    _fields = ('cond', 'then',)
 
     def __init__(self, cond, then, lineno, lexpos):
         self.cond = cond
@@ -105,7 +112,7 @@ class ElseIfExpression(VdmslNode):
 
 class CasesExpression(VdmslNode):
     """ cases式 """
-    _field = ('cond', 'case_group', 'other',)
+    _fields = ('cond', 'case_group', 'other',)
 
     def __init__(self, cond, case_group, other, lineno, lexpos):
         self.cond = cond
@@ -117,7 +124,7 @@ class CasesExpression(VdmslNode):
 # 単項式
 class UnaryBaseExpression(VdmslNode):
     """ 単項式基底クラス """
-    _field = ('op', 'right',)
+    _fields = ('op', 'right',)
 
     def __init__(self, op, right, lineno, lexpos):
         self.op = op
@@ -185,7 +192,7 @@ class Inverse(UnaryBaseExpression):
 # 二項式
 class BinBaseExpression(VdmslNode):
     """ 二項式基底クラス """
-    _field = ('op', 'left', 'right')
+    _fields = ('op', 'left', 'right',)
 
     def __init__(self, op, left, right, lineno, lexpos):
         self.op = op
@@ -329,7 +336,7 @@ class Rep(BinBaseExpression):
 # 限量式
 class ForallExpression(VdmslNode):
     """ 全称限量式 """
-    _field = ('bind_list', 'body',)
+    _fields = ('bind_list', 'body',)
 
     def __init__(self, bind_list, body, lineno, lexpos):
         self.bind_list = bind_list
@@ -339,7 +346,7 @@ class ForallExpression(VdmslNode):
 
 class ExistsExpression(VdmslNode):
     """ 存在限量式 """
-    _field = ('bind_list', 'body',)
+    _fields = ('bind_list', 'body',)
 
     def __init__(self, bind_list, body, lineno, lexpos):
         self.bind_list = bind_list
@@ -349,7 +356,7 @@ class ExistsExpression(VdmslNode):
 
 class Exist1Expression(VdmslNode):
     """ 1存在限量式 """
-    _field = ('bind', 'body')
+    _fields = ('bind', 'body',)
 
     def __init__(self, bind, body, lineno, lexpos):
         self.bind = bind
@@ -360,7 +367,7 @@ class Exist1Expression(VdmslNode):
 # iota式
 class IotaExpression(VdmslNode):
     """ iota式 """
-    _field = ('bind', 'body')
+    _fields = ('bind', 'body',)
 
     def __init__(self, bind, body, lineno, lexpos):
         self.bind = bind
@@ -371,7 +378,7 @@ class IotaExpression(VdmslNode):
 # 集合式
 class SetEnumExpression(VdmslNode):
     """ 集合列挙 """
-    _field = ('expr_list',)
+    _fields = ('expr_list',)
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
@@ -380,7 +387,7 @@ class SetEnumExpression(VdmslNode):
 
 class SetCompExpression(VdmslNode):
     """ 集合内包 """
-    _field = ('body', 'bind_list', 'predicate',)
+    _fields = ('body', 'bind_list', 'predicate',)
 
     def __init__(self, body, bind_list, predicate, lineno, lexpos):
         self.body = body
@@ -391,7 +398,7 @@ class SetCompExpression(VdmslNode):
 
 class SetRangeExpression(VdmslNode):
     """ 集合範囲式 """
-    _field = ('start','end',)
+    _fields = ('start','end',)
 
     def __init__(self, start, end, lineno, lexpos):
         self.start = start
@@ -402,7 +409,7 @@ class SetRangeExpression(VdmslNode):
 # 列式
 class ColEnumExpression(VdmslNode):
     """ 列列挙 """
-    _field = ('expr_list',)
+    _fields = ('expr_list',)
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
@@ -411,7 +418,7 @@ class ColEnumExpression(VdmslNode):
 
 class ColCompExpression(VdmslNode):
     """ 列内包 """
-    _field = ('body', 'set_bind', 'predicate',)
+    _fields = ('body', 'set_bind', 'predicate',)
 
     def __init__(self, body, set_bind, predicate, lineno, lexpos):
         self.body = body
@@ -422,7 +429,7 @@ class ColCompExpression(VdmslNode):
 
 class SubseqExpression(VdmslNode):
     """ 部分列 """
-    _field = ('column', 'start', 'end',)
+    _fields = ('column', 'start', 'end',)
 
     def __init__(self, column, start, end, lineno, lexpos):
         self.column = column
@@ -434,7 +441,7 @@ class SubseqExpression(VdmslNode):
 # 写像式
 class MapEnumExpression(VdmslNode):
     """ 写像列挙 """
-    _field = ('map_list')
+    _fields = ('map_list',)
 
     def __init__(self, map_list, lineno, lexpos):
         self.map_list = map_list
@@ -443,7 +450,7 @@ class MapEnumExpression(VdmslNode):
 
 class MapExpression(VdmslNode):
     """ 写像 """
-    _field = ('dom', 'range',)
+    _fields = ('dom', 'range',)
 
     def __init__(self, dom, range, lineno, lexpos):
         self.dom = dom
@@ -453,7 +460,7 @@ class MapExpression(VdmslNode):
 
 class MapCompExpression(VdmslNode):
     """ 写像内包 """
-    _field = ('map', 'bind_list', 'predicate',)
+    _fields = ('map', 'bind_list', 'predicate',)
 
     def __init__(self, map, bind_list, predicate, lineno, lexpos):
         self.map = map
@@ -465,7 +472,7 @@ class MapCompExpression(VdmslNode):
 # 組構成子式
 class TupleConExpression(VdmslNode):
     """ 組構成子 """
-    _field = ('body', 'expr_list',)
+    _fields = ('body', 'expr_list',)
 
     def __init__(self, body, expr_list, lineno, lexpos):
         self.body = body
@@ -476,7 +483,7 @@ class TupleConExpression(VdmslNode):
 # レコード式
 class RecordConExpression(VdmslNode):
     """ レコード構成子 """
-    _field = ('record_name', 'expr_list')
+    _fields = ('record_name', 'expr_list',)
 
     def __init__(self, record_name, expr_list, lineno, lexpos):
         self.record_name = record_name
@@ -486,7 +493,7 @@ class RecordConExpression(VdmslNode):
 
 class RecordModExpression(VdmslNode):
     """ レコード修正子 """
-    _field = ('body', 'record_update_list',)
+    _fields = ('body', 'record_update_list',)
 
     def __init__(self, body, record_update_list, lineno, lexpos):
         self.body = body
@@ -496,7 +503,7 @@ class RecordModExpression(VdmslNode):
 
 class RecordUpdateExpression(VdmslNode):
     """ レコード修正 """
-    _field = ('left','right',)
+    _fields = ('left','right',)
 
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
@@ -507,7 +514,7 @@ class RecordUpdateExpression(VdmslNode):
 # 適用式
 class AppExpression(VdmslNode):
     """ 適用式 """
-    _field = ('body', 'expr_list',)
+    _fields = ('body', 'expr_list',)
 
     def __init__(self, body, expr_list, lineno, lexpos):
         self.body = body
@@ -517,7 +524,7 @@ class AppExpression(VdmslNode):
 
 class ItemChoiceExpression(VdmslNode):
     """ 項目選択式 """
-    _field = ('body',)
+    _fields = ('body',)
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
@@ -526,7 +533,7 @@ class ItemChoiceExpression(VdmslNode):
 
 class TupleChoiceExpression(VdmslNode):
     """ 組選択式 """
-    _field = ('body',)
+    _fields = ('body',)
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
@@ -535,7 +542,7 @@ class TupleChoiceExpression(VdmslNode):
 
 class FuncInstExpression(VdmslNode):
     """ 関数型インスタンス化 """
-    _field = ('name', 'type_list',)
+    _fields = ('name', 'type_list',)
 
     def __init__(self, name, type_list, lineno, lexpos):
         self.name = name
@@ -546,7 +553,7 @@ class FuncInstExpression(VdmslNode):
 # ラムダ式
 class LambdaExpression(VdmslNode):
     """ ラムダ式 """
-    _field = ('type_bind_list', 'body',)
+    _fields = ('type_bind_list', 'body',)
 
     def __init__(self, type_bind_list, body, lineno, lexpos):
         self.type_bind_list = type_bind_list
@@ -557,7 +564,7 @@ class LambdaExpression(VdmslNode):
 # is式
 class GeneralIsExpression(VdmslNode):
     """ 一般is式 """
-    _field = ('body',)
+    _fields = ('body',)
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
@@ -566,7 +573,7 @@ class GeneralIsExpression(VdmslNode):
 
 class IsExpression(VdmslNode):
     """ is式 """
-    _field = ('type_name', 'body',)
+    _fields = ('type_name', 'body',)
 
     def __init__(self, type_name, body, lineno, lexpos):
         self.type_name = type_name
@@ -576,7 +583,7 @@ class IsExpression(VdmslNode):
 
 class TypeJudgeExpression(VdmslNode):
     """ 型判定 """
-    _field = ('body', 'type_name',)
+    _fields = ('body', 'type_name',)
 
     def __init__(self, body, type_name, lineno, lexpos):
         self.body = body
@@ -587,7 +594,7 @@ class TypeJudgeExpression(VdmslNode):
 # 未定義式
 class UnDefExpression(VdmslNode):
     """ 未定義式 """
-    _field = ('body')
+    _fields = ('body',)
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
@@ -597,10 +604,125 @@ class UnDefExpression(VdmslNode):
 # 事前条件式
 class PreCondExpression(VdmslNode):
     """ 事前条件式 """
-    _field = ('expr_list',)
+    _fields = ('expr_list',)
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# パターン 
+class Pattern(VdmslNode):
+    """ パターン """
+    _fields = ('patterns',)
+
+    def __init__(self, patterns, lineno, lexpos):
+        self.patterns = patterns
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class PatternIdent(VdmslNode):
+    """ パターン識別子 """
+    _fields = ('pattern_ident',)
+
+    def __init__(self, pattern_ident, lineno, lexpos):
+        self.pattern_ident = pattern_ident
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MatchValue(VdmslNode):
+    """ 一致値 """
+    _fields = ('match_value',)
+
+    def __init__(self, match_value, lineno, lexpos):
+        self.match_value = match_value
+        self.lineno = lineno
+        self.lexpos = lexpose
+
+class SetEnumPattern(VdmslNode):
+    """ 集合列挙パターン """
+    _fields = ('pattern_list',)
+
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class SetUnionPattern(VdmslNode):
+    """ 集合合併パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ColEnumPattern(VdmslNode):
+    """ 列列挙パターン """
+    _fields = ('pattern_list',)
+
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ColLinkPattern(VdmslNode):
+    """ 列連結パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapEnumPattern(VdmslNode):
+    """ 写像列挙パターン """
+    _fields = ('map_pattern_list',)
+
+    def __init__(self, map_pattern_list, lineno, lexpos):
+        self.map_pattern_list = map_pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapPattern(VdmslNode):
+    """ 写パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapMunionPattern(VdmslNode):
+    """ 写像併合パターン """
+    _fields = ('left', 'right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TuplePattern(VdmslNode):
+    """ 組パターン """
+    _fields = ('pattern', 'pattern_list',)
+
+    def __init__(self, pattern, pattern_list, lineno, lexpos):
+        self.pattern = pattern
+        self.pattern_list = pattern_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class RecordPattern(VdmslNode):
+    """ レコードパターン """
+    _fields = ('name', 'pattern_list',)
+
+    def __init__(self, name, pattern_list, lineno, lexpos):
+        self.name = name
+        self.pattern_list = pattern_list
         self.lineno = lineno
         self.lexpos = lexpos
 
