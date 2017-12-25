@@ -400,7 +400,7 @@ class SetRangeExpression(VdmslNode):
         self.lexpos = lexpos
 
 # 列式
-class ColEmunExpression(VdmslNode):
+class ColEnumExpression(VdmslNode):
     """ 列列挙 """
     _field = ('expr_list',)
 
