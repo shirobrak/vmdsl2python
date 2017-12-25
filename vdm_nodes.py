@@ -326,6 +326,41 @@ class Rep(BinBaseExpression):
     """ 反復 """
     pass
 
+# 限量式
+class ForallExpression(VdmslNode):
+    """ 全称限量式 """
+    _field = ('bind_list', 'body',)
+
+    def __init__(self, bind_list, body, lineno, lexpos):
+        self.bind_list = bind_list
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ExistsExpression(VdmslNode):
+    """ 存在限量式 """
+    _field = ('bind_list', 'body',)
+
+    def __init__(self, bind_list, body, lineno, lexpos):
+        self.bind_list = bind_list
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class Exist1Expression(VdmslNode):
+    """ 1存在限量式 """
+    _field = ('bind', 'body')
+
+    def __init__(self, bind, body, lineno, lexpos):
+        self.bind = bind
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+    
+        
+        
 
 # デバッグ用記述
 if __name__ == '__main__':
