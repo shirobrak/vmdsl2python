@@ -7,7 +7,7 @@ class VdmslNode(object):
 
 class NameBase(VdmslNode):
     """ 名称基底クラス """
-    _field = ('name')
+    _field = ('name',)
 
     def __init__(self, name, lineno, lexpos):
         self.name = name
@@ -15,7 +15,7 @@ class NameBase(VdmslNode):
         self.lexpos = lexpos
 
 class Name(NameBase):
-    """ 名称クラス """
+    """ 名称 """
     pass
 
 class OldName(NameBase):
@@ -26,11 +26,21 @@ class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
 
+class Expression(VdmslNode):
+    """ 式 """
+    _field = ('value',)
+
+    def __init__(self, value, lineno, lexpos):
+        self.value = value
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 # デバッグ用記述
 if __name__ == '__main__':
     pass
+
     
 
 
