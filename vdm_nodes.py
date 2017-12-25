@@ -473,6 +473,37 @@ class TupleConExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# レコード式
+class RecordConExpression(VdmslNode):
+    """ レコード構成子 """
+    _field = ('record_name', 'expr_list')
+
+    def __init__(self, record_name, expr_list, lineno, lexpos):
+        self.record_name = record_name
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class RecordModExpression(VdmslNode):
+    """ レコード修正子 """
+    _field = ('body', 'record_update_list',)
+
+    def __init__(self, body, record_update_list, lineno, lexpos):
+        self.body = body
+        self.record_update_list = record_update_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class RecordUpdateExpression(VdmslNode):
+    """ レコード修正 """
+    _field = ('left','right',)
+
+    def __init__(self, left, right, lineno, lexpos):
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 # デバッグ用記述
 if __name__ == '__main__':
