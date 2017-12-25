@@ -554,6 +554,36 @@ class LambdaExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# is式
+class GeneralIsExpression(VdmslNode):
+    """ 一般is式 """
+    _field = ('body',)
+
+    def __init__(self, body, lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class IsExpression(VdmslNode):
+    """ is式 """
+    _field = ('type_name', 'body',)
+
+    def __init__(self, type_name, body, lineno, lexpos):
+        self.type_name = type_name
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class TypeJudgeExpression(VdmslNode):
+    """ 型判定 """
+    _field = ('body', 'type_name',)
+
+    def __init__(self, body, type_name, lineno, lexpos):
+        self.body = body
+        self.type_name = type_name
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 
