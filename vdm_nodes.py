@@ -182,9 +182,149 @@ class Merge(UnaryBaseExpression):
 class Inverse(UnaryBaseExpression):
     pass
 
+# 二項式
+class BinBaseExpression(VdmslNode):
+    """ 二項式基底クラス """
+    _field = ('op', 'left', 'right')
 
+    def __init__(self, op, left, right, lineno, lexpos):
+        self.op = op
+        self.left = left
+        self.right = right
+        self.lineno = lineno
+        self.lexpos = lexpos
 
+class Add(BinBaseExpression):
+    """ 加算 """
+    pass
 
+class Sub(BinBaseExpression):
+    """ 減算 """
+    pass
+
+class Mul(BinBaseExpression):
+    """ 乗算 """
+    pass
+
+class Div(BinBaseExpression):
+    """ 除算 """
+    pass
+
+class IntDiv(BinBaseExpression):
+    """ 整数除算 """
+    pass
+
+class Rem(BinBaseExpression):
+    """ 剰余算 """
+    pass
+
+class Mod(BinBaseExpression):
+    """ 法算 """
+    pass
+
+class Lt(BinBaseExpression):
+    """ より小さい """
+    pass
+
+class LtEq(BinBaseExpression):
+    """ より小さいか等しい """
+    pass
+
+class Gt(BinBaseExpression):
+    """ より大きい """
+    pass
+
+class GtEq(BinBaseExpression):
+    """ より大きいか等しい """
+    pass
+
+class Equal(BinBaseExpression):
+    """ 相等 """
+    pass
+
+class NotEq(BinBaseExpression):
+    """ 不等 """
+    pass
+
+class Or(BinBaseExpression):
+    """ 論理和 """
+    pass
+
+class And(BinBaseExpression):
+    """ 論理積 """
+    pass
+
+class Imp(BinBaseExpression):
+    """ 含意 """
+    pass
+
+class Equivalence(BinBaseExpression):
+    """ 同値 """
+    pass
+
+class InSet(BinBaseExpression):
+    """ 帰属 """
+    pass
+
+class NotInSet(BinBaseExpression):
+    """ 非帰属 """
+    pass
+
+class Subset(BinBaseExpression):
+    """ 包含 """
+    pass
+
+class PSubset(BinBaseExpression):
+    """ 真包含 """
+    pass
+
+class Union(BinBaseExpression):
+    """ 集合合併 """
+    pass
+
+class SetDiff(BinBaseExpression):
+    """ 集合差 """
+    pass
+
+class Inter(BinBaseExpression):
+    """ 集合共通部分 """
+    pass
+
+class ColLink(BinBaseExpression):
+    """ 列連結 """
+    pass
+
+class MapColUpdate(BinBaseExpression):
+    """ 写像修正または列修正 """
+    pass
+
+class Munion(BinBaseExpression):
+    """ 写像併合 """
+    pass
+
+class MapDomRes(BinBaseExpression):
+    """ 写像定義域限定 """
+    pass
+
+class MapDomRed(BinBaseExpression):
+    """ 写像定義域削減 """
+    pass
+
+class MapRangeRes(BinBaseExpression):
+    """ 写像値域限定 """
+    pass
+
+class MapRangeRed(BinBaseExpression):
+    """ 写像値域削減 """
+    pass
+
+class Comp(BinBaseExpression):
+    """ 合成 """
+    pass
+
+class Rep(BinBaseExpression):
+    """ 反復 """
+    pass
 
 
 # デバッグ用記述
