@@ -543,6 +543,16 @@ class FuncInstExpression(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# ラムダ式
+class LambdaExpression(VdmslNode):
+    """ ラムダ式 """
+    _field = ('type_bind_list', 'body',)
+
+    def __init__(self, type_bind_list, body, lineno, lexpos):
+        self.type_bind_list = type_bind_list
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
