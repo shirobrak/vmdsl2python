@@ -12,6 +12,164 @@ class VdmslNode(object):
                     for field in self._fields])
     )
 
+# データ型定義
+
+# 基本データ型
+class BasicDataType(VdmslNode):
+    """ 基本データ型基底クラス """
+    _fields = ('value',)
+
+    def __init__(self, value, lineno, lexpos):
+        self.value = value
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class BoolType(BasicDataType):
+    """ ブール型 """
+    pass
+
+class NatType(BasicDataType):
+    """ Nat型(自然数) """
+    pass
+
+class Nat1Type(BasicDataType):
+    """ Nat1型(正の自然数) """
+    pass
+
+class IntType(BasicDataType):
+    """ Int型(整数) """
+    pass
+
+class RatType(BasicDataType):
+    """ Rat型(有理数) """
+    pass
+
+class RealType(BasicDataType):
+    """ Real型(実数) """
+    pass
+
+class CharType(BasicDataType):
+    """ 文字型 """
+    pass
+
+class QuoteType(BasicDataType):
+    """ 引用型 """
+    pass
+
+class TokenType(BasicDataType):
+    """ トークン型 """
+    pass
+
+# 合成型
+class SyntheticDataType(VdmslNode):
+    """ 合成型基底クラス """
+    _fields = ('type_name',)
+
+    def __init__(self, value, lineno, lexpos):
+        self.type_name = type_name
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class SetType(SyntheticDataType):
+    """ 集合型 """
+    pass
+
+class SeqType(SyntheticDataType):
+    """ 空列を含む列型 """
+    pass
+
+class Seq1Type(SyntheticDataType):
+    """ 空列を含まない列型 """
+    pass
+
+class MapType(SyntheticDataType):
+    """ 一般写像型 """
+    pass
+
+class InMapType(SyntheticDataType):
+    """ 1対1写像型 """
+    pass
+
+class TupleType(VdmslNode):
+    """ 組型 """
+    _fields = ('type1', 'type2', 'type_list',)
+
+    def __init__(self, type1, type2, type_list):
+        self.type1 = type1
+        self.type2 = type2
+        self.type_list =type_list
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class RecordType(VdmslNode):
+    """ レコード型 """
+    _fields = ('ident', 'item_list',)
+
+    def __init__(self, ident, item_list, lineno, lexpos):
+        self.ident = ident
+        self.item_list = item_list
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class Item(VdmslNode):
+    """ 項目 """
+    _fields = ('ident', 'type',)
+
+    def __init__(self, ident, type, lineno, lexpos):
+        self.ident = ident
+        self.type = type
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class MergerType(VdmslNode):
+    """ 合併型 """
+    _fields = ('type1', 'type2', 'type_list',)
+
+    def __init__(self, type1, type2, type_list):
+        self.type1 = type1
+        self.type2 = type2
+        self.type_list =type_list
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class SelectType(VdmslNode):
+    """ 選択型 """
+    _fields = ('value',)
+
+    def __init__(self, value, lineno, lexpos):
+        self.value = value
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+
+class FuncionType(VdmslNode):
+    """ 関数型基底クラス """
+    _fields = ('any_type', 'type',)
+
+    def __init__(self, any_type, type, lineno, lexpos):
+        self.any_type = any_type
+        self.type = type
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class PartialFunctionType(VdmslNode):
+    """ 部分関数型 """
+    pass
+
+class FullFuntionType(VdmslNode):
+    """ 全関数型 """
+    pass
+
+class AnyType(VdmslNode):
+    """ 任意の型 """
+    _fields = ('type',)
+
+    def __init__(self, type, lineno, lexpos):
+        self.type = type
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+
 class NameBase(VdmslNode):
     """ 名称基底クラス """
     _fields = ('name',)
@@ -944,14 +1102,6 @@ class OperationType(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class AnyType(VdmslNode):
-    """ 任意の型 """
-    _fields = ('type',)
-
-    def __init__(self, type, lineno, lexpos):
-        self.type = type
-        self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)
 
 class ParamGroup(VdmslNode):
     """ パラメータ群 """
@@ -1166,34 +1316,7 @@ class PatternTypePair(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class FuncionType(VdmslNode):
-    """ 関数型 """
-    _fields = ('function_type',)
 
-    def __init__(self, function_type, lineno, lexpos):
-        self.function_type = function_type
-        self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)
-
-class PartialFunctionType(VdmslNode):
-    """ 部分関数型 """
-    _fields = ('any_type', 'type',)
-
-    def __init__(self, any_type, type, lineno, lexpos):
-        self.any_type = any_type
-        self.type = type
-        self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)
-
-class FunnFuntionType(VdmslNode):
-    """ 全関数型 """
-    _fields = ('any_type', 'type',)
-
-    def __init__(self, any_type, type, lineno, lexpos):
-        self.any_type = any_type
-        self.type = type
-        self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)
 
 class FunctionBody(VdmslNode):
     """ 関数本体 """
