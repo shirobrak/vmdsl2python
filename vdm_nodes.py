@@ -18,8 +18,8 @@ class NameBase(VdmslNode):
 
     def __init__(self, name, lineno, lexpos):
         self.name = name
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Name(NameBase):
     """ 名称 """
@@ -40,8 +40,8 @@ class Expression(VdmslNode):
 
     def __init__(self, value, lineno, lexpos):
         self.value = value
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 括弧式
 class BracketExpression(VdmslNode):
@@ -50,8 +50,8 @@ class BracketExpression(VdmslNode):
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # let式
 class LetExpression(VdmslNode):
@@ -61,8 +61,8 @@ class LetExpression(VdmslNode):
     def __init__(self, local_definition, body, lineno, lexpos):
         self.local_definition = local_definition
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class LetBeExpression(VdmslNode):
     """ letbe式 """
@@ -72,8 +72,8 @@ class LetBeExpression(VdmslNode):
         self.binding = binding
         self.option_expr = option_expr
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
  
 
 # def式
@@ -84,8 +84,8 @@ class DefExpression(VdmslNode):
     def __init__(self, pattern_binding, body, lineno, lexpos):
         self.pattern_binding = pattern_binding
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 条件式
 class IfExpression(VdmslNode):
@@ -97,8 +97,8 @@ class IfExpression(VdmslNode):
         self.then = then
         self.elseif = elseif
         self.else_ = else_
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
@@ -107,8 +107,8 @@ class ElseIfExpression(VdmslNode):
     def __init__(self, cond, then, lineno, lexpos):
         self.cond = cond
         self.then = then
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class CasesExpression(VdmslNode):
     """ cases式 """
@@ -118,8 +118,8 @@ class CasesExpression(VdmslNode):
         self.cond = cond
         self.case_group = case_group
         self.other = other
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 単項式
 class UnaryBaseExpression(VdmslNode):
@@ -129,8 +129,8 @@ class UnaryBaseExpression(VdmslNode):
     def __init__(self, op, right, lineno, lexpos):
         self.op = op
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Plus(UnaryBaseExpression):
     pass
@@ -198,8 +198,8 @@ class BinBaseExpression(VdmslNode):
         self.op = op
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Add(BinBaseExpression):
     """ 加算 """
@@ -341,8 +341,8 @@ class ForallExpression(VdmslNode):
     def __init__(self, bind_list, body, lineno, lexpos):
         self.bind_list = bind_list
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExistsExpression(VdmslNode):
     """ 存在限量式 """
@@ -351,8 +351,8 @@ class ExistsExpression(VdmslNode):
     def __init__(self, bind_list, body, lineno, lexpos):
         self.bind_list = bind_list
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Exist1Expression(VdmslNode):
     """ 1存在限量式 """
@@ -361,8 +361,8 @@ class Exist1Expression(VdmslNode):
     def __init__(self, bind, body, lineno, lexpos):
         self.bind = bind
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # iota式
 class IotaExpression(VdmslNode):
@@ -372,8 +372,8 @@ class IotaExpression(VdmslNode):
     def __init__(self, bind, body, lineno, lexpos):
         self.bind = bind
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 集合式
 class SetEnumExpression(VdmslNode):
@@ -382,8 +382,8 @@ class SetEnumExpression(VdmslNode):
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class SetCompExpression(VdmslNode):
     """ 集合内包 """
@@ -393,8 +393,8 @@ class SetCompExpression(VdmslNode):
         self.body = body
         self.bind_list = bind_list
         self.predicate = predicate
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class SetRangeExpression(VdmslNode):
     """ 集合範囲式 """
@@ -403,8 +403,8 @@ class SetRangeExpression(VdmslNode):
     def __init__(self, start, end, lineno, lexpos):
         self.start = start
         self.end = end
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 列式
 class ColEnumExpression(VdmslNode):
@@ -413,8 +413,8 @@ class ColEnumExpression(VdmslNode):
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ColCompExpression(VdmslNode):
     """ 列内包 """
@@ -424,8 +424,8 @@ class ColCompExpression(VdmslNode):
         self.body = body
         self.set_bind = set_bind
         self.predicate = predicate
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class SubseqExpression(VdmslNode):
     """ 部分列 """
@@ -435,8 +435,8 @@ class SubseqExpression(VdmslNode):
         self.column = column
         self.start = start
         self.end = end
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 写像式
 class MapEnumExpression(VdmslNode):
@@ -445,8 +445,8 @@ class MapEnumExpression(VdmslNode):
 
     def __init__(self, map_list, lineno, lexpos):
         self.map_list = map_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapExpression(VdmslNode):
     """ 写像 """
@@ -455,8 +455,8 @@ class MapExpression(VdmslNode):
     def __init__(self, dom, range, lineno, lexpos):
         self.dom = dom
         self.range = range
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapCompExpression(VdmslNode):
     """ 写像内包 """
@@ -466,8 +466,8 @@ class MapCompExpression(VdmslNode):
         self.map = map
         self.bind_list = bind_list
         self.predicate = predicate
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
         
 # 組構成子式
 class TupleConExpression(VdmslNode):
@@ -477,8 +477,8 @@ class TupleConExpression(VdmslNode):
     def __init__(self, body, expr_list, lineno, lexpos):
         self.body = body
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # レコード式
 class RecordConExpression(VdmslNode):
@@ -488,8 +488,8 @@ class RecordConExpression(VdmslNode):
     def __init__(self, record_name, expr_list, lineno, lexpos):
         self.record_name = record_name
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class RecordModExpression(VdmslNode):
     """ レコード修正子 """
@@ -498,8 +498,8 @@ class RecordModExpression(VdmslNode):
     def __init__(self, body, record_update_list, lineno, lexpos):
         self.body = body
         self.record_update_list = record_update_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class RecordUpdateExpression(VdmslNode):
     """ レコード修正 """
@@ -508,8 +508,8 @@ class RecordUpdateExpression(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 適用式
 class AppExpression(VdmslNode):
@@ -519,8 +519,8 @@ class AppExpression(VdmslNode):
     def __init__(self, body, expr_list, lineno, lexpos):
         self.body = body
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ItemChoiceExpression(VdmslNode):
     """ 項目選択式 """
@@ -528,8 +528,8 @@ class ItemChoiceExpression(VdmslNode):
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TupleChoiceExpression(VdmslNode):
     """ 組選択式 """
@@ -537,8 +537,8 @@ class TupleChoiceExpression(VdmslNode):
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class FuncInstExpression(VdmslNode):
     """ 関数型インスタンス化 """
@@ -547,8 +547,8 @@ class FuncInstExpression(VdmslNode):
     def __init__(self, name, type_list, lineno, lexpos):
         self.name = name
         self.type_list = type_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # ラムダ式
 class LambdaExpression(VdmslNode):
@@ -558,8 +558,8 @@ class LambdaExpression(VdmslNode):
     def __init__(self, type_bind_list, body, lineno, lexpos):
         self.type_bind_list = type_bind_list
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # is式
 class GeneralIsExpression(VdmslNode):
@@ -568,8 +568,8 @@ class GeneralIsExpression(VdmslNode):
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class IsExpression(VdmslNode):
     """ is式 """
@@ -578,8 +578,8 @@ class IsExpression(VdmslNode):
     def __init__(self, type_name, body, lineno, lexpos):
         self.type_name = type_name
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TypeJudgeExpression(VdmslNode):
     """ 型判定 """
@@ -588,8 +588,8 @@ class TypeJudgeExpression(VdmslNode):
     def __init__(self, body, type_name, lineno, lexpos):
         self.body = body
         self.type_name = type_name
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 未定義式
 class UnDefExpression(VdmslNode):
@@ -598,8 +598,8 @@ class UnDefExpression(VdmslNode):
 
     def __init__(self, body, lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 事前条件式
 class PreCondExpression(VdmslNode):
@@ -608,8 +608,8 @@ class PreCondExpression(VdmslNode):
 
     def __init__(self, expr_list, lineno, lexpos):
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # パターン 
 class Pattern(VdmslNode):
@@ -618,8 +618,8 @@ class Pattern(VdmslNode):
 
     def __init__(self, patterns, lineno, lexpos):
         self.patterns = patterns
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class PatternIdent(VdmslNode):
     """ パターン識別子 """
@@ -627,8 +627,8 @@ class PatternIdent(VdmslNode):
 
     def __init__(self, pattern_ident, lineno, lexpos):
         self.pattern_ident = pattern_ident
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MatchValue(VdmslNode):
     """ 一致値 """
@@ -636,8 +636,8 @@ class MatchValue(VdmslNode):
 
     def __init__(self, match_value, lineno, lexpos):
         self.match_value = match_value
-        self.lineno = lineno
-        self.lexpos = lexpose
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)e
 
 class SetEnumPattern(VdmslNode):
     """ 集合列挙パターン """
@@ -645,8 +645,8 @@ class SetEnumPattern(VdmslNode):
 
     def __init__(self, pattern_list, lineno, lexpos):
         self.pattern_list = pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class SetUnionPattern(VdmslNode):
     """ 集合合併パターン """
@@ -655,8 +655,8 @@ class SetUnionPattern(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ColEnumPattern(VdmslNode):
     """ 列列挙パターン """
@@ -664,8 +664,8 @@ class ColEnumPattern(VdmslNode):
 
     def __init__(self, pattern_list, lineno, lexpos):
         self.pattern_list = pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ColLinkPattern(VdmslNode):
     """ 列連結パターン """
@@ -674,8 +674,8 @@ class ColLinkPattern(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapEnumPattern(VdmslNode):
     """ 写像列挙パターン """
@@ -683,8 +683,8 @@ class MapEnumPattern(VdmslNode):
 
     def __init__(self, map_pattern_list, lineno, lexpos):
         self.map_pattern_list = map_pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapPattern(VdmslNode):
     """ 写パターン """
@@ -693,8 +693,8 @@ class MapPattern(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapMunionPattern(VdmslNode):
     """ 写像併合パターン """
@@ -703,8 +703,8 @@ class MapMunionPattern(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TuplePattern(VdmslNode):
     """ 組パターン """
@@ -713,8 +713,8 @@ class TuplePattern(VdmslNode):
     def __init__(self, pattern, pattern_list, lineno, lexpos):
         self.pattern = pattern
         self.pattern_list = pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class RecordPattern(VdmslNode):
     """ レコードパターン """
@@ -723,8 +723,8 @@ class RecordPattern(VdmslNode):
     def __init__(self, name, pattern_list, lineno, lexpos):
         self.name = name
         self.pattern_list = pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 束縛
 class Binding(VdmslNode):
@@ -733,8 +733,8 @@ class Binding(VdmslNode):
 
     def __init__(self, bindings, lineno, lexpos):
         self.bindings = bindings
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class SetBinding(VdmslNode):
     """ 集合束縛 """
@@ -743,8 +743,8 @@ class SetBinding(VdmslNode):
     def __init__(self, pattern, expr, lineno, lexpos):
         self.pattern = pattern
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TypeBinding(VdmslNode):
     """ 型束縛 """
@@ -753,8 +753,8 @@ class TypeBinding(VdmslNode):
     def __init__(self, pattern, type, lineno, lexpos):
         self.pattern = pattern
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class BindingList(VdmslNode):
     """ 束縛リスト """
@@ -762,8 +762,8 @@ class BindingList(VdmslNode):
 
     def __init__(self, multi_bindings, lineno, lexpos):
         self.multi_bindings = multi_bindings
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MultiBinding(VdmslNode):
     """ 多重束縛 """
@@ -771,8 +771,8 @@ class MultiBinding(VdmslNode):
 
     def __init__(self, bindings, lineno, lexpos):
         self.bindings = bindings
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MultiSetBinding(VdmslNode):
     """ 多重集合束縛 """
@@ -781,8 +781,8 @@ class MultiSetBinding(VdmslNode):
     def __init__(self, pattern_list, expr, lineno, lexpos):
         self.pattern_list = pattern_list
         self.expr = expr
-        self.lineno = lineno 
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno) 
+        self.__setattr__('lexpos', lexpos)
 
 class MultiTypeBinding(VdmslNode):
     """ 多重型束縛 """
@@ -791,8 +791,8 @@ class MultiTypeBinding(VdmslNode):
     def __init__(self, pattern_list, type, lineno, lexpos):
         self.pattern_list = pattern_list
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 値定義
 class ValueDefinitionGroup(VdmslNode):
@@ -801,8 +801,8 @@ class ValueDefinitionGroup(VdmslNode):
 
     def __init__(self, value_definitions, lineno, lexpos):
         self.value_definitions = value_definitions
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ValueDefinition(VdmslNode):
     """ 値定義 """
@@ -811,8 +811,8 @@ class ValueDefinition(VdmslNode):
     def __init__(self, pattern, type, expr, lineno, lexpos):
         self.pattern = pattern
         self.type = type
-        self.lineno
-        self.lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 状態定義
 class StateDefinition(VdmslNode):
@@ -824,8 +824,8 @@ class StateDefinition(VdmslNode):
         self.item_list = item_list
         self.inv_cond = inv_cond
         self.init = init
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class InvCondition(VdmslNode):
     """ 不変条件 """
@@ -833,8 +833,8 @@ class InvCondition(VdmslNode):
 
     def __init__(self, inv_condition_init_function, lineno, lexpos):
         self.inv_condition_init_function = inv_condition_init_function
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Initialization(VdmslNode):
     """ 初期化 """
@@ -842,8 +842,8 @@ class Initialization(VdmslNode):
 
     def __init__(self, inv_condition_init_function, lineno, lexpos):
         self.inv_condition_init_function = inv_condition_init_function
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class InvCondInitFunc(VdmslNode):
     """ 不変条件初期関数 """
@@ -852,8 +852,8 @@ class InvCondInitFunc(VdmslNode):
     def __init__(self, pattern, expr, lineno, lexpos):
         self.pattern = pattern
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 操作定義
 class OpeDefinitionGroup(VdmslNode):
@@ -862,8 +862,8 @@ class OpeDefinitionGroup(VdmslNode):
 
     def __init__(self, operation_definitions, lineno, lexpos):
         self.operation_definitions = operation_definitions
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class OpeDefinition(VdmslNode):
     """ 操作定義 """
@@ -871,8 +871,8 @@ class OpeDefinition(VdmslNode):
 
     def __init__(self, operation_definition, lineno, lexpos):
         self.operation_definition = operation_definition
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExpOpeDefinition(VdmslNode):
     """ 陽操作定義 """
@@ -888,8 +888,8 @@ class ExpOpeDefinition(VdmslNode):
         self.ope_body = ope_body
         self.pre_expr = pre_expr
         self.post_expr = post_expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ImpOpeDefinition(VdmslNode):
     """ 陰操作定義 """
@@ -901,8 +901,8 @@ class ImpOpeDefinition(VdmslNode):
         self.param_type = param_type
         self.ident_type_pair_list = ident_type_pair_list
         self.imp_body = imp_body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
@@ -913,8 +913,8 @@ class ImpOpeBody(VdmslNode):
         self.pre_expr = pre_expr
         self.post_expr = post_expr
         self.exception = exception
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExpandExpOpeDefinition(VdmslNode):
     """ 拡張陽操作定義 """
@@ -931,8 +931,8 @@ class ExpandExpOpeDefinition(VdmslNode):
         self.pre_expr = pre_expr
         self.post_expr = post_expr
         self.exception = exception
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class OperationType(VdmslNode):
     """ 操作型 """
@@ -941,8 +941,8 @@ class OperationType(VdmslNode):
     def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class AnyType(VdmslNode):
     """ 任意の型 """
@@ -950,8 +950,8 @@ class AnyType(VdmslNode):
 
     def __init__(self, type, lineno, lexpos):
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ParamGroup(VdmslNode):
     """ パラメータ群 """
@@ -959,8 +959,8 @@ class ParamGroup(VdmslNode):
 
     def __init__(self, pattern_list, lineno, lexpos):
         self.pattern_list = pattern_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 
 class PatternList(VdmslNode):
@@ -969,8 +969,8 @@ class PatternList(VdmslNode):
 
     def __init__(self, patterns, lineno, lexpos):
         self.patterns = patterns
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class OperationBody(VdmslNode):
     """ 操作本体 """
@@ -978,8 +978,8 @@ class OperationBody(VdmslNode):
 
     def __init__(self, statement, lineno, lexpos):
         self.statement = statement
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExtSection(VdmslNode):
     """ 外部節 """
@@ -987,8 +987,8 @@ class ExtSection(VdmslNode):
 
     def __init__(self, var_infos, lineno, lexpos):
         self.var_infos = var_infos
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class VarInfo(VdmslNode):
     """ var 情報 """
@@ -998,8 +998,8 @@ class VarInfo(VdmslNode):
         self.mode = mode
         self.name_list = name_list
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class NameList(VdmslNode):
     """ 名称リスト """
@@ -1007,8 +1007,8 @@ class NameList(VdmslNode):
 
     def __init__(self, idents, lineno, lexpos):
         self.idents = idents
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Exception(VdmslNode):
     """ 例外 """
@@ -1016,8 +1016,8 @@ class Exception(VdmslNode):
 
     def __init__(self, err_list, lineno, lexpos):
         self.err_list = err_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ErrorList(VdmslNode):
     """ エラーリスト """
@@ -1025,8 +1025,8 @@ class ErrorList(VdmslNode):
 
     def __init__(self, errors, lineno, lexpos):
         self.errors = errors
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class Error(VdmslNode):
     """ エラー """
@@ -1036,8 +1036,8 @@ class Error(VdmslNode):
         self.ident = ident
         self.left = left
         self.right = right
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 関数定義
 class FuncDefinitionGroup(VdmslNode):
@@ -1046,8 +1046,8 @@ class FuncDefinitionGroup(VdmslNode):
 
     def __init__(self, function_definitions, lineno, lexpos):
         self.function_definitions = function_definitions
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class FuncDefinition(VdmslNode):
     """ 関数定義 """
@@ -1055,8 +1055,8 @@ class FuncDefinition(VdmslNode):
 
     def __init__(self, function_definition, lineno, lexpos):
         self.function_definition = function_definition
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExpFuncDefinition(VdmslNode):
     """ 陽関数定義 """
@@ -1074,8 +1074,8 @@ class ExpFuncDefinition(VdmslNode):
         self.pre_expr = pre_expr
         self.post_expr = post_expr
         self.name = name
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ImpFuncDefinition(VdmslNode):
     """ 陰関数定義 """
@@ -1090,8 +1090,8 @@ class ImpFuncDefinition(VdmslNode):
         self.ident_type_pair_list = ident_type_pair_list
         self.pre_expr = pre_expr
         self.post_expr = post_expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExpandExpFuncDefinition(VdmslNode):
     """ 拡張陽関数定義 """
@@ -1107,8 +1107,8 @@ class ExpandExpFuncDefinition(VdmslNode):
         self.func_body = func_body
         self.pre_expr = pre_expr
         self.post_expr = post_expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TypeVariableList(VdmslNode):
     """ 型変数リスト """
@@ -1116,8 +1116,8 @@ class TypeVariableList(VdmslNode):
 
     def __init__(self, type_variable_idents, lineno, lexpos):
         self.type_variable_idents = type_variable_idents
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class IdentTypePairList(VdmslNode):
     """ 識別子型ペアリスト """
@@ -1125,8 +1125,8 @@ class IdentTypePairList(VdmslNode):
 
     def __init__(self, ident_type_pairs, lineno, lexpos):
         self.ident_type_pairs = ident_type_pairs
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class IdentTypePair(VdmslNode):
     """ 識別子ペア """
@@ -1135,8 +1135,8 @@ class IdentTypePair(VdmslNode):
     def __init__(self, ident, type, lineno, lexpos):
         self.ident = ident
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ParamType(VdmslNode):
     """ パラメーター型 """
@@ -1144,8 +1144,8 @@ class ParamType(VdmslNode):
 
     def __init__(self, pattern_type_pair_list, lineno, lexpos):
         self.pattern_type_pair_list = pattern_type_pair_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class PatternTypePairList(VdmslNode):
     """ パターン型ペアリスト """
@@ -1153,8 +1153,8 @@ class PatternTypePairList(VdmslNode):
 
     def __init__(self, pattern_type_pairs, lineno, lexpos):
         self.pattern_type_pairs = pattern_type_pairs
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class PatternTypePair(VdmslNode):
     """ パターン型ペア """
@@ -1163,8 +1163,8 @@ class PatternTypePair(VdmslNode):
     def __init__(self, pattern_list, type, lineno, lexpos):
         self.pattern_list = pattern_list
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class FuncionType(VdmslNode):
     """ 関数型 """
@@ -1172,8 +1172,8 @@ class FuncionType(VdmslNode):
 
     def __init__(self, function_type, lineno, lexpos):
         self.function_type = function_type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class PartialFunctionType(VdmslNode):
     """ 部分関数型 """
@@ -1182,8 +1182,8 @@ class PartialFunctionType(VdmslNode):
     def __init__(self, any_type, type, lineno, lexpos):
         self.any_type = any_type
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class FunnFuntionType(VdmslNode):
     """ 全関数型 """
@@ -1192,8 +1192,8 @@ class FunnFuntionType(VdmslNode):
     def __init__(self, any_type, type, lineno, lexpos):
         self.any_type = any_type
         self.type = type
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class FunctionBody(VdmslNode):
     """ 関数本体 """
@@ -1201,8 +1201,8 @@ class FunctionBody(VdmslNode):
 
     def __init__(self, expressions, lineno, lexpos):
         self.expression = expression
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 文
 class Statements(VdmslNode):
@@ -1211,8 +1211,8 @@ class Statements(VdmslNode):
 
     def __init__(self, statement, lineno, lexpos):
         self.statement = statement
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # let 文
 class LetStatement(VdmslNode):
@@ -1222,8 +1222,8 @@ class LetStatement(VdmslNode):
     def __init__(self, local_definitions, body, lineno, lexpos):
         self.local_definitions = local_definitions
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class LetBeStatement(VdmslNode):
     """ let be 文 """
@@ -1233,8 +1233,8 @@ class LetBeStatement(VdmslNode):
         self.binding = binding
         self.option_expr = option_expr
         self.body = body
-        self.lineno = lineno 
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno) 
+        self.__setattr__('lexpos', lexpos)
 
 class LocalDefinitions(VdmslNode):
     """ ローカル定義 """
@@ -1242,8 +1242,8 @@ class LocalDefinitions(VdmslNode):
 
     def __init__(self, definition, lineno, lexpos):
         self.definition = definition
-        self.lineno = lineno
-        self.lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # def 文
 
@@ -1254,8 +1254,8 @@ class DefStatement(VdmslNode):
     def __init__(self, equal_definitions, body, lineno, lexpos):
         self.equal_definitions = equal_definitions
         self.body = body
-        self.lineno = lineno 
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno) 
+        self.__setattr__('lexpos', lexpos)
 
 class EqualDefinition(VdmslNode):
     """ 相等定義 """
@@ -1264,8 +1264,8 @@ class EqualDefinition(VdmslNode):
     def __init__(self, pattern_binding, expr, lineno, lexpos):
         self.pattern_binding = pattern_binding
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # ブロック文
 class BlockStatement(VdmslNode):
@@ -1275,8 +1275,8 @@ class BlockStatement(VdmslNode):
     def __init__(self, dcl_stmt, statement, lineno, lexpos):
         self.dcl_stmt = dcl_stmt
         self.statement = statement
-        self.lineno = lineno 
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno) 
+        self.__setattr__('lexpos', lexpos)
 
 class DclStatement(VdmslNode):
     """ dcl文 """
@@ -1284,8 +1284,8 @@ class DclStatement(VdmslNode):
 
     def __init__(self, assign_definitions, lineno, lexpos):
         self.assign_definitions = assign_definitions
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class AssignDefinition(VdmslNode):
     """ 代入定義 """
@@ -1295,8 +1295,8 @@ class AssignDefinition(VdmslNode):
         self.ident = ident
         self.type = type
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 代入文
 class GeneralAssignStatement(VdmslNode):
@@ -1305,8 +1305,8 @@ class GeneralAssignStatement(VdmslNode):
 
     def __init__(self, statement, lineno, lexpos):
         self.statement = statement
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class AssignStatement(VdmslNode):
     """ 代入文 """
@@ -1315,8 +1315,8 @@ class AssignStatement(VdmslNode):
     def __init__(self, status_indicator, expr, lineno, lexpos):
         self.status_indicator = status_indicator
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class StatusIndicator(VdmslNode):
     """ 状態指示子 """
@@ -1325,7 +1325,7 @@ class StatusIndicator(VdmslNode):
     def __init__(self, indicator, lineno, lexpos):
         self.indicator = indicator
         self.indicator = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lexpos', lexpos)
 
 class ItemReference(VdmslNode):
     """ 項目参照 """
@@ -1334,8 +1334,8 @@ class ItemReference(VdmslNode):
     def __init__(self, status_indicator, ident, lineno, lexpos):
         self.status_indicator = status_indicator
         self.ident = ident
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MapOrColReference(VdmslNode):
     """ 写像参照または列参照 """
@@ -1344,8 +1344,8 @@ class MapOrColReference(VdmslNode):
     def __init__(self, status_indicator, expr, lineno, lexpos):
         self.status_indicator = status_indicator
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class MultiAssignStatement(VdmslNode):
     """ 多重代入文 """
@@ -1353,8 +1353,8 @@ class MultiAssignStatement(VdmslNode):
 
     def __init__(self, assign_stmts, lineno, lexpos):
         self.assign_stmts = assign_stmts
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 条件文
 class IfStatement(VdmslNode):
@@ -1366,8 +1366,8 @@ class IfStatement(VdmslNode):
         self.then = then
         self.elseif_stmts = elseif_stmts
         self.else_stmt = else_stmt
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
     
 class ElseIfStatement(VdmslNode):
     """ elseif文 """
@@ -1376,8 +1376,8 @@ class ElseIfStatement(VdmslNode):
     def __init__(self, cond, body, lineno, lexpos):
         self.cond = cond
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class CasesStatement(VdmslNode):
     """ cases文 """
@@ -1387,8 +1387,8 @@ class CasesStatement(VdmslNode):
         self.cond = cond
         self.case_stmt_options = case_stmt_options
         self.other_stmt = other_stmt
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class CaseStmtOption(VdmslNode):
     """ case文選択肢 """
@@ -1397,8 +1397,8 @@ class CaseStmtOption(VdmslNode):
     def __init__(self, pattern_list, statement, lineno, lexpos):
         self.pattern_list = pattern_list
         self.statement = statement
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # forループ文
 class ColForStatement(VdmslNode):
@@ -1409,8 +1409,8 @@ class ColForStatement(VdmslNode):
         self.pattern_binding = pattern_binding
         self.expr = expr
         self.body = body
-        self.lineno = lineno 
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno) 
+        self.__setattr__('lexpos', lexpos)
 
 class SetForStatement(VdmslNode):
     """ 集合forループ """
@@ -1420,8 +1420,8 @@ class SetForStatement(VdmslNode):
         self.pattern = pattern
         self.expr = expr
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class IndexForStatement(VdmslNode):
     """ 索引forループ """
@@ -1433,8 +1433,8 @@ class IndexForStatement(VdmslNode):
         self.to_expr = to_expr
         self.by_expr = by_expr
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # while ループ文
 class WhileStatement(VdmslNode):
@@ -1444,8 +1444,8 @@ class WhileStatement(VdmslNode):
     def __init__(self, cond, body, lineno, lexpos):
         self.cond = cond
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 非決定文
 class NonDeterminationStatement(VdmslNode):
@@ -1454,8 +1454,8 @@ class NonDeterminationStatement(VdmslNode):
 
     def __init__(self, statements, lineno, lexpos):
         self.statements = statements
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # call文
 class CallStatement(VdmslNode):
@@ -1465,8 +1465,8 @@ class CallStatement(VdmslNode):
     def __init__(self, opename, expr_list, lineno, lexpos):
         self.opename = opename
         self.expr_list = expr_list
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # return文
 class ReturnStatement(VdmslNode):
@@ -1475,8 +1475,8 @@ class ReturnStatement(VdmslNode):
 
     def __init__(self, expr, lineno, lexpos):
         self.expr = expr
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 例外処理文
 class AlwaysStatement(VdmslNode):
@@ -1486,8 +1486,8 @@ class AlwaysStatement(VdmslNode):
     def __init__(self, stmt1, stmt2, lineno, lexpos):
         self.stmt1 = stmt1
         self.stmt2 = stmt2
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 
 class TrapStatement(VdmslNode):
@@ -1498,8 +1498,8 @@ class TrapStatement(VdmslNode):
         self.pattern_binding = pattern_binding
         self.stmt1 = stmt1
         self.stmt2 = stmt2
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 
 class RecursiveTrapStatement(VdmslNode):
@@ -1509,8 +1509,8 @@ class RecursiveTrapStatement(VdmslNode):
     def __init__(self, trap_group, body, lineno, lexpos):
         self.trap_group = trap_group
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 
 class Trap(VdmslNode):
@@ -1520,8 +1520,8 @@ class Trap(VdmslNode):
     def __init__(self, pattern_binding, body, lineno, lexpos):
         self.pattern_binding = pattern_binding
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class ExitStatement(VdmslNode):
     """ exit文 """
@@ -1529,8 +1529,8 @@ class ExitStatement(VdmslNode):
 
     def __init__(self, body ,lineno, lexpos):
         self.body = body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # error文
 class Error(VdmslNode):
@@ -1538,8 +1538,8 @@ class Error(VdmslNode):
     _fields = ()
     
     def __init__(self, lineno, lexpos):
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 恒等文
 class Skip(VdmslNode):
@@ -1547,8 +1547,8 @@ class Skip(VdmslNode):
     _fields = ()
 
     def __init__(self, lineno, lexpos):
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 # 仕様記述文
 class SpecDecriptionStatement(VdmslNode):
@@ -1557,8 +1557,8 @@ class SpecDecriptionStatement(VdmslNode):
     
     def __init__(self, imp_ope_body, lineno, lexpos):
         self.imp_ope_body = imp_ope_body
-        self.lineno = lineno
-        self.lexpos = lexpos
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 
 
@@ -1568,6 +1568,7 @@ class SpecDecriptionStatement(VdmslNode):
 # デバッグ用記述
 if __name__ == '__main__':
     pass
+
 
     
 
