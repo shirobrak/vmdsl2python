@@ -1561,7 +1561,27 @@ class SpecDecriptionStatement(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 
+# トップレベル仕様記述
+class Specification(VdmslNode):
+    """ 文書 """
+    _fields = ('blocks',)
 
+    def __init__(self, blocks, lineno, lexpos):
+        self.blocks = blocks
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class Block(VdmslNode):
+    """ 定義ブロック """
+    _fields = ('block',)
+
+    def __init__(self, block, lineno, lexpos):
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+
+    
+    
 
 
 
