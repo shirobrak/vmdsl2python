@@ -66,11 +66,11 @@ class LetExpression(VdmslNode):
 
 class LetBeExpression(VdmslNode):
     """ letbe式 """
-    _fields = ('binding', 'Option', 'body',)
+    _fields = ('binding', 'option_expr', 'body',)
 
-    def __init__(self, binding, option, body, lineno, lexpos):
+    def __init__(self, binding, option_expr, body, lineno, lexpos):
         self.binding = binding
-        self.option = option
+        self.option_expr = option_expr
         self.body = body
         self.lineno = lineno
         self.lexpos = lexpos
@@ -1203,6 +1203,50 @@ class FunctionBody(VdmslNode):
         self.expression = expression
         self.lineno = lineno
         self.lexpos = lexpos
+
+# 文
+class Statements(VdmslNode):
+    """ 文 """
+    _fields = ('statement',)
+
+    def __init__(self, statement, lineno, lexpos):
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# let 文
+class LetStatement(VdmslNode):
+    """ let文 """
+    _fields = ('local_definitions', 'body',)
+
+    def __init__(self, local_definitions, body, lineno, lexpos):
+        self.local_definitions = local_definitions
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class LetBeStatement(VdmslNode):
+    """ let be 文 """
+    _fields = ('binding', 'option_expr', 'body',)
+
+    def __init__(self, binding, option_expr, body, lineno, lexpos):
+        self.binding = binding
+        self.option_expr = option_expr
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class LocalDefinitions(VdmslNode):
+    """ ローカル定義 """
+    _fields = ('definition',)
+
+    def __init__(self, definition, lineno, lexpos):
+        self.definition = definition
+        self.lineno = lineno
+        self.lexpos
+
+
+
 
 
 
