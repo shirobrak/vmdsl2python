@@ -1436,6 +1436,17 @@ class IndexForStatement(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# while ループ文
+class WhileStatement(VdmslNode):
+    """ whileループ """
+    _fields = ('cond', 'body',)
+
+    def __init__(self, cond, body, lineno, lexpos):
+        self.cond = cond
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 
