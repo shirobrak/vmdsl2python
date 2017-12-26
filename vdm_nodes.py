@@ -1478,6 +1478,58 @@ class ReturnStatement(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 例外処理文
+class AlwaysStatement(VdmslNode):
+    """ always文 """
+    _fields = ('stmt1', 'stmt2',)
+
+    def __init__(self, stmt1, stmt2, lineno, lexpos):
+        self.stmt1 = stmt1
+        self.stmt2 = stmt2
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class TrapStatement(VdmslNode):
+    """ trap文　"""
+    _fields = ('pattern_binding', 'stmt1', 'stmt2',)
+
+    def __init__(self, pattern_binding, stmt1, stmt2, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.stmt1 = stmt1
+        self.stmt2 = stmt2
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class RecursiveTrapStatement(VdmslNode):
+    """ 再帰trap文 """
+    _fields = ('trap_group', 'body',)
+
+    def __init__(self, trap_group, body, lineno, lexpos):
+        self.trap_group = trap_group
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class Trap(VdmslNode):
+    _fields = ('pattern_binding', 'body',)
+
+    def __init__(self, pattern_binding, body, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ExitStatement(VdmslNode):
+    """ exit文 """
+    _fields = ('body',)
+
+    def __init__(self, body ,lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
