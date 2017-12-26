@@ -1298,6 +1298,63 @@ class AssignDefinition(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 代入文
+class GeneralAssignStatement(VdmslNode):
+    """ 一般代入文 """
+    _fields = ('statement',)
+
+    def __init__(self, statement, lineno, lexpos):
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class AssignStatement(VdmslNode):
+    """ 代入文 """
+    _fields = ('status_indicator', 'expr',)
+
+    def __init__(self, status_indicator, expr, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class StatusIndicator(VdmslNode):
+    """ 状態指示子 """
+    _fields = ('indicator',)
+
+    def __init__(self, indicator, lineno, lexpos):
+        self.indicator = indicator
+        self.indicator = lineno
+        self.lexpos = lexpos
+
+class ItemReference(VdmslNode):
+    """ 項目参照 """
+    _fields = ('status_indicator', 'ident',)
+
+    def __init__(self, status_indicator, ident, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.ident = ident
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapOrColReference(VdmslNode):
+    """ 写像参照または列参照 """
+    _fields = ('status_indicator', 'expr',)
+
+    def __init__(self, status_indicator, expr, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MultiAssignStatement(VdmslNode):
+    """ 多重代入文 """
+    _fields = ('assign_stmts',)
+
+    def __init__(self, assign_stmts, lineno, lexpos):
+        self.assign_stmts = assign_stmts
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 # デバッグ用記述
