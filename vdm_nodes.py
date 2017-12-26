@@ -1245,12 +1245,27 @@ class LocalDefinitions(VdmslNode):
         self.lineno = lineno
         self.lexpos
 
+# def 文
 
+class DefStatement(VdmslNode):
+    """ def文 """
+    _fields = ('equal_definitions', 'body',)
 
+    def __init__(self, equal_definitions, body, lineno, lexpos):
+        self.equal_definitions = equal_definitions
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
 
+class EqualDefinition(VdmslNode):
+    """ 相等定義 """
+    _fields = ('pattern_binding', 'expr',)
 
-
-    
+    def __init__(self, pattern_binding, expr, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
