@@ -1447,6 +1447,39 @@ class WhileStatement(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 非決定文
+class NonDeterminationStatement(VdmslNode):
+    """ 非決定文 """
+    _fields = ('statements',)
+
+    def __init__(self, statements, lineno, lexpos):
+        self.statements = statements
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# call文
+class CallStatement(VdmslNode):
+    """ call文 """
+    _fields = ('opename', 'expr_list',)
+
+    def __init__(self, opename, expr_list, lineno, lexpos):
+        self.opename = opename
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# return文
+class ReturnStatement(VdmslNode):
+    """ return文 """
+    _fields = ('expr',)
+
+    def __init__(self, expr, lineno, lexpos):
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
 
 
 
