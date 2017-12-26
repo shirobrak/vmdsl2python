@@ -1356,6 +1356,53 @@ class MultiAssignStatement(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 条件文
+class IfStatement(VdmslNode):
+    """ if文 """
+    _fields = ('cond', 'body', 'elseif_stmts', 'else_stmt',)
+
+    def __init__(self, cond, then, elseif_stmts, else_stmt, lineno, lexpos):
+        self.cond = cond
+        self.then = then
+        self.elseif_stmts = elseif_stmts
+        self.else_stmt = else_stmt
+        self.lineno = lineno
+        self.lexpos = lexpos
+    
+class ElseIfStatement(VdmslNode):
+    """ elseif文 """
+    _fields = ('cond', 'body',)
+
+    def __init__(self, cond, body, lineno, lexpos):
+        self.cond = cond
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class CasesStatement(VdmslNode):
+    """ cases文 """
+    _fields = ('cond', 'case_stmt_options', 'other_stmt',)
+
+    def __init__(self, cond, case_stmt_options, other, lineno, lexpos):
+        self.cond = cond
+        self.case_stmt_options = case_stmt_options
+        self.other_stmt = other_stmt
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class CaseStmtOption(VdmslNode):
+    """ case文選択肢 """
+    _fields = ('pattern_list', 'statement',)
+
+    def __init__(self, pattern_list, statement, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
+
 
 # デバッグ用記述
 if __name__ == '__main__':
