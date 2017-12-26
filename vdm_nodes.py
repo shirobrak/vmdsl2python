@@ -66,11 +66,11 @@ class LetExpression(VdmslNode):
 
 class LetBeExpression(VdmslNode):
     """ letbe式 """
-    _fields = ('binding', 'Option', 'body',)
+    _fields = ('binding', 'option_expr', 'body',)
 
-    def __init__(self, binding, option, body, lineno, lexpos):
+    def __init__(self, binding, option_expr, body, lineno, lexpos):
         self.binding = binding
-        self.option = option
+        self.option_expr = option_expr
         self.body = body
         self.lineno = lineno
         self.lexpos = lexpos
@@ -1204,9 +1204,364 @@ class FunctionBody(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# 文
+class Statements(VdmslNode):
+    """ 文 """
+    _fields = ('statement',)
 
+    def __init__(self, statement, lineno, lexpos):
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
 
+# let 文
+class LetStatement(VdmslNode):
+    """ let文 """
+    _fields = ('local_definitions', 'body',)
+
+    def __init__(self, local_definitions, body, lineno, lexpos):
+        self.local_definitions = local_definitions
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class LetBeStatement(VdmslNode):
+    """ let be 文 """
+    _fields = ('binding', 'option_expr', 'body',)
+
+    def __init__(self, binding, option_expr, body, lineno, lexpos):
+        self.binding = binding
+        self.option_expr = option_expr
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class LocalDefinitions(VdmslNode):
+    """ ローカル定義 """
+    _fields = ('definition',)
+
+    def __init__(self, definition, lineno, lexpos):
+        self.definition = definition
+        self.lineno = lineno
+        self.lexpos
+
+# def 文
+
+class DefStatement(VdmslNode):
+    """ def文 """
+    _fields = ('equal_definitions', 'body',)
+
+    def __init__(self, equal_definitions, body, lineno, lexpos):
+        self.equal_definitions = equal_definitions
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class EqualDefinition(VdmslNode):
+    """ 相等定義 """
+    _fields = ('pattern_binding', 'expr',)
+
+    def __init__(self, pattern_binding, expr, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# ブロック文
+class BlockStatement(VdmslNode):
+    """ ブロック文 """
+    _fields =('dcl_stmt', 'statements',)
+
+    def __init__(self, dcl_stmt, statement, lineno, lexpos):
+        self.dcl_stmt = dcl_stmt
+        self.statement = statement
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class DclStatement(VdmslNode):
+    """ dcl文 """
+    _fields = ('assign_definitions',)
+
+    def __init__(self, assign_definitions, lineno, lexpos):
+        self.assign_definitions = assign_definitions
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class AssignDefinition(VdmslNode):
+    """ 代入定義 """
+    _fields = ('ident', 'type', 'expr',)
+
+    def __init__(self, ident, type, expr, lineno, lexpos):
+        self.ident = ident
+        self.type = type
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 代入文
+class GeneralAssignStatement(VdmslNode):
+    """ 一般代入文 """
+    _fields = ('statement',)
+
+    def __init__(self, statement, lineno, lexpos):
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class AssignStatement(VdmslNode):
+    """ 代入文 """
+    _fields = ('status_indicator', 'expr',)
+
+    def __init__(self, status_indicator, expr, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class StatusIndicator(VdmslNode):
+    """ 状態指示子 """
+    _fields = ('indicator',)
+
+    def __init__(self, indicator, lineno, lexpos):
+        self.indicator = indicator
+        self.indicator = lineno
+        self.lexpos = lexpos
+
+class ItemReference(VdmslNode):
+    """ 項目参照 """
+    _fields = ('status_indicator', 'ident',)
+
+    def __init__(self, status_indicator, ident, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.ident = ident
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MapOrColReference(VdmslNode):
+    """ 写像参照または列参照 """
+    _fields = ('status_indicator', 'expr',)
+
+    def __init__(self, status_indicator, expr, lineno, lexpos):
+        self.status_indicator = status_indicator
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class MultiAssignStatement(VdmslNode):
+    """ 多重代入文 """
+    _fields = ('assign_stmts',)
+
+    def __init__(self, assign_stmts, lineno, lexpos):
+        self.assign_stmts = assign_stmts
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 条件文
+class IfStatement(VdmslNode):
+    """ if文 """
+    _fields = ('cond', 'body', 'elseif_stmts', 'else_stmt',)
+
+    def __init__(self, cond, then, elseif_stmts, else_stmt, lineno, lexpos):
+        self.cond = cond
+        self.then = then
+        self.elseif_stmts = elseif_stmts
+        self.else_stmt = else_stmt
+        self.lineno = lineno
+        self.lexpos = lexpos
     
+class ElseIfStatement(VdmslNode):
+    """ elseif文 """
+    _fields = ('cond', 'body',)
+
+    def __init__(self, cond, body, lineno, lexpos):
+        self.cond = cond
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class CasesStatement(VdmslNode):
+    """ cases文 """
+    _fields = ('cond', 'case_stmt_options', 'other_stmt',)
+
+    def __init__(self, cond, case_stmt_options, other, lineno, lexpos):
+        self.cond = cond
+        self.case_stmt_options = case_stmt_options
+        self.other_stmt = other_stmt
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class CaseStmtOption(VdmslNode):
+    """ case文選択肢 """
+    _fields = ('pattern_list', 'statement',)
+
+    def __init__(self, pattern_list, statement, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.statement = statement
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# forループ文
+class ColForStatement(VdmslNode):
+    """ 列forループ """
+    _fields = ('pattern_binding', 'expr', 'body',)
+
+    def __init__(self, pattern_binding, expr, body, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.expr = expr
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class SetForStatement(VdmslNode):
+    """ 集合forループ """
+    _fields = ('pattern', 'expr', 'body',)
+
+    def __init__(self, pattern, expr, body, lineno, lexpos):
+        self.pattern = pattern
+        self.expr = expr
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class IndexForStatement(VdmslNode):
+    """ 索引forループ """
+    _fields = ('ident', 'expr', 'to_expr', 'by_expr', 'body',)
+
+    def __init__(self, ident, expr, to_expr, by_expr, body, lineno, lexpos):
+        self.ident = ident
+        self.expr = expr
+        self.to_expr = to_expr
+        self.by_expr = by_expr
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# while ループ文
+class WhileStatement(VdmslNode):
+    """ whileループ """
+    _fields = ('cond', 'body',)
+
+    def __init__(self, cond, body, lineno, lexpos):
+        self.cond = cond
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 非決定文
+class NonDeterminationStatement(VdmslNode):
+    """ 非決定文 """
+    _fields = ('statements',)
+
+    def __init__(self, statements, lineno, lexpos):
+        self.statements = statements
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# call文
+class CallStatement(VdmslNode):
+    """ call文 """
+    _fields = ('opename', 'expr_list',)
+
+    def __init__(self, opename, expr_list, lineno, lexpos):
+        self.opename = opename
+        self.expr_list = expr_list
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# return文
+class ReturnStatement(VdmslNode):
+    """ return文 """
+    _fields = ('expr',)
+
+    def __init__(self, expr, lineno, lexpos):
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 例外処理文
+class AlwaysStatement(VdmslNode):
+    """ always文 """
+    _fields = ('stmt1', 'stmt2',)
+
+    def __init__(self, stmt1, stmt2, lineno, lexpos):
+        self.stmt1 = stmt1
+        self.stmt2 = stmt2
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class TrapStatement(VdmslNode):
+    """ trap文　"""
+    _fields = ('pattern_binding', 'stmt1', 'stmt2',)
+
+    def __init__(self, pattern_binding, stmt1, stmt2, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.stmt1 = stmt1
+        self.stmt2 = stmt2
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class RecursiveTrapStatement(VdmslNode):
+    """ 再帰trap文 """
+    _fields = ('trap_group', 'body',)
+
+    def __init__(self, trap_group, body, lineno, lexpos):
+        self.trap_group = trap_group
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+class Trap(VdmslNode):
+    """ Trap """
+    _fields = ('pattern_binding', 'body',)
+
+    def __init__(self, pattern_binding, body, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class ExitStatement(VdmslNode):
+    """ exit文 """
+    _fields = ('body',)
+
+    def __init__(self, body ,lineno, lexpos):
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# error文
+class Error(VdmslNode):
+    """ error文 """
+    _fields = ()
+    
+    def __init__(self, lineno, lexpos):
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 恒等文
+class Skip(VdmslNode):
+    """ 恒等文 """
+    _fields = ()
+
+    def __init__(self, lineno, lexpos):
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 仕様記述文
+class SpecDecriptionStatement(VdmslNode):
+    """ 仕様記述文 """
+    _fields = ('imp_ope_body',)
+    
+    def __init__(self, imp_ope_body, lineno, lexpos):
+        self.imp_ope_body = imp_ope_body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+
+
 
 
 
