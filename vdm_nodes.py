@@ -1267,6 +1267,37 @@ class EqualDefinition(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# ブロック文
+class BlockStatement(VdmslNode):
+    """ ブロック文 """
+    _fields =('dcl_stmt', 'statements',)
+
+    def __init__(self, dcl_stmt, statement, lineno, lexpos):
+        self.dcl_stmt = dcl_stmt
+        self.statement = statement
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class DclStatement(VdmslNode):
+    """ dcl文 """
+    _fields = ('assign_definitions',)
+
+    def __init__(self, assign_definitions, lineno, lexpos):
+        self.assign_definitions = assign_definitions
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class AssignDefinition(VdmslNode):
+    """ 代入定義 """
+    _fields = ('ident', 'type', 'expr',)
+
+    def __init__(self, ident, type, expr, lineno, lexpos):
+        self.ident = ident
+        self.type = type
+        self.expr = expr
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 # デバッグ用記述
