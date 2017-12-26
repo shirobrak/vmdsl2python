@@ -1400,6 +1400,41 @@ class CaseStmtOption(VdmslNode):
         self.lineno = lineno
         self.lexpos = lexpos
 
+# forループ文
+class ColForStatement(VdmslNode):
+    """ 列forループ """
+    _fields = ('pattern_binding', 'expr', 'body',)
+
+    def __init__(self, pattern_binding, expr, body, lineno, lexpos):
+        self.pattern_binding = pattern_binding
+        self.expr = expr
+        self.body = body
+        self.lineno = lineno 
+        self.lexpos = lexpos
+
+class SetForStatement(VdmslNode):
+    """ 集合forループ """
+    _fields = ('pattern', 'expr', 'body',)
+
+    def __init__(self, pattern, expr, body, lineno, lexpos):
+        self.pattern = pattern
+        self.expr = expr
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+class IndexForStatement(VdmslNode):
+    """ 索引forループ """
+    _fields = ('ident', 'expr', 'to_expr', 'by_expr', 'body',)
+
+    def __init__(self, ident, expr, to_expr, by_expr, body, lineno, lexpos):
+        self.ident = ident
+        self.expr = expr
+        self.to_expr = to_expr
+        self.by_expr = by_expr
+        self.body = body
+        self.lineno = lineno
+        self.lexpos = lexpos
 
 
 
