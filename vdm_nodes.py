@@ -637,7 +637,7 @@ class MatchValue(VdmslNode):
     def __init__(self, match_value, lineno, lexpos):
         self.match_value = match_value
         self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)e
+        self.__setattr__('lexpos', lexpos)
 
 class SetEnumPattern(VdmslNode):
     """ 集合列挙パターン """
