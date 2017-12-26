@@ -1514,6 +1514,7 @@ class RecursiveTrapStatement(VdmslNode):
 
 
 class Trap(VdmslNode):
+    """ Trap """
     _fields = ('pattern_binding', 'body',)
 
     def __init__(self, pattern_binding, body, lineno, lexpos):
@@ -1530,6 +1531,35 @@ class ExitStatement(VdmslNode):
         self.body = body
         self.lineno = lineno
         self.lexpos = lexpos
+
+# error文
+class Error(VdmslNode):
+    """ error文 """
+    _fields = ()
+    
+    def __init__(self, lineno, lexpos):
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 恒等文
+class Skip(VdmslNode):
+    """ 恒等文 """
+    _fields = ()
+
+    def __init__(self, lineno, lexpos):
+        self.lineno = lineno
+        self.lexpos = lexpos
+
+# 仕様記述文
+class SpecDecriptionStatement(VdmslNode):
+    """ 仕様記述文 """
+    _fields = ('imp_ope_body',)
+    
+    def __init__(self, imp_ope_body, lineno, lexpos):
+        self.imp_ope_body = imp_ope_body
+        self.lineno = lineno
+        self.lexpos = lexpos
+
 
 
 
