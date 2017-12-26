@@ -386,7 +386,7 @@ def p_operation_type(p):
 
 # 操作本体 = 文 | ‘is not yet specified’ ;
 def p_operation_body(p):
-    """ operation_body : name 
+    """ operation_body : statement 
                        | IS NOT YET SPECIFIED """
 
 # 外部節 = ‘ext’, var 情報, { var 情報 } ;
@@ -758,7 +758,7 @@ def p_statement(p):
                   | let_be_statement
                   | def_statement
                   | block_statement
-                  | assignment_statement
+                  | general_assignment_statement
                   | if_statement
                   | cases_statement
                   | column_for_statement
@@ -973,6 +973,7 @@ def p_pattern(p):
                 | set_union_pattern
                 | column_enumeration_pattern
                 | column_link_pattern
+                | map_enumeration_pattern
                 | map_munion_pattern
                 | tuple_pattern
                 | record_pattern"""
@@ -1010,7 +1011,7 @@ def p_column_link_pattern(p):
 # 写像列挙パターン
 def p_map_enumeration_pattern(p):
     """ map_enumeration_pattern : LBRACE map_pattern_list RBRACE
-                                  | LBRACE RBRACE """
+                                  | LBRACE RBRACE """                              
 
 # 写パターンリスト
 def p_map_pattern_list(p):
@@ -1156,7 +1157,7 @@ def p_error(p):
     print("Syntax error in input")
 
 # 構文解析器の構築
-parser = yacc.yacc()
+parser = yacc.yacc(start='definition_block')
 
 # デバッグ
 if __name__ == '__main__':  
