@@ -113,7 +113,7 @@ t_COLEQUAL = r':='
 
 # 識別子
 def t_IDENT(t):
-    r'[a-zA-Z][a-zA-Z_’0-9]*'
+    r'[a-zA-Z][a-zA-Z_0-9]*'
     # キーワードのチェック
     t.type = keyword.get(t.value, 'IDENT')
     return t
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     pass
 
     # ここからテスト記述
-    # print("program test...\n")
+    print("program test...\n")
     # data = '''
     #   is_bool is_boolean in set
     #   cases e :
@@ -186,3 +186,20 @@ if __name__ == '__main__':
     #         print("これ以上トークンはない")
     #         break
     #     print(tok)
+    
+    # テスト(データ入力版)
+    while True:
+        try:
+            text = input('vdmlexer input > ')
+            lexer.input(text)
+        except EOFError:
+            break
+
+        while True:
+            tok = lexer.token()
+            if not tok:  
+                print("これ以上トークンはない")
+                break
+            print(tok)
+        
+
