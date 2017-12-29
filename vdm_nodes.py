@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 class VdmslNode(object):
+    SPACER = " "
     """ VDM-SLのASTノード基底クラス """
     _fields = ()
     _attributes = ('lineno', 'lexpos')
@@ -11,6 +12,29 @@ class VdmslNode(object):
             ', '.join(["%s=%s" % (field, getattr(self, field))
                     for field in self._fields])
     )
+
+    def _p(self, v, indent):
+        print("{}{}".format(self.SPACER * indent, v))
+
+    def dumps(self, indent=0):
+        self._p(self.__class__.__name__ + '(', indent)
+        for field in self._fields:
+            self._p(field + '=', indent + 1)
+            value = getattr(self, field)
+            if type(value) == list:
+                for value2 in value:
+                    if isinstance(value2, ASTNode):
+                        value2.dumps(indent + 2)
+                    else:
+                        self._p(value2, indent + 2)
+            else:
+                if value:
+                    if isinstance(value, ASTNode):
+                        value.dumps(indent + 2)
+                    else:
+                        self._p(value, indent + 2)
+        self._p(')', indent)
+
 
 # データ型定義
 
@@ -82,19 +106,31 @@ class Seq1Type(SyntheticDataType):
     """ 空列を含まない列型 """
     pass
 
-class MapType(SyntheticDataType):
+class MapType(VdmslNode):
     """ 一般写像型 """
-    pass
+    _fields = ('type1', 'type2',)
+
+    def __init__(self, type1, type2, lineno, lexpos):
+        self.type1 = type1
+        self.type2 = type2
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class InMapType(SyntheticDataType):
     """ 1対1写像型 """
-    pass
+    _fields = ('type1', 'type2',)
+
+    def __init__(self, type1, type2, lineno, lexpos):
+        self.type1 = type1
+        self.type2 = type2
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TupleType(VdmslNode):
     """ 組型 """
     _fields = ('type1', 'type2', 'type_list',)
 
-    def __init__(self, type1, type2, type_list):
+    def __init__(self, type1, type2, type_list, lineno, lexpos):
         self.type1 = type1
         self.type2 = type2
         self.type_list =type_list
@@ -125,7 +161,7 @@ class MergerType(VdmslNode):
     """ 合併型 """
     _fields = ('type1', 'type2', 'type_list',)
 
-    def __init__(self, type1, type2, type_list):
+    def __init__(self, type1, type2, type_list, lineno, lexpos):
         self.type1 = type1
         self.type2 = type2
         self.type_list =type_list
@@ -172,10 +208,10 @@ class AnyType(VdmslNode):
 
 class NameBase(VdmslNode):
     """ 名称基底クラス """
-    _fields = ('name',)
+    _fields = ('id',)
 
-    def __init__(self, name, lineno, lexpos):
-        self.name = name
+    def __init__(self, id, lineno, lexpos):
+        self.id = id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
