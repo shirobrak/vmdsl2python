@@ -248,6 +248,11 @@ class TypeName(NameBase):
     """ 型名称 """
     pass
 
+class TypeVariableIdent(NameBase):
+    """ 型変数識別子 """
+    pass
+
+
 # 式
 class Expression(VdmslNode):
     """ 式 """
