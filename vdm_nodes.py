@@ -838,10 +838,10 @@ class Pattern(VdmslNode):
 
 class PatternIdent(VdmslNode):
     """ パターン識別子 """
-    _fields = ('pattern_ident',)
+    _fields = ('ptn_id',)
 
-    def __init__(self, pattern_ident, lineno, lexpos):
-        self.pattern_ident = pattern_ident
+    def __init__(self, ptn_id, lineno, lexpos):
+        self.ptn_id = ptn_id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -856,10 +856,10 @@ class MatchValue(VdmslNode):
 
 class SetEnumPattern(VdmslNode):
     """ 集合列挙パターン """
-    _fields = ('pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern_list, lineno, lexpos):
-        self.pattern_list = pattern_list
+    def __init__(self, ptn_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -875,10 +875,10 @@ class SetUnionPattern(VdmslNode):
 
 class ColEnumPattern(VdmslNode):
     """ 列列挙パターン """
-    _fields = ('pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern_list, lineno, lexpos):
-        self.pattern_list = pattern_list
+    def __init__(self, ptn_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -923,11 +923,10 @@ class MapMunionPattern(VdmslNode):
 
 class TuplePattern(VdmslNode):
     """ 組パターン """
-    _fields = ('pattern', 'pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern, pattern_list, lineno, lexpos):
-        self.pattern = pattern
-        self.pattern_list = pattern_list
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
