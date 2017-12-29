@@ -188,11 +188,11 @@ class FuncionType(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class PartialFunctionType(VdmslNode):
+class PartialFunctionType(FuncionType):
     """ 部分関数型 """
     pass
 
-class FullFuntionType(VdmslNode):
+class FullFuntionType(FuncionType):
     """ 全関数型 """
     pass
 
