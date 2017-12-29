@@ -244,6 +244,10 @@ class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
 
+class TypeName(NameBase):
+    """ 型名称 """
+    pass
+
 # 式
 class Expression(VdmslNode):
     """ 式 """
