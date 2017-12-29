@@ -185,7 +185,64 @@ class VdmAstGenerator():
     def make_inv_cond_init_function(self, tokens):
         return InvCondInitFunc(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
+    # パターン
+    def make_pattern_ident(self, tokens):
+        return PatternIdent(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_match_value(self, tokens):
+        if len(tokens) == 4:
+            return MatchValue(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return MatchValue(tokens[1])
     
+    def make_set_enumration_pattern(self, tokens):
+        if len(tokens) == 4:
+            return SetEnumPattern(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return SetEnumPattern(None, tokens.lineno, tokens.lexpos)
+    
+    def make_set_union_pattern(self, tokens):
+        return SetUnionPattern(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_column_enumeration_pattern(self, tokens):
+        if len(tokens) == 4:
+            return ColEnumPattern(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return ColEnumPattern(None, tokens.lineno, tokens.lexpos)
+    
+    def make_column_link_pattern(self, tokens):
+        return ColLinkPattern(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_map_enumeration_pattern(self, tokens):
+        if len(tokens) == 4:
+            return MapEnumPattern(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return MapEnumPattern(None, tokens.lineno, tokens.lexpos)
+
+    def make_map_pattern(self, tokens):
+        return MapPattern(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+    
+    def make_map_munion_pattern(self, tokens):
+        return MapMunionPattern(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_tuple_pattern(self, tokens):
+        ptn_list = [tokens[3]] + tokens[5].patterns
+        return TuplePattern(ptn_list, tokens.lineno, tokens.lexpos)
+
+    def make_record_pattern(self, tokens):
+        if len(tokens) == 6:
+            return RecordPattern(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+        else:
+            return RecordPattern(tokens[2], None, tokens.lineno, tokens.lexpos)
+
+    def make_pattern_list(self, tokens):
+        if tokens[2] != None:
+            return PatternList([tokens[1]] + tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return PatternList([tokens[1]], tokens.lineno, tokens.lexpos)
+        
+
+
 
 if __name__ == '__main__':
     pass

@@ -1042,70 +1042,96 @@ def p_pattern(p):
 def p_pattern_ident(p):
     """ pattern_ident : IDENT
                       | '-' """
-    p[0] = p[1]
+    p[0] = ast.make_pattern_ident(p)
 
 # 一致値
 def p_match_value(p):
     """ match_value : LPAR expression RPAR
                     | symbol_ltr """
+    p[0] = ast.make_match_value(p)
     
 # 集合列挙パターン
 def p_set_enumeration_pattern(p):
     """ set_enumeration_pattern : LBRACE pattern_list RBRACE
                                 | LBRACE RBRACE """ 
+    p[0] = ast.make_set_enumration_pattern(p)
     
 # 集合合併パターン
 def p_set_union_pattern(p):
     """ set_union_pattern : pattern UNION pattern """
+    p[0] = ast.make_set_union_pattern(p)
 
 # 列列挙パターン
 def p_column_enumeration_pattern(p):
     """ column_enumeration_pattern : LBRACK pattern_list RBRACK
                                    | LBRACK RBRACK """
+    p[0] = ast.make_column_enumeration_pattern(p)
     
 # 列連結パターン
 def p_column_link_pattern(p):
     """ column_link_pattern : pattern MUL pattern """
+    p[0] = ast.make_column_link_pattern(p)
 
 # 写像列挙パターン
 def p_map_enumeration_pattern(p):
     """ map_enumeration_pattern : LBRACE map_pattern_list RBRACE
-                                  | LBRACE RBRACE """                              
+                                  | LBRACE RBRACE """
+    p[0] = ast.make_map_enumeration_pattern(p)                              
 
 # 写パターンリスト
 def p_map_pattern_list(p):
     """ map_pattern_list : map_pattern map_pattern_list_part """
-
+    if p[2] != None:
+        p[0] = [p[1]] + p[2]
+    else:
+        p[0] = [p[1]]
+ 
 # 写パターンリスト部品
 def p_map_pattern_list_part(p):
     """ map_pattern_list_part : map_pattern_list_part COMMA map_pattern 
                               | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
 
 # 写パターン
 def p_map_pattern(p):
     """ map_pattern : pattern VERARROW pattern """
+    p[0] = ast.make_map_pattern(p)
 
 # 写像併合パターン
 def p_map_munion_pattern(p):
     """ map_munion_pattern : pattern MUNION pattern """
+    p[0] = ast.make_map_munion_pattern(p)
 
 # 組パターン
 def p_tuple_pattern(p):
     """ tuple_pattern : MK_ LPAR pattern COMMA pattern_list RPAR """
+    p[0] = ast.make_tuple_pattern(p)
 
 # レコードパターン
 def p_record_pattern(p):
     """ record_pattern : MK_ name LPAR pattern_list RPAR 
                        | MK_ name LPAR RPAR """
+    p[0] = ast.make_record_pattern(p)
 
 # パターンリスト
 def p_pattern_list(p):
     """ pattern_list : pattern pattern_list_part """
+    p[0] = ast.make_pattern_list(p)
+    
 
 # パターンリスト部品
 def p_pattern_list_part(p):
     """ pattern_list_part : pattern_list_part COMMA pattern 
                           | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
 
 # パターン束縛
 def p_pattern_binding(p):
@@ -1227,7 +1253,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='type_definition_group')
+        parser = yacc.yacc(start='pattern')
     else:
         parser = yacc.yacc(start=grammer) 
 
