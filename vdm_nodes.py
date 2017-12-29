@@ -38,6 +38,27 @@ class VdmslNode(object):
 
 # データ型定義
 
+class TypeDefinitionGroup(VdmslNode):
+    """ 型定義群 """
+    _fields = ('type_definitions',)
+
+    def __init__(self, type_definitions, lineno, lexpos):
+        self.type_definitions = type_definitions
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class TypeDefinition(VdmslNode):
+    """ 型定義 """
+    _fields = ('id', 'type', 'inv_cond',)
+
+    def __init__(self, id, type, inv_cond, lineno, lexpos):
+        self.id = id
+        self.type = type
+        self.inv_cond = inv_cond
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+        
+
 # 基本データ型
 class BasicDataType(VdmslNode):
     """ 基本データ型基底クラス """
