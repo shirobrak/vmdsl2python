@@ -178,12 +178,10 @@ class Item(VdmslNode):
 
 class MergerType(VdmslNode):
     """ 合併型 """
-    _fields = ('type1', 'type2', 'type_list',)
+    _fields = ('type_list',)
 
-    def __init__(self, type1, type2, type_list, lineno, lexpos):
-        self.type1 = type1
-        self.type2 = type2
-        self.type_list =type_list
+    def __init__(self, type_list, lineno, lexpos):
+        self.type_list = type_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
