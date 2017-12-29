@@ -225,27 +225,33 @@ def p_type_variable(p):
 # 状態定義 = ‘state’, 識別子, ‘of’, 項目リスト, [ 不変条件 ], [ 初期化 ], ‘end’, [ ‘;’ ] ;
 def p_state_definition(p):
     """ state_definition : STATE IDENT OF item_list inv_condition_option initialization_option END SEMI """
+    p[0] = ast.make_state_definition(p)
 
 # 不変条件 = ‘inv’, 不変条件初期関数 ;
 def p_inv_condition(p):
     """ inv_condition : INV inv_condition_init_function """
+    p[0] = ast.make_inv_condition(p)
 
 # 不変条件オプション
 def p_inv_condition_option(p):
     """ inv_condition_option : inv_condition 
                              | empty """
+    p[0] = p[1]
 
 # 初期化 = ‘init’, 不変条件初期関数 ;
 def p_initialization(p):
     """ initialization : INIT inv_condition_init_function """
+    p[0] = ast.make_initialization(p)
 
 def p_initialization_option(p):
     """ initialization_option : initialization
                               | empty """
+    p[0] = p[1]
 
 # 不変条件初期関数 = パターン, ‘==’, 式 ;
 def p_inv_condition_init_function(p):
     """ inv_condition_init_function : pattern WEQUAL expression """
+    p[0] = ast.make_inv_cond_init_function(p)
 
 # 値定義群 = ‘values’, [ 値定義, { ‘;’, 値定義 }, [ ‘;’ ] ] ;
 def p_value_definition_group(p):

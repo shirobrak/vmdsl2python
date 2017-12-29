@@ -172,6 +172,20 @@ class VdmAstGenerator():
     def make_type_variable(self, tokens):
         return TypeVariableList(tokens[1], tokens.lineno, tokens.lexpos)
 
+    # 状態定義
+    def make_state_definition(self, tokens):
+        return StateDefinition(tokens[2], tokens[3], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_inv_condition(self, tokens):
+        return InvCondition(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_initialization(self, tokens):
+        return Initialization(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_inv_cond_init_function(self, tokens):
+        return InvCondInitFunc(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    
 
 if __name__ == '__main__':
     pass
