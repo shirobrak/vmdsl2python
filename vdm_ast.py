@@ -240,6 +240,25 @@ class VdmAstGenerator():
             return PatternList([tokens[1]] + tokens[2], tokens.lineno, tokens.lexpos)
         else:
             return PatternList([tokens[1]], tokens.lineno, tokens.lexpos)
+    
+    # 束縛
+    def make_binding(self, tokens):
+        return Binding(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_set_binding(self, tokens):
+        return SetBinding(tokens[1], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_type_binding(self, tokens):
+        return TypeBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_multi_set_binding(self, tokens):
+        return MultiSetBinding(tokens[1], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_multi_type_binding(self, tokens):
+        return MultiTypeBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_type_variable_ident(self, tokens):
+        return TypeVariableIdent(tokens[1] + tokens[2], tokens.lineno, tokens.lexpos)
         
 
 

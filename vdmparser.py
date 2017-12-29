@@ -1137,54 +1137,80 @@ def p_pattern_list_part(p):
 def p_pattern_binding(p):
     """ pattern_binding : pattern 
                         | binding """
+    p[0] = p[1]
 
 # 束縛
 def p_binding(p):
     """ binding : set_binding
                 | type_binding """
+    p[0] = ast.make_binding(p)
 
 # 集合束縛
 def p_set_binding(p):
     """ set_binding : pattern IN SET expression """
+    p[0] = ast.make_set_binding(p)
 
 # 型束縛
 def p_type_binding(p):
     """ type_binding : pattern COLON vdmsl_type """
+    p[0] = ast.make_type_binding(p)
 
 # 束縛リスト
 def p_binding_list(p):
     """ binding_list : multi_binding binding_list_part """
+    if p[2] != None:
+        p[0] = [p[1]] + p[2]
+    else:
+        p[0] = [p[1]]
 
 # 束縛リスト部品
 def p_binding_list_part(p):
     """ binding_list_part : binding_list_part COMMA multi_binding
                           | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
 
 # 多重束縛
 def p_multi_binding(p):
     """ multi_binding : multi_set_binding
                       | multi_type_binding """
+    p[0] = p[1]
 
 # 多重集合束縛
 def p_multi_set_binding(p):
     """ multi_set_binding : pattern_list IN SET expression """
+    p[0] = ast.make_multi_set_binding(p)
 
 # 多重型束縛
 def p_multi_type_binding(p):
     """ multi_type_binding : pattern_list COLON vdmsl_type """
+    p[0] = ast.make_multi_type_binding(p)
 
 # 型束縛リスト
 def p_type_binding_list(p):
     """ type_binding_list : type_binding type_binding_list_part """
+    if p[2] != None:
+        p[0] = [p[1]] + p[2]
+    else:
+        p[0] = [p[1]]
 
 # 型束縛リスト部品
 def p_type_binding_list_part(p):
     """ type_binding_list_part : type_binding_list_part COMMA type_binding 
                                | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
 
 # 型変数識別子
 def p_type_variable_ident(p):
     """ type_variable_ident : '@' IDENT """
+    p[0] = ast.make_type_variable_ident(p)
 
 
 # Optional(expression_list)
@@ -1253,7 +1279,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='pattern')
+        parser = yacc.yacc(start='binding')
     else:
         parser = yacc.yacc(start=grammer) 
 
