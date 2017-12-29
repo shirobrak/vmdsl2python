@@ -7,6 +7,9 @@ import ply.yacc as yacc
 
 # VDM-SLの字句解析器をインポート
 from vdmlexer import tokens
+from vdm_ast import VdmAstGenerator
+
+ast = VdmAstGenerator()
 
 # 定義ブロック = 型定義群 | 状態定義群 | 値定義群 | 関数定義群 | 操作定義群 ;
 def p_definition_block(p):
@@ -15,23 +18,32 @@ def p_definition_block(p):
                          | value_definition_group
                          | function_definition_group
                          | operation_definition_group """
+    p[0] = p[1]
 
 # 型定義群
 def p_type_definition_group(p):
     """ type_definition_group : TYPES optional_type_definition_group """
+    p[0] = ast.make_type_definition_group(p)
 
 def p_optional_type_definition_group(p):
     """ optional_type_definition_group : type_definition optional_type_definition_group_part option_semi_expression 
                                        | empty"""
+    p[0] = ast.make_optional_type_definition_group(p)
 
 def p_optional_type_definition_group_part(p):
-    """ optional_type_definition_group_part : optional_type_definition_group_part COMMA type_definition
+    """ optional_type_definition_group_part : optional_type_definition_group_part SEMI type_definition
                                             | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1]+[p[3]]
+        else:
+            p[0] = [p[3]]
 
 # 型定義
 def p_type_definition(p):
     """ type_definition : IDENT EQUAL vdmsl_type inv_condition_option 
                         | IDENT COLON COLON item_list inv_condition_option """
+    p[0] = ast.make_type_definition(p)
 
 # 型
 def p_vdmsl_type(p):
@@ -48,6 +60,7 @@ def p_vdmsl_type(p):
                    | partial_function_type 
                    | type_name 
                    | type_variable """
+    p[0] = p[1]
 
 # is基本型
 def p_is_basic_type(p):
@@ -59,6 +72,7 @@ def p_is_basic_type(p):
                       | IS_REAL
                       | IS_CHAR
                       | IS_TOKEN """
+    p[0] = ast.make_is_basic_type(p)
 
 # 括弧型 = ‘(’, 型, ‘)’ ;
 def p_brackets_type(p):
@@ -74,104 +88,139 @@ def p_basic_type(p):
                    | REAL
                    | CHAR
                    | TOKEN """
+    p[0] = ast.make_basic_type(p)
 
 # 引用型 = ‘<’, 引用リテラル, ‘>’ ;
 def p_quotation_type(p):
     """ quotation_type : LT QUOTELTR GT """
+    p[0] = ast.make_quote_type(p)
 
 # レコード型 = ‘compose’, 識別子, ‘of’, 項目リスト, ‘end’ ;
 def p_record_type(p):
     """ record_type : COMPOSE IDENT OF item_list END """
+    p[0] = ast.make_record_type(p)
 
 # 項目リスト = { 項目 } ;
 def p_item_list(p):
     """ item_list : item_list item
                   | empty """
+    if len(p) == 3:
+        if p[1] != None:
+            p[0] = p[1:]
+        else:
+            p[0] = p[2]
 
 # 項目 = [ 識別子, ‘:’ ], 型 | [ 識別子, ‘:-’ ], 型 ;
 def p_item(p):
     """ item : IDENT COLON vdmsl_type
              | IDENT COLON MINUS vdmsl_type
              | vdmsl_type """
+    p[0] = ast.make_item(p)
 
 # 合併型 = 型, ‘|’, 型, { ‘|’, 型 } ;
 def p_merger_type(p):
     """ merger_type : vdmsl_type VERTICAL vdmsl_type merger_type_part """
+    p[0] = ast.make_merger_type(p)
 
 # 合併型部品
 def p_merger_type_part(p):
     """ merger_type_part : merger_type_part VERTICAL vdmsl_type
                          | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = [p[1]+p[3]]
+        else:
+            p[0] = [p[3]]
 
 # 組型 = 型, ‘*’, 型, { ‘*’, 型 } ;
 def p_tuple_type(p):
     """ tuple_type : vdmsl_type ASTER vdmsl_type tuple_type_part """
+    p[0] = ast.make_tuple_type(p)
 
 # 組型部品
 def p_tuple_type_part(p):
     """ tuple_type_part : tuple_type_part ASTER vdmsl_type
                         | empty """
-
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = [p[1]+p[3]]
+        else:
+            p[0] = [p[3]]
+            
 # 選択型 = ‘[’, 型, ‘]’ ;
 def p_selective_type(p):
     """ selective_type : LBRACK vdmsl_type RBRACK """
+    p[0] = ast.make_selective_type(p)
 
 # 集合型 = ‘set of’, 型 ;
 def p_set_type(p):
     """ set_type : SET OF vdmsl_type """
+    p[0] = ast.make_set_type(p)
 
 # 列型 = 空列を含む列型 | 空列を含まない列型 ;
 def p_column_type(p):
     """ column_type : seq_of_type 
                     | seq1_of_type """
+    p[0] = p[1]
 
 # 空列を含む列型 = ‘seq of’, 型 ;
 def p_seq_of_type(p):
     """ seq_of_type : SEQ OF vdmsl_type """
+    p[0] = ast.make_seq_type(p)
 
 # 空列を含まない列型 = ‘seq1 of’, 型 ;
 def p_seq1_of_type(p):
     """ seq1_of_type : SEQ1 OF vdmsl_type """
+    p[0] = ast.make_seq1_type(p)
 
 # 写像型 = 一般写像型 | 1 対 1 写像型 ;
 def p_map_type(p):
     """ map_type : general_map_type
                  | inmap_type """
+    p[0] = p[1]
 
 # 一般写像型 = ‘map’, 型, ‘to’, 型 ;
 def p_general_map_type(p):
     """ general_map_type : MAP vdmsl_type TO vdmsl_type """
+    p[0] = ast.make_map_type(p)
 
 
 # 1 対 1 写像型 = ‘inmap’, 型, ‘to’, 型 ;
 def p_inmap_type(p):
     """ inmap_type : INMAP vdmsl_type TO vdmsl_type """
+    p[0] = ast.make_inmap_type(p)
 
 # 関数型 = 部分関数型 | 全関数型 ;
 def p_function_type(p):
     """ function_type : partial_function_type 
                       | full_function_type """
+    p[0] = p[1]
 
 # 部分関数型 = 任意の型, ‘->’, 型
 def p_partial_function_type(p):
-    """ partial_function_type : any_type VERARROW vdmsl_type """
+    """ partial_function_type : any_type ARROW vdmsl_type """
+    p[0] = ast.make_partial_function_type(p)
 
 # 全関数型 = 任意の型, ‘+>’, 型
 def p_full_function_type(p):
     """ full_function_type : any_type PARROW vdmsl_type """
+    p[0] = ast.make_full_function_type(p)
     
 # 任意の型 = 型 | ‘(’, ‘)’ ;
 def p_any_type(p):
     """ any_type : vdmsl_type 
                  | LPAR RPAR """
+    p[0] = ast.make_any_type(p)
 
 # 型名称 = 名称 ;
 def p_type_name(p):
     """ type_name : name """
+    p[0] = ast.make_type_name(p)
 
 # 型変数 = 型変数識別子 ;
 def p_type_variable(p):
     """ type_variable : type_variable_ident """
+    p[0] = ast.make_type_variable(p)
 
 # 状態定義 = ‘state’, 識別子, ‘of’, 項目リスト, [ 不変条件 ], [ 初期化 ], ‘end’, [ ‘;’ ] ;
 def p_state_definition(p):
@@ -472,18 +521,21 @@ def p_expression(p):
                    | name
                    | oldname
                    | symbol_ltr """
+    p[0] = ast.make_expression(p)
+
 
 # 括弧式 = ‘(’, 式, ‘)’ ;
 def p_brackets_expression(p):
     """ brackets_expression : LPAR expression RPAR """
+    p[0] = ast.make_brackets_expression(p)
 
 # let 式 = ‘let’, ローカル定義, { ‘,’, ローカル定義 }, ‘in’, 式 ;
 def p_let_expression(p):
-    """ let_expression : LET local_definition let_expression_part IN expression """
+    """ let_expression : LET let_expression_part IN expression """
 
 def p_let_expression_part(p):
     """ let_expression_part : let_expression_part COMMA local_definition 
-                            | empty """
+                            | local_definition """
 
 # let be 式 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 式 ;
 def p_let_be_expression(p):
@@ -731,15 +783,15 @@ def p_undefined_expression(p):
 
 # 名称
 def p_name(p):
-    """ name : IDENT name_part """
+    """ name : IDENT """
+    p[0] = ast.make_name(p)
 
-# 名称のパーツ
-def p_name_part(p):
-    """ name_part : name_part '‘' IDENT 
-                  | empty """
 # 旧名称
 def p_oldname(p):
     """ oldname : IDENT '~' """
+    p[0] = ast.make_oldname(p)
+    
+    
 
 # 記号リテラル
 def p_symbol_ltr(p):
@@ -750,7 +802,7 @@ def p_symbol_ltr(p):
                   | CHARLTR
                   | TEXTLTR
                   | QUOTELTR """
-    p[0] = [p[1]]
+    p[0] = ast.make_symbol_literal(p)
 
 # 文構文
 def p_statement(p):
@@ -788,6 +840,7 @@ def p_let_statement_part(p):
 def p_local_definition(p):
     """ local_definition : value_definition 
                          | function_definition """
+    p[0] = make_local_definition(p)
 
 # let be 文 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 文 ;
 def p_let_be_statement(p):
@@ -1130,6 +1183,8 @@ def p_option_andop_expression(p):
 def p_option_semi_expression(p):
     """ option_semi_expression : SEMI 
                                | empty """
+    if p[1] != None:
+        p[0] = p[1]
 
 # Optional('be'+'st'+expression)
 def p_optional_be_st_expression(p):
@@ -1156,11 +1211,20 @@ def p_empty(p):
 def p_error(p):
     print("Syntax error in input")
 
-# 構文解析器の構築
-parser = yacc.yacc(start='definition_block')
 
 # デバッグ
 if __name__ == '__main__':  
+    
+    import logging
+    log = logging.getLogger()
+
+    grammer = input('start grammer > ')
+    # 構文解析器の構築
+    if grammer == '':
+        parser = yacc.yacc(start='type_definition_group')
+    else:
+        parser = yacc.yacc(start=grammer) 
+
     while True:
         try:
             s = input('vdmsl > ')
@@ -1168,6 +1232,10 @@ if __name__ == '__main__':
             break
         if not s:
             continue
-        result = parser.parse(s)
+        result = parser.parse(s, debug=log)
         print(result)
+
+        # print("== symbol table ==")
+        # for k, v in ast.symbol_table.items():
+        #     print("%10s  %10s" % (k, v.__class__.__name__))
 
