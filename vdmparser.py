@@ -701,14 +701,17 @@ def p_iota_expression(p):
 # 集合列挙 = ‘{’, [ 式リスト ], ‘}’ ;
 def p_set_enumeration(p):
     """ set_enumeration : LBRACE option_expression_list RBRACE """
+    p[0] = ast.make_set_enumeration(p)
 
 # 集合内包 = ‘{’, 式, ‘|’, 束縛リスト, [ ‘&’, 式 ], ‘}’ ;
 def p_set_comprehension(p):
     """ set_comprehension : LBRACE expression VERTICAL binding_list option_andop_expression RBRACE """
+    p[0] = ast.make_set_comprehension(p)
 
 # 集合範囲式 = ‘{’, 式, ‘,’, ‘...’, ‘,’, 式, ‘}’ ;
 def p_set_range_expression(p):
     """ set_range_expression : LBRACE expression COMMA TRIDOT COMMA expression RBRACE """
+    p[0] = ast.make_set_range_expression(p)
 
 # 列列挙 = ‘[’, [ 式リスト ], ‘]’ ;
 def p_column_enumeration(p):

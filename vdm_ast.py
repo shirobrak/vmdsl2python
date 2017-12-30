@@ -30,8 +30,20 @@ class VdmAstGenerator():
     def make_elseif_expression(self, tokens):
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_set_enumeration(self, tokens):
+        """ 集合列挙 ノード作成 """
+        return SetEnumExpression(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_set_comprehension(self, tokens):
+        """ 集合内包 ノード作成 """
+        return SetCompExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_set_range_expression(self, tokens):
+        """ 集合範囲式 ノード作成 """
+        return SetRangeExpression(tokens[2], tokens[6], tokens.lineno, tokens.lexpos)
+
     def make_column_enumeration(self, tokens):
-        """ 列列挙 """
+        """ 列列挙 ノード作成 """
         return ColEnumExpression(tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_column_comprehension(self, tokens):
