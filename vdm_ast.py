@@ -30,6 +30,22 @@ class VdmAstGenerator():
     def make_elseif_expression(self, tokens):
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_map_enumeration(self, tokens):
+        """ 写像列挙 ノード作成 """
+        if len(tokens) == 5:
+            return MapEnumExpression([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
+        else:
+            return MapEnumExpression([], tokens.lineno, tokens.lexpos)
+            
+
+    def make_copy(self, tokens):
+        """ 写 ノード作成 """
+        return MapExpression(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_map_comprehension(self, tokens):
+        """ 写像内包 ノード作成 """
+        return MapCompExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
     def make_tuple_constructor(self, tokens):
         """ 組構成子 ノード作成　"""
         return TupleConExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)

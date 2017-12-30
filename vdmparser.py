@@ -727,18 +727,28 @@ def p_subsequence(p):
 def p_map_enumeration(p):
     """ map_enumeration : LBRACE copy map_enumeration_part RBRACE
                         | LBRACE VERARROW RBRACE """
+    p[0] = ast.make_map_enumeration(p)
 
 def p_map_enumeration_part(p):
     """ map_enumeration_part : map_enumeration_part COMMA copy
                              | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # 写 = 式, ‘|->’, 式 
 def p_copy(p):
     """ copy : expression VERARROW expression """
+    p[0] = ast.make_copy(p)
 
 # 写像内包 = ‘{’, 写, ‘|’, 束縛リスト, [ ‘&’, 式 ], ‘}’ ;
 def p_map_comprehension(p):
     """ map_comprehension : LBRACE copy VERTICAL binding_list option_andop_expression RBRACE """
+    p[0] = ast.make_map_comprehension(p)
 
 # 組構成子 = ‘mk_’, ‘(’, 式, ‘,’, 式リスト, ‘)’ ;
 def p_tuple_constructor(p):
@@ -1278,6 +1288,8 @@ def p_optional_expression(p):
 def p_option_andop_expression(p):
     """ option_andop_expression : ANDOP expression
                                 | empty """
+    if len(p) == 3:
+        p[0] = p[2]
 
 # Optional(';')
 def p_option_semi_expression(p):
