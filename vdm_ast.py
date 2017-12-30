@@ -18,6 +18,7 @@ class VdmAstGenerator():
     def make_symbol_literal(self, tokens):
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
+    # 式
     def make_expression(self, tokens):
         return Expression(tokens[1], tokens.lineno, tokens.lexpos)
 
@@ -30,9 +31,14 @@ class VdmAstGenerator():
         return LetExpression(token[1], token[4], tokens.lineno, tokens.lexpos)
 
     def make_local_definition(self, tokens):
-        return LocalDefinitions(token[1], tokens.lineno, tokens.lexpos)
+        return LocalDefinitions(tokens[1], tokens.lineno, tokens.lexpos)
 
+    def make_if_expression(self, tokens):
+        return IfExpression(tokens[2], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
 
+    def make_elseif_expression(self, tokens):
+        return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+    
     # 型定義
     def make_type_definition_group(self, tokens):
         return TypeDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)
@@ -184,6 +190,15 @@ class VdmAstGenerator():
 
     def make_inv_cond_init_function(self, tokens):
         return InvCondInitFunc(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    # 値定義群
+    def make_value_definition(self, tokens):
+        if len(tokens) == 6:
+            return ValueDefinition(tokens[1], tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+        elif len(tokens) == 5:
+            return ValueDefinition(tokens[1], None, tokens[3], tokens.lineno, tokens.lexpos)
+        else:
+            return ValueDefinition(tokens[1], None, tokens[3], tokens.lineno, tokens.lexpos)
 
     # パターン
     def make_pattern_ident(self, tokens):

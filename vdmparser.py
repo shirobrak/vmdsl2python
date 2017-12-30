@@ -273,6 +273,7 @@ def p_value_definition_group_option_part(p):
 def p_value_definition(p):
     """ value_definition : pattern COLON vdmsl_type EQUAL expression 
                          | pattern EQUAL expression """
+    p[0] = ast.make_value_definition(p)
 
 # 関数定義群 = ‘functions’, [ 関数定義, { ‘;’, 関数定義 }, [ ‘;’ ] ] ;
 def p_function_definition_group(p):
@@ -526,7 +527,7 @@ def p_expression(p):
                    | undefined_expression
                    | name
                    | oldname
-                   | symbol_ltr """
+                   | symbol_ltr """      
     p[0] = ast.make_expression(p)
 
 
@@ -558,14 +559,21 @@ def p_def_expression_part(p):
 # if 式 = ‘if’, 式, ‘then’, 式, { elseif 式 }, ‘else’, 式 ;
 def p_if_expression(p):
     """ if_expression : IF expression THEN expression if_expression_part ELSE expression """
+    p[0] = ast.make_if_expression(p)
 
 def p_if_expression_part(p):
     """ if_expression_part : if_expression_part elseif_expression 
                            | empty """
+    if len(p) == 3:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + [p[2]]
 
 # elseif 式 = ‘elseif’, 式, ‘then’, 式 ;
 def p_elseif_expression(p):
     """ elseif_expression : ELSEIF expression THEN expression """
+    p[0] = ast.make_elseif_expression(p)
 
 # cases 式 = ‘cases’, 式, ‘:’, cases 式選択肢群, [ ‘,’, others 式 ], ‘end’ ;
 def p_cases_expression(p):
@@ -657,7 +665,7 @@ def p_binomial_expression(p):
                             | expression COMP expression 
                             | expression WASTER expression
                              """
-
+    
 
 # 限量式 = 全称限量式 | 存在限量式 | 1存在限量式 ;
 def p_limit_expression(p):
@@ -846,7 +854,7 @@ def p_let_statement_part(p):
 def p_local_definition(p):
     """ local_definition : value_definition 
                          | function_definition """
-    p[0] = make_local_definition(p)
+    p[0] = ast.make_local_definition(p)
 
 # let be 文 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 文 ;
 def p_let_be_statement(p):
@@ -1279,7 +1287,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='binding')
+        parser = yacc.yacc(start='expression')
     else:
         parser = yacc.yacc(start=grammer) 
 
