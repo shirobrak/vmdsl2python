@@ -713,14 +713,17 @@ def p_set_range_expression(p):
 # 列列挙 = ‘[’, [ 式リスト ], ‘]’ ;
 def p_column_enumeration(p):
     """ column_enumeration : LBRACK option_expression_list RBRACK """
+    p[0] = ast.make_column_enumeration(p)
 
 # 列内包 = ‘[’, 式, ‘|’, 集合束縛, [ ‘&’, 式 ], ‘]’ ;
 def p_column_comprehension(p):
     """ column_comprehension : LBRACK expression VERTICAL set_binding option_andop_expression RBRACK """
+    p[0] = ast.make_column_comprehension(p)
 
 # 部分列 = 式, ‘(’, 式, ‘,’, ‘...’, ‘,’, 式, ‘)’ ;
 def p_subsequence(p):
     """ subsequence : expression LPAR expression COMMA TRIDOT COMMA expression RPAR """
+    p[0] = ast.make_subsequence(p)
 
 
 # 写像列挙 = ‘{’, 写, { ‘,’, 写 }, ‘}’ | ‘{’, ‘|->’, ‘}’ ;

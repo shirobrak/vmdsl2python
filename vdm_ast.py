@@ -30,6 +30,18 @@ class VdmAstGenerator():
     def make_elseif_expression(self, tokens):
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_column_enumeration(self, tokens):
+        """ 列列挙 """
+        return ColEnumExpression(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_column_comprehension(self, tokens):
+        """ 列内包 ノード作成 """
+        return ColCompExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_subsequence(self, tokens):
+        """ 部分列 ノード作成 """
+        return SubseqExpression(tokens[1], tokens[3], tokens[7], tokens.lineno, tokens.lexpos)
+
     def make_map_enumeration(self, tokens):
         """ 写像列挙 ノード作成 """
         if len(tokens) == 5:
