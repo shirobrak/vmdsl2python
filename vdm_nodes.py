@@ -310,11 +310,11 @@ class DefExpression(VdmslNode):
 # 条件式
 class IfExpression(VdmslNode):
     """ if式 """
-    _fields = ('cond', 'body', 'elseif', 'else',)
+    _fields = ('cond', 'body', 'elseif', 'else_',)
 
-    def __init__(self, cond, then, elseif, else_, lineno, lexpos):
+    def __init__(self, cond, body, elseif, else_, lineno, lexpos):
         self.cond = cond
-        self.then = then
+        self.body = body
         self.elseif = elseif
         self.else_ = else_
         self.__setattr__('lineno', lineno)
@@ -1030,6 +1030,7 @@ class ValueDefinition(VdmslNode):
     def __init__(self, pattern, type, expr, lineno, lexpos):
         self.pattern = pattern
         self.type = type
+        self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
