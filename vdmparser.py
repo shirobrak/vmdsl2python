@@ -490,10 +490,19 @@ def p_error_expr(p):
 # 式リスト = 式 , {‘,’, 式}
 def p_expression_list(p):
     """ expression_list : expression expression_list_part """
+    if p[2] == None:
+        p[0] = [p[1]]
+    else:
+        p[0] = [p[1]] + p[2]
 
 def p_expression_list_part(p):
     """ expression_list_part : expression_list_part COMMA expression 
                              | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
 
 # 式
 def p_expression(p):
@@ -734,43 +743,61 @@ def p_map_comprehension(p):
 # 組構成子 = ‘mk_’, ‘(’, 式, ‘,’, 式リスト, ‘)’ ;
 def p_tuple_constructor(p):
     """ tuple_constructor : MK_ LPAR expression COMMA expression_list RPAR """
+    p[0] = ast.make_tuple_constructor(p)
 
 # レコード構成子 = ‘mk_’, 名称, ‘(’, [ 式リスト ], ‘)’ ;
 # 名称：境界文字は許されない
 def p_record_constructor(p):
     """ record_constructor : MK_ name LPAR option_expression_list RPAR """
+    p[0] = ast.make_record_constructor(p)
 
 # レコード修正子 = ‘mu’, ‘(’, 式, ‘,’, レコード修正, { ‘,’, レコード修正 }, ‘)’ ;
 def p_record_modifier(p):
     """ record_modifier : MU LPAR expression COMMA record_update record_modifier_part RPAR """
+    p[0] = ast.make_record_modifier(p)
 
 def p_record_modifier_part(p):
     """ record_modifier_part : record_modifier_part COMMA record_update
                              | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]] 
 
 # レコード修正 = 識別子, ‘|->’, 式 ;
 def p_record_update(p):
     """ record_update :  IDENT VERARROW expression """
+    p[0] = ast.make_record_update(p)
 
 # 適用 = 式, ‘(’, [ 式リスト ], ‘)’
 def p_application(p):
     """ application : expression LPAR option_expression_list RPAR """
+    p[0] = ast.make_application(p)
 
 # 項目選択 = 式, ‘.’, 識別子 ;
 def p_item_choice(p):
     """ item_choice : expression DOT IDENT """
+    p[0] = ast.make_item_choice(p)
 
 # 組選択 = 式, ‘.#’, 数字 ;
 def p_tuple_choice(p):
     """ tuple_choice : expression DOTSHARP number """
+    p[0] = ast.make_tuple_choice(p)
 
 # 関数型インスタンス化 = 名称, ‘[’, 型, { ‘,’, 型 }, ‘]’
 def p_functional_instantiation(p):
     """ functional_instantiation : name LBRACK vdmsl_type functional_instantiation_part RBRACK """
+    p[0] = ast.make_functional_instantiation(p)
 
 def p_functional_instantiation_part(p):
     """ functional_instantiation_part : functional_instantiation_part COMMA vdmsl_type 
                                       | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
 
 # ラムダ式 = ‘lambda’, 型束縛リスト, ‘&’, 式 ;
 def p_lambda_expression(p):
@@ -1230,6 +1257,8 @@ def p_type_variable_ident(p):
 def p_option_expression_list(p):
     """ option_expression_list : expression_list 
                                | empty """
+    if p[1] != None:
+        p[0] = p[1]
 
 # Optional('by' + expression)
 def p_optional_byop_expression(p):

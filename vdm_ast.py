@@ -30,6 +30,41 @@ class VdmAstGenerator():
     def make_elseif_expression(self, tokens):
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_tuple_constructor(self, tokens):
+        """ 組構成子 ノード作成　"""
+        return TupleConExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_record_constructor(self, tokens):
+        """ レコード構成子 ノード作成 """
+        return RecordConExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_record_modifier(self, tokens):
+        """ レコード修正子 ノード作成 """
+        if tokens[6] == None:
+            return RecordModExpression(tokens[3], [tokens[5]], tokens.lineno, tokens.lexpos)
+        else:
+            return RecordModExpression(tokens[3], [tokens[5]] + tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_record_update(self, tokens):
+        """ レコード修正 ノード作成 """
+        return RecordUpdateExpression(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_application(self, tokens):
+        """ 適用 ノード作成 """
+        return AppExpression(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+    
+    def make_item_choice(self, tokens):
+        """ 項目選択 ノード作成 """
+        return ItemChoice(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_tuple_choice(self, tokens):
+        """ 組選択 ノード作成"""
+        return TupleChoice(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_functional_instantiation(self, tokens):
+        """ 関数型インスタンス化 ノード作成 """
+        return FuncInstExpression(tokens[1], [tokens[3]] + tokens[4], tokens.lineno, tokens.lexpos)
+
     def make_lambda_expression(self, tokens):
         return LambdaExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
 
