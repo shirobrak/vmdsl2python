@@ -8,15 +8,6 @@ class VdmAstGenerator():
     def __init__(self):
         self.symbol_table = {}
 
-    def make_name(self, tokens):
-        return Name(tokens[1], tokens.lineno, tokens.lexpos)
-    
-    def make_oldname(self, tokens):
-        old_name = tokens[1] + tokens[2]
-        return OldName(old_name, tokens.lineno, tokens.lexpos)
-
-    def make_symbol_literal(self, tokens):
-        return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
     # 式
     def make_expression(self, tokens):
@@ -37,8 +28,33 @@ class VdmAstGenerator():
         return IfExpression(tokens[2], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
 
     def make_elseif_expression(self, tokens):
-        return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+        return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
+
+    def make_lambda_expression(self, tokens):
+        return LambdaExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_is_expression(self, tokens):
+        if len(tokens) == 6:
+            return IsExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+        else:
+            return IsExpression(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)   
+
+    def make_type_judgment(self, tokens):
+        return TypeJudgeExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_undefined_expression(self, tokens):
+        return UnDefExpression(tokens[1], tokens.lineno, tokens.lexpos)
     
+    def make_name(self, tokens):
+        return Name(tokens[1], tokens.lineno, tokens.lexpos)
+    
+    def make_oldname(self, tokens):
+        old_name = tokens[1] + tokens[2]
+        return OldName(old_name, tokens.lineno, tokens.lexpos)
+
+    def make_symbol_literal(self, tokens):
+        return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
+
     # 型定義
     def make_type_definition_group(self, tokens):
         return TypeDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)

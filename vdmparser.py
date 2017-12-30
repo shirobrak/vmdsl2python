@@ -775,25 +775,30 @@ def p_functional_instantiation_part(p):
 # ラムダ式 = ‘lambda’, 型束縛リスト, ‘&’, 式 ;
 def p_lambda_expression(p):
     """ lambda_expression : LAMBDA type_binding_list ANDOP expression """
+    p[0] = ast.make_lambda_expression(p)
 
 # 一般 is 式 = is 式 | 型判定 ;
 def p_general_is_expression(p):
     """ general_is_expression : is_expression 
                               | type_judgment  """
+    p[0] = p[1]
 
 # is 式 = ‘is_’,24 名称, ‘(’, 式, ‘)’ | is 基本型, ‘(’, 式, ‘)’ ;
 # 24名称 : 境界文字は許されない
 def p_is_expression(p):
     """ is_expression : IS_ name LPAR expression RPAR 
                       | is_basic_type LPAR expression RPAR """
+    p[0] = ast.make_is_expression(p)
 
 # 型判定 = ‘is_’, ‘(’, 式, ‘,’, 型, ‘)’ ;
 def p_type_judgment(p):
     """ type_judgment : IS_ LPAR expression COMMA vdmsl_type RPAR """
+    p[0] = ast.make_type_judgment(p)
 
 # 未定義式 = ‘undefined’ ;
 def p_undefined_expression(p):
     """ undefined_expression : UNDEFINED """
+    p[0] = ast.make_undefined_expression(p)
 
 # 名称
 def p_name(p):
