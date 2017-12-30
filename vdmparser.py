@@ -681,22 +681,27 @@ def p_limit_expression(p):
     """ limit_expression : forall_expression
                          | exists_expression
                          | exists1_expression """
+    p[0] = p[1]
 
 # 全称限量式 = ‘forall’, 束縛リスト, ‘&’, 式 ;
 def p_forall_expression(p):
     """ forall_expression : FORALL binding_list ANDOP expression """
+    p[0] = ast.make_forall_expression(p)
 
 # 存在限量式 = ‘exists’, 束縛リスト, ‘&’, 式 ;
 def p_exists_expression(p):
     """ exists_expression : EXISTS binding_list ANDOP expression """
+    p[0] = ast.make_exists_expression(p)
 
 # 1存在限量式 = ‘exists1’, 束縛, ‘&’, 式 ;
 def p_exists1_expression(p):
     """ exists1_expression : EXISTS1 binding ANDOP expression """
+    p[0] = ast.make_exists1_expression(p)
 
 # iota 式 = ‘iota’, 束縛, ‘&’, 式 ;
 def p_iota_expression(p):
     """ iota_expression : IOTA binding ANDOP expression """
+    p[0] = ast.make_iota_expression(p)
 
 # 集合列挙 = ‘{’, [ 式リスト ], ‘}’ ;
 def p_set_enumeration(p):

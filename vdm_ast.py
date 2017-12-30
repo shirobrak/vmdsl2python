@@ -30,6 +30,22 @@ class VdmAstGenerator():
     def make_elseif_expression(self, tokens):
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_forall_expression(self, tokens):
+        """ 全称限量式 ノード作成 """
+        return ForallExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_exists_expression(self, tokens):
+        """ 存在限量式 ノード作成 """
+        return ExistsExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_exists1_expression(self, tokens):
+        """ 1存在限量式 ノード作成 """
+        return Exist1Expression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_iota_expression(self, tokens):
+        """ iota式 ノード作成 """
+        return IotaExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
     def make_set_enumeration(self, tokens):
         """ 集合列挙 ノード作成 """
         return SetEnumExpression(tokens[2], tokens.lineno, tokens.lexpos)
