@@ -742,21 +742,23 @@ class AppExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class ItemChoiceExpression(VdmslNode):
+class ItemChoice(VdmslNode):
     """ 項目選択式 """
-    _fields = ('body',)
+    _fields = ('expr', 'ident',)
 
-    def __init__(self, body, lineno, lexpos):
-        self.body = body
+    def __init__(self, expr, ident, lineno, lexpos):
+        self.expr = expr
+        self.ident = ident
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class TupleChoiceExpression(VdmslNode):
+class TupleChoice(VdmslNode):
     """ 組選択式 """
-    _fields = ('body',)
+    _fields = ('expr', 'number',)
 
-    def __init__(self, body, lineno, lexpos):
-        self.body = body
+    def __init__(self, expr, number, lineno, lexpos):
+        self.expr = expr
+        self.number = number
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
