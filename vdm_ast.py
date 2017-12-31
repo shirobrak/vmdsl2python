@@ -79,6 +79,76 @@ class VdmAstGenerator():
         """ 逆写像 ノード作成 """
         return Inverse(tokens[2], tokens.lineno, tokens.lexpos)
 
+    def make_binomial_expression(self, tokens):
+        """ 二項式 ノード作成 """
+        if tokens[2] == '+':
+            return Add(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '-':
+            return Sub(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '*':
+            return Mul(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '/':
+            return Div(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'div':
+            return IntDiv(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'rem':
+            return Rem(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'mod':
+            return Mod(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<':
+            return Lt(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<=':
+            return LtEq(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '>':
+            return Gt(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '>=':
+            return GtEq(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '=':
+            return Equal(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<>':
+            return NotEq(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'or':
+            return Or(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'and':
+            return And(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '=>':
+            return Imp(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<=>':
+            return Equivalence(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'in set':
+            return InSet(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'not in set':
+            return NotInSet(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'subset':
+            return Subset(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'psubset':
+            return PSubset(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'union':
+            return Union(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '\\':
+            return SetDiff(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'inter':
+            return Inter(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '^':
+            return ColLink(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '++':
+            return MapColUpdate(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'munion':
+            return Munion(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<:':
+            return MapDomRes(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '<-:':
+            return MapDomRed(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == ':>':
+            return MapRangeRes(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == ':->':
+            return MapRangeRed(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == 'comp':
+            return Comp(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        elif tokens[2] == '**':
+            return Rep(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        else:
+            return None
 
     def make_local_definition(self, tokens):
         return LocalDefinitions(tokens[1], tokens.lineno, tokens.lexpos)

@@ -430,10 +430,9 @@ class Inverse(UnaryBaseExpression):
 # 二項式
 class BinBaseExpression(VdmslNode):
     """ 二項式基底クラス """
-    _fields = ('op', 'left', 'right',)
+    _fields = ('left', 'right',)
 
-    def __init__(self, op, left, right, lineno, lexpos):
-        self.op = op
+    def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
         self.__setattr__('lineno', lineno)

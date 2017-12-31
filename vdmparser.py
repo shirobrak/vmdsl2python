@@ -708,6 +708,7 @@ def p_binomial_expression(p):
                             | expression COMP expression 
                             | expression WASTER expression
                              """
+    p[0] = ast.make_binomial_expression(p)
     
 
 # 限量式 = 全称限量式 | 存在限量式 | 1存在限量式 ;
