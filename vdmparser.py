@@ -1042,14 +1042,23 @@ def p_statement(p):
                   | exit_statement
                   | error_statement
                   | identity_statement """
+    p[0] = p[1]
 
 # let 文 = ‘let’, ローカル定義, { ‘,’, ローカル定義 }, ‘in’, 文 ;
 def p_let_statement(p):
     """ let_statement : LET local_definition let_statement_part IN statement """
+    p[0] = ast.make_let_statement(p)
 
 def p_let_statement_part(p):
     """ let_statement_part : let_statement_part COMMA local_definition
                            | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # ローカル定義 = 値定義　| 関数定義 ;
 def p_local_definition(p):
@@ -1060,164 +1069,264 @@ def p_local_definition(p):
 # let be 文 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 文 ;
 def p_let_be_statement(p):
     """ let_be_statement : LET binding optional_be_st_expression IN statement """
+    p[0] = ast.make_let_be_statement(p)
 
 # def 文 = ‘def’, 相等定義, { ‘;’, 相等定義 }, [ ‘;’ ], ‘in’, 文 ;
 def p_def_statement(p):
     """ def_statement : DEF equality_definition def_statement_part option_semi_expression IN statement """
+    p[0] = ast.make_def_statement(p)
 
 def p_def_statement_part(p):
     """ def_statement_part : def_statement_part SEMI equality_definition
                            | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # 相等定義 = パターン束縛, ‘=’, 式 ;
 def p_equality_definition(p):
     """ equality_definition : pattern_binding EQUAL expression """
+    p[0] = ast.make_equality_definition(p)
 
 # ブロック文 = ‘(’, { dcl 文 }, 文, { ‘;’, 文 }, [ ‘;’ ], ‘)’ ;
 def p_block_statement(p):
     """ block_statement : LPAR block_statement_part1 statement block_statement_part2 option_semi_expression RPAR """
+    p[0] = ast.make_block_statement(p)
 
 def p_block_statement_part1(p):
     """ block_statement_part1 : block_statement_part1 dcl_statement
                               | empty """
+    if len(p) == 3:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 def p_block_statement_part2(p):
     """ block_statement_part2 : block_statement_part2 SEMI statement 
                               | empty """
-
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # dcl 文 = ‘dcl’, 代入定義, { ‘,’, 代入定義 }, ‘;’ ;
 def p_dcl_statement(p):
     """ dcl_statement : DCL assignment_definition dcl_statement_part SEMI """
+    p[0] = ast.make_dcl_statement(p)
 
 def p_dcl_statement_part(p):
     """ dcl_statement_part : dcl_statement_part COMMA assignment_definition 
                            | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # 代入定義 = 識別子, ‘:’, 型, [ ‘:=’, 式 ] ;
 def p_assignment_definition(p):
     """ assignment_definition : IDENT COLON vdmsl_type optional_coleqop_expression """
+    p[0] = ast.make_assignment_definition(p)
 
 # 一般代入文 = 代入文 | 多重代入文 ;
 def p_general_assignment_statement(p):
     """ general_assignment_statement : assignment_statement
                                      | multi_assignment_statement """
+    p[0] = p[1]
 
 # 代入文 = 状態指示子, ‘:=’, 式 ;
 def p_assignment_statement(p):
     """ assignment_statement : status_indicator COLEQUAL expression """
+    p[0] = ast.make_assignment_statement(p)
 
 # 多重代入文 = ‘atomic’, ‘(’ 代入文, ‘;’, 代入文, { ‘;’, 代入文 }‘)’ ;
 def p_multi_assignment_statement(p):
     """ multi_assignment_statement : ATOMIC LPAR assignment_statement SEMI assignment_statement multi_assignment_statement_part RPAR """
+    p[0] = ast.make_multi_assignment_statement(p)
 
 def p_multi_assignment_statement_part(p):
     """ multi_assignment_statement_part : multi_assignment_statement_part SEMI assignment_statement 
                                         | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # if 文 = ‘if’, 式, ‘then’, 文, { elseif 文 }, [ ‘else’, 文 ] ;
 def p_if_statement(p):
     """ if_statement : IF expression THEN statement if_statement_part optional_else_statement """
+    p[0] = ast.make_if_statement(p)
 
 def p_if_statement_part(p):
     """ if_statement_part : if_statement_part elseif_statement
                           | empty """
+    if len(p) == 2:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 # elseif 文 = ‘elseif’, 式, ‘then’, 文 ;
 def p_elseif_statement(p):
     """ elseif_statement : ELSEIF expression THEN statement """
+    p[0] = ast.make_elseif_statement(p)
 
 # cases 文 = ‘cases’, 式, ‘:’, cases 文選択肢群, [ ‘,’, others 文 ], ‘end’ ;
 def p_cases_statement(p):
     """ cases_statement : CASES expression COLON cases_statement_option_group optional_commma_others_statement """
+    p[0] = ast.make_cases_statement(p)
 
 def p_optional_commma_others_statement(p):
     """ optional_commma_others_statement : COMMA others_statement 
                                          | empty """
+    if len(p) == 3:
+        p[0] = p[2]                      
 
 # cases 文選択肢群 = cases 文選択肢, { ‘,’, cases 文選択肢 } ;
 def p_cases_statement_option_group(p):
     """ cases_statement_option_group : cases_statement_option cases_statement_option_group_part """
+    p[0] = [p[1]] + p[2]
 
 def p_cases_statement_option_group_part(p):
     """ cases_statement_option_group_part : cases_statement_option_group_part COMMA cases_statement_option 
                                           | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
+    else:
+        p[0] = []
 
 # cases 文選択肢 = パターンリスト, ‘->’, 文 ;
 def p_cases_statement_option(p):
     """ cases_statement_option : pattern_list ARROW statement """
+    p[0] = ast.make_cases_statement_option(p)
 
 # others 文 = ‘others’, ‘->’, 文 ;
 def p_others_statement(p):
     """ others_statement : OTHERS ARROW statement """
+    p[0] = p[3]
 
 # 列 for ループ = ‘for’, パターン束縛, ‘in’, [ ‘reverse’ ], 式, ‘do’, 文 ;
 def p_column_for_statement(p):
     """ column_for_statement : FOR pattern_binding IN optional_reverse expression DO statement """
+    p[0] = ast.make_column_for_statement(p)
+
 
 # 集合 for ループ = ‘for’, ‘all’, パターン, ‘in set’, 式, ‘do’, 文 ;
 def p_set_for_statement(p):
-    """ set_for_statement : FOR ALL pattern IN SET expression DO statement """
+    """ set_for_statement : FOR ALL pattern INSET expression DO statement """
+    p[0] = ast.make_set_for_statement(p)
+    
 
 # 索引 for ループ = ‘for’, 識別子, ‘=’, 式, ‘to’, 式, [ ‘by’, 式 ], ‘do’, 式 ;
 def p_index_for_statement(p):
     """ index_for_statement : FOR IDENT EQUAL expression TO expression optional_byop_expression DO expression """
+    p[0] = ast.make_index_for_statement(p)
 
 # while ループ = ‘while’, 式, ‘do’, 式 ;
 def p_while_statement(p):
     """ while_statement : WHILE expression DO expression """
+    p[0] = ast.make_while_statement(p)
 
 # 非決定文 = ‘||’, ‘(’, 文, { ‘,’, 文 }, ‘)’ ;
 def p_non_determination_statement(p):
     """ non_determination_statement : WVERTICAL LPAR statement non_determination_statement_part RPAR """
+    p[0] = ast.make_non_determination_statement(p)
 
 def p_non_determination_statement_part(p):
     """ non_determination_statement_part : non_determination_statement_part COMMA statement 
                                          | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
+    else:
+        p[0] = []
 
 # call 文 = 名称, ‘(’, [ 式リスト ], ‘)’ ;
 def p_call_statement(p):
     """ call_statement : name LPAR option_expression_list RPAR """
+    p[0] = ast.make_call_statement(p)
 
 # return 文 = ‘return’, [ 式 ] ;
 def p_return_statement(p):
     """ return_statement : RETURN optional_expression """
+    p[0] = ast.make_return_statement(p)
 
 # 仕様記述文 = ‘[’, 陰操作本体, ‘]’ ;
 def p_specification_description_statement(p):
     """ specification_description_statement : LBRACK implicit_operation_body RBRACK """
+    p[0] = ast.make_specification_description_statement(p)
 
 # always 文 = ‘always’, 文, ‘in’, 文 ;
 def p_always_statement(p):
     """ always_statement : ALWAYS statement IN statement """
+    p[0] = ast.make_always_statement(p)
 
 # trap 文 = ‘trap’, パターン束縛, ‘with’, 文, ‘in’, 文 ;
 def p_trap_statement(p):
-    """ trap_statement : TRAP pattern_binding WITH statement statement IN statement """
+    """ trap_statement : TRAP pattern_binding WITH statement IN statement """
+    p[0] = ast.make_trap_statement(p)
 
 # 再帰 trap 文 = ‘tixe’, trap 群, ‘in’, 文 ;
 def p_recursive_statement(p):
     """ recursive_statement : TIXE trap_group IN statement """
+    p[0] = ast.make_recursive_statement(p)
 
 # trap 群 = ‘{’, パターン束縛, ‘|->’, 文, { ‘,’, パターン束縛, ‘|->’, 文 }, ‘}’ ;
 def p_trap_group(p):
-    """ trap_group : LBRACE pattern_binding VERARROW statement trap_group_part LBRACE """
+    """ trap_group : LBRACE trap trap_group_part LBRACE """
+    p[0] = [p[2]] + p[3]
 
 def p_trap_group_part(p):
-    """ trap_group_part : trap_group_part COMMA pattern_binding VERARROW statement 
+    """ trap_group_part : trap_group_part COMMA trap 
                         | empty """
+    if len(p) == 4:
+        if p[1] != None:
+            p[0] = p[1] + [p[3]]
+        else:
+            p[0] = [p[3]]
+    else:
+        p[0] = []
+
+def p_trap(p):
+    """ trap : pattern_binding VERARROW statement """
+    p[0] = ast.make_trap(p)
 
 # exit 文 = ‘exit’, [ 式 ] ;
 def p_exit_statement(p):
     """ exit_statement : EXIT optional_expression """
+    p[0] = ast.make_exit_statement(p)
 
 # error 文 = ‘error’ ;
 def p_error_statement(p):
     """ error_statement : ERROR """
+    p[0] = ast.make_error_statement(p)
 
 # 恒等文 = ‘skip’ ;
 def p_identity_statement(p):
     """ identity_statement : SKIP """
+    p[0] = ast.make_identity_statement(p)
 
 # 状態指示子 = 名称 | 項目参照 | 写像参照または列参照 ;
 def p_status_indicator(p):
@@ -1304,6 +1413,8 @@ def p_map_pattern_list_part(p):
             p[0] = p[1] + [p[3]]
         else:
             p[0] = [p[3]]
+    else:
+        p[0] = []
 
 # 写パターン
 def p_map_pattern(p):
@@ -1437,6 +1548,8 @@ def p_optional_byop_expression(p):
 def p_optional_coleqop_expression(p):
     """ optional_coleqop_expression : COLEQUAL expression
                                     | empty """
+    if len(p) == 3:
+        p[0] = p[2]
 
 # Optional(expression)
 def p_optional_expression(p):

@@ -584,6 +584,121 @@ class VdmAstGenerator():
         """ 名称リスト ノード作成 """
         return NameList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
 
+    # 文
+    def make_let_statement(self, tokens):
+        """ let文 ノード作成 """
+        return LetStatement([tokens[2]]+tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_let_be_statement(self, tokens):
+        """ let be 文 ノード作成 """
+        return LetBeStatement([tokens[2]]+tokens[3], tokens[4], tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_def_statement(self, tokens):
+        """ def 文 ノード作成 """
+        return DefStatement([tokens[2]]+tokens[3], tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_equality_definition(self, tokens):
+        """ 相当定義 ノード作成 """
+        return EqualDefinition(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_block_statement(self, tokens):
+        """ ブロック文 ノード作成 """
+        return BlockStatement(tokens[2], [tokens[3]]+tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_dcl_statement(self, tokens):
+        """ dcl 文 ノード作成 """
+        return DclStatement([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_assignment_definition(self, tokens):
+        """ 代入定義 ノード作成 """
+        return AssignDefinition(tokens[1], tokens[3], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_assignment_statement(self, tokens):
+        """ 代入文 ノード作成 """
+        return AssignStatement(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_multi_assignment_statement(self, tokens):
+        """ 多重代入文 ノード作成 """
+        return MultiAssignStatement([tokens[3]]+[tokens[4]]+tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_if_statement(self, tokens):
+        """ if 文 ノード作成 """
+        return IfStatement(tokens[2], tokens[4], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
+    
+    def make_elseif_statement(self, tokens):
+        """ elseif ノード作成 文 """
+        return ElseIfStatement(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_cases_statement(self, tokens):
+        """ cases ノード作成 文 """
+        return CasesStatement(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_cases_statement_option(self, tokens):
+        """ cases 文選択肢 ノード作成 """
+        return CaseStmtOption(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_column_for_statement(self, tokens):
+        """ 列 for ループ ノード作成 """
+        return ColForStatement(tokens[2], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
+
+    def make_set_for_statement(self, tokens):
+        """ 集合 for ループ ノード作成 """
+        return SetForStatement(tokens[3], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
+
+    def make_index_for_statement(self, tokens):
+        """ 索引 for ループ ノード作成 """
+        return IndexForStatement(tokens[2], tokens[4], tokens[6], tokens[7], tokens[9], tokens.lineno, tokens.lexpos)
+
+    def make_while_statement(self, tokens):
+        """ while ループ ノード作成 """
+        return WhileStatement(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_non_determination_statement(self, tokens):
+        """ 非決定文 ノード作成 """
+        return NonDeterminationStatement([tokens[3]]+tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_call_statement(self, tokens):
+        """ call 文 ノード作成 """
+        return CallStatement(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_return_statement(self, tokens):
+        """ return 文 ノード作成 """
+        return RecursiveTrapStatement(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_specification_description_statement(self, tokens):
+        """ 仕様記述文 ノード作成 """
+        return SpecDecriptionStatement(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_always_statement(self, tokens):
+        """ always 文 ノード作成 """
+        return AlwaysStatement(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_trap_statement(self, tokens):
+        """ trap 文 ノード作成 """
+        return TrapStatement(tokens[2], tokens[4], tokens[6], tokens.lineno, tokens.lexpos)
+
+    def make_recursive_statement(self, tokens):
+        """ 再帰trap文 ノード作成 """
+        return RecursiveTrapStatement(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_trap(self, tokens):
+        """ trap """
+        return Trap(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_exit_statement(self, tokens):
+        """ exit 文 ノード作成 """
+        return ExitStatement(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_error_statement(self, tokens):
+        """ error 文 ノード作成 """
+        return Error(tokens.lineno, tokens.lexpos)
+
+    def make_identity_statement(self, tokens):
+        """ 恒等文 ノード作成 """
+        return Skip(tokens.lineno, tokens.lexpos)
+
+
+
     # パターン
     def make_pattern_ident(self, tokens):
         return PatternIdent(tokens[1], tokens.lineno, tokens.lexpos)
