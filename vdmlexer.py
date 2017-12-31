@@ -54,6 +54,8 @@ tokens = (
     'DOTSHARP',
     'BACKSLASH',
     'COLEQUAL',
+    'INSET',
+    'NOTINSET',
 )
 
 # キーワードリスト
@@ -110,10 +112,17 @@ t_DOTSHARP = r'\.\#'
 t_BACKSLASH = r'\\'
 t_COLEQUAL = r':='
 
+def t_INSET(t):
+    r'in\sset'
+    return t
+
+def t_NOTINSET(t):
+    r'not\sin\sset'
+    return t
 
 # 識別子
 def t_IDENT(t):
-    r'[a-zA-Z][a-zA-Z_0-9]*'
+    r'[a-zA-Z][a-zA-Z_0-9]*'                    
     # キーワードのチェック
     t.type = keyword.get(t.value, 'IDENT')
     return t

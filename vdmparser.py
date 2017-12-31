@@ -692,7 +692,7 @@ def p_binomial_expression(p):
                             | expression EQARROW expression 
                             | expression LTEQGT expression
                             | expression INSET expression
-                            | expression NOT INSET expression
+                            | expression NOTINSET expression
                             | expression SUBSET expression
                             | expression PSUBSET expression
                             | expression UNION expression
