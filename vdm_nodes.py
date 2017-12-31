@@ -1259,7 +1259,7 @@ class ErrorList(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class Error(VdmslNode):
+class ErrorExpr(VdmslNode):
     """ エラー """
     _fields = ('ident', 'left', 'right',)
 

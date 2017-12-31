@@ -441,27 +441,33 @@ def p_param_group(p):
     """ param_group : LPAR pattern_list_option RPAR """
     p[0] = ast.make_param_group(p)
 
-
 # 関数本体 = 式 | ‘is not yet specified’ ;
 def p_function_body(p):
     """ function_body : expression 
                       | IS_ NOT YET SPECIFIED """   
     p[0] = ast.make_function_body(p)
-        
 
 
 # 操作定義群 = ‘operations’, [ 操作定義, { ‘;’, 操作定義 }, [ ‘;’ ] ] ;
 def p_operation_definition_group(p):
-    """ operation_definition_group : OPERATIONS operation_definition_group_option """
+    """ operation_definition_group : OPERATIONS operation_definition_group_option option_semi_expression 
+                                   | OPERATIONS """
+    p[0] = ast.make_operation_definition_group(p)
 
 def p_operation_definition_group_option(p):
-    """ operation_definition_group_option : operation_definition operation_definition_group_option_part
-                                          | operation_definition operation_definition_group_option_part SEMI 
-                                          | empty """
+    """ operation_definition_group_option : operation_definition operation_definition_group_option_part """
+    p[0] = [p[1]] + p[2]
 
 def p_operation_definition_group_option_part(p):
     """ operation_definition_group_option_part : operation_definition_group_option_part SEMI operation_definition 
                                                | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
     
     
 # 操作定義 = 陽操作定義 | 陰操作定義 | 拡張陽操作定義 ;
@@ -469,87 +475,123 @@ def p_operation_definition(p):
     """ operation_definition : explicit_operation_definition
                              | implicit_operation_definition
                              | expanded_explicit_operation_definition """
+    p[0] = p[1]
 
 # 陽操作定義 = 識別子, ‘:’, 操作型, 識別子, パラメーター群, ‘==’, 操作本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
 def p_explicit_operation_definition(p):
     """ explicit_operation_definition : IDENT COLON operation_type IDENT param_group WEQUAL operation_body pre_cond_option post_cond_option """
+    p[0] = ast.make_explicit_operation_definition(p)
 
 # 陰操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], 陰操作本体 ;
 def p_implicit_operation_definition(p):
     """ implicit_operation_definition : IDENT param_type ident_type_pair_list_option implicit_operation_body """
+    p[0] = ast.make_implicit_operation_definition(p)
 
 # 識別子型ペアリストオプション
 def p_ident_type_pair_list_option(p):
     """ ident_type_pair_list_option : ident_type_pair_list 
                                     | empty """
+    p[0] = p[1]
 
 # 陰操作本体 = [ 外部節 ], [ ‘pre’, 式 ], ‘post’, 式, [ 例外 ] ;
 def p_implicit_operation_body(p):
     """ implicit_operation_body : ext_section_option pre_cond_option POST expression exception_option """
+    p[0] = ast.make_implicit_operation_body(p)
 
 # 外部節オプション
 def p_ext_section_option(p):
     """ ext_section_option : ext_section 
                            | empty """
+    p[0] = p[1]
 
 def p_exception_option(p):
     """ exception_option : exception 
                          | empty """
+    p[0] = p[1]
 
 # 拡張陽操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], ‘==’, 操作本体, [ 外部節 ], [ ‘pre’, 式 ], [ ‘post’, 式 ], [ 例外 ] ;
 def p_expanded_explicit_operation_definition(p):
     """ expanded_explicit_operation_definition : IDENT param_type ident_type_pair_list_option WEQUAL operation_body ext_section_option pre_cond_option post_cond_option exception_option """
+    p[0] = ast.make_expanded_explicit_operation_definition(p)
 
 # 操作型 = 任意の型, ‘==>’, 任意の型 ;
 def p_operation_type(p):
     """ operation_type : any_type WEQARROW any_type """
+    p[0] = ast.make_operation_type(p)
 
 # 操作本体 = 文 | ‘is not yet specified’ ;
 def p_operation_body(p):
     """ operation_body : statement 
                        | IS NOT YET SPECIFIED """
+    p[0] = ast.make_operation_body(p)
 
 # 外部節 = ‘ext’, var 情報, { var 情報 } ;
 def p_ext_section(p):
     """ ext_section : EXT var_infomation ext_section_part """
+    p[0] = ast.make_ext_section(p)
 
 def p_ext_section_part(p):
     """ ext_section_part : ext_section_part var_infomation
                          | empty """
+    if len(p) == 3:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 # var 情報 = モード, 名称リスト, [ ‘:’, 型 ] ;
 def p_var_infomation(p):
     """ var_infomation : mode name_list COLON vdmsl_type 
                        | mode name_list """
+    p[0] = ast.make_var_infomation(p)
+        
 
 # モード = ‘rd’ | ‘wr’ ;
 def p_mode(p):
     """ mode : RD
              | WR """
+    p[0] = p[1]
 
 # 名称リスト = 識別子, { ‘,’, 識別子 } ;
 def p_name_list(p):
     """ name_list : IDENT name_list_part """
-
+    p[0] = ast.make_name_list(p)
+    
 def p_name_list_part(p):
     """ name_list_part : name_list_part COMMA IDENT 
                        | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = p[1]
 
 # 例外 = ‘errs’, エラーリスト ;
 def p_exception(p):
     """ exception : ERRS error_list """
+    p[0] = ast.make_exception(p)
 
 # エラーリスト = エラー, { エラー } ;
 def p_error_list(p):
     """ error_list : error_expr error_list_part """
+    p[0] = ast.make_error_list(p)
 
 def p_error_list_part(p):
     """ error_list_part : error_list_part error_expr
                         | empty """
+    if len(p) == 3:
+        p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 # エラー = 識別子, ‘:’, 式, ‘->’, 式 ;
 def p_error_expr(p):
     """ error_expr : IDENT COLON expression ARROW expression """
+    p[0] = ast.make_error_expr(p)
 
 # 式リスト = 式 , {‘,’, 式}
 def p_expression_list(p):

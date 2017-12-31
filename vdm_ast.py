@@ -521,6 +521,69 @@ class VdmAstGenerator():
         else:
             return FunctionBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
 
+    # 操作定義
+    def make_operation_definition_group(self, tokens):
+        """ 操作定義群 ノード作成 """
+        if len(tokens) == 4:
+            return OpeDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return OpeDefinitionGroup([], tokens.lineno, tokens.lexpos)
+
+    def make_explicit_operation_definition(self, tokens):
+        """ 陽操作定義 ノード作成 """
+        return ExpOpeDefinition(tokens[1], tokens[3], tokens[4], tokens[5], tokens[7], tokens[8], tokens[9], tokens.lineno, tokens.lexpos)
+
+    def make_implicit_operation_definition(self, tokens):
+        """ 陰操作定義 ノード作成 """
+        return ImpOpeDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens.lineno, tokens.lexpos)
+
+    def make_implicit_operation_body(self, tokens):
+        """ 陰操作本体 ノード作成 """
+        return ImpOpeBody(tokens[1], tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_expanded_explicit_operation_definition(self, tokens):
+        """ 拡張陽操作定義 ノード作成 """
+        return ExpandExpOpeDefinition(tokens[1], tokens[2], tokens[3], tokens[5], tokens[6], tokens[7], tokens[8], tokens[9], tokens.lineno, tokens.lexpos)
+
+    def make_operation_type(self, tokens):
+        """ 操作型 ノード作成 """
+        return OperationType(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_operation_body(self, tokens):
+        """ 操作本体 ノード作成 """
+        if len(tokens) == 2:
+            return OperationBody(tokens[1], tokens.lineno, tokens.lexpos)
+        else:
+            return OperationBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
+
+    def make_ext_section(self, tokens):
+        """ 外部節 ノード作成 """
+        return ExtSection([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_var_infomation(self, tokens):
+        """ var情報 ノード作成 """
+        if len(tokens) == 5:
+            return VarInfo(tokens[1], tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
+        else:
+            return VarInfo(tokens[1], tokens[2], None, tokens.lineno, tokens.lexpos)
+    
+    def make_exception(self, tokens):
+        """ 例外 ノード作成 """
+        return Exception(tokens[2], tokens.lineno, tokens.lexpos)
+
+
+    def make_error_list(self, tokens):
+        """ エラーリスト """
+        return ErrorList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_error_expr(self, tokens):
+        """ エラー """
+        return ErrorExpr(tokens[1], tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_name_list(self, tokens):
+        """ 名称リスト ノード作成 """
+        return NameList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
+
     # パターン
     def make_pattern_ident(self, tokens):
         return PatternIdent(tokens[1], tokens.lineno, tokens.lexpos)
