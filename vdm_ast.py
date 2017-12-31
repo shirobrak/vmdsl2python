@@ -450,7 +450,15 @@ class VdmAstGenerator():
         return InvCondInitFunc(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
     # 値定義群
+    def make_value_definition_group(self, tokens):
+        """ 値定義群 ノード作成 """
+        if len(tokens) == 5:
+            return ValueDefinitionGroup([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
+        else:
+            return ValueDefinitionGroup([], tokens.lineno, tokens.lexpos)
+        
     def make_value_definition(self, tokens):
+        """ 値定義 ノード作成 """
         if len(tokens) == 6:
             return ValueDefinition(tokens[1], tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
         elif len(tokens) == 5:

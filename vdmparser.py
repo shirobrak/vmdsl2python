@@ -255,19 +255,21 @@ def p_inv_condition_init_function(p):
 
 # 値定義群 = ‘values’, [ 値定義, { ‘;’, 値定義 }, [ ‘;’ ] ] ;
 def p_value_definition_group(p):
-    """ value_definition_group : VALUES value_definition_group_option
+    """ value_definition_group : VALUES value_definition value_definition_group_part option_semi_expression
                                | VALUES """
+    p[0] = ast.make_value_definition_group(p)
 
 # 値定義群オプション構文
-def p_value_definition_group_option(p):
-    """value_definition_group_option : value_definition value_definition_group_option_part 
-                                     | value_definition value_definition_group_option_part SEMI
-                                     | empty"""
-
-# 値定義群オプション構文 部品
 def p_value_definition_group_option_part(p):
-    """ value_definition_group_option_part : value_definition_group_option_part SEMI value_definition 
-                                           | empty """
+    """ value_definition_group_part : value_definition_group_part SEMI value_definition
+                                    | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # 値定義 = パターン, [ ‘:’, 型 ], ‘=’, 式 ;
 def p_value_definition(p):
@@ -1401,7 +1403,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='expression')
+        parser = yacc.yacc(start='value_definition_group')
     else:
         parser = yacc.yacc(start=grammer) 
 

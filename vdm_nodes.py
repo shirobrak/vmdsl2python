@@ -1035,7 +1035,7 @@ class MultiTypeBinding(VdmslNode):
 # 値定義
 class ValueDefinitionGroup(VdmslNode):
     """ 値定義群 """
-    _fields = ('value_definitions')
+    _fields = ('value_definitions',)
 
     def __init__(self, value_definitions, lineno, lexpos):
         self.value_definitions = value_definitions
