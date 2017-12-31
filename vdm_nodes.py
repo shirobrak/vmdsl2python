@@ -307,6 +307,14 @@ class DefExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+class DefPtnBinding(VdmslNode):
+    """ def式 パターン束縛&式の組 """
+    _fields = ('ptn_binding', 'expr',)
+
+    def __init__(self, ptn_binding, expr):
+        self.ptn_binding = ptn_binding
+        self.expr = expr
+
 # 条件式
 class IfExpression(VdmslNode):
     """ if式 """

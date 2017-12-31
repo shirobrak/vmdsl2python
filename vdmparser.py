@@ -547,23 +547,42 @@ def p_brackets_expression(p):
 
 # let 式 = ‘let’, ローカル定義, { ‘,’, ローカル定義 }, ‘in’, 式 ;
 def p_let_expression(p):
-    """ let_expression : LET let_expression_part IN expression """
+    """ let_expression : LET local_definition let_expression_part IN expression """
+    p[0] = ast.make_let_expression(p)
 
 def p_let_expression_part(p):
     """ let_expression_part : let_expression_part COMMA local_definition 
-                            | local_definition """
+                            | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
+
 
 # let be 式 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 式 ;
 def p_let_be_expression(p):
     """ let_be_expression : LET binding optional_be_st_expression IN expression """
+    p[0] = ast.make_let_be_expression(p)
 
 # def 式 = ‘def’, パターン束縛, ‘=’, 式, { ‘;’, パターン束縛, ‘=’, 式 }, [ ‘;’ ], ‘in’, 式 ;
 def p_def_expression(p):
     """ def_expression : DEF pattern_binding EQUAL expression def_expression_part option_semi_expression IN expression """
+    p[0] = ast.make_def_expression(p)
 
 def p_def_expression_part(p):
     """ def_expression_part : def_expression_part SEMI pattern_binding EQUAL expression 
                             | empty """
+    if len(p) != 2:
+        if p[1] == None:
+            p[0] = [ast.make_def_ptn_binding(p[3], p[5])]
+        else:
+            p[0] = p[1] + [ast.make_def_ptn_binding(p[3], p[5])]
+    else:
+        p[0] = []
+        
 
 # if 式 = ‘if’, 式, ‘then’, 式, { elseif 式 }, ‘else’, 式 ;
 def p_if_expression(p):
@@ -657,8 +676,8 @@ def p_binomial_expression(p):
                             | expression LTGT expression
                             | expression EQARROW expression 
                             | expression LTEQGT expression
-                            | expression IN SET expression
-                            | expression NOT IN SET expression
+                            | expression INSET expression
+                            | expression NOT INSET expression
                             | expression SUBSET expression
                             | expression PSUBSET expression
                             | expression UNION expression
@@ -1313,6 +1332,8 @@ def p_option_semi_expression(p):
 def p_optional_be_st_expression(p):
     """ optional_be_st_expression : BE ST expression
                                   | empty """
+    if len(p)==4:
+        p[0] = p[3]
 
 # Optional('else' statement)
 def p_optional_else_statement(p):

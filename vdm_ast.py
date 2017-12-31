@@ -17,9 +17,23 @@ class VdmAstGenerator():
         return BracketExpression(tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_let_expression(self, tokens):
-        if token[3] != None:
-            token[2] 
-        return LetExpression(token[1], token[4], tokens.lineno, tokens.lexpos)
+        """ let 式 ノード作成 """
+        return LetExpression([tokens[2]]+tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_let_be_expression(self, tokens):
+        """ let be 式 ノード作成 """
+        return LetBeExpression(tokens[2], tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_def_expression(self, tokens):
+        """ def 式 ノード作成 """
+        ptn_bind = [DefPtnBinding(tokens[2], tokens[4])]
+        return DefExpression(ptn_bind+tokens[5], tokens[8], tokens.lineno, tokens.lexpos)
+
+    def make_def_ptn_binding(self, ptn_binding, expr):
+        """ def 式 パターン束縛&式 組 """
+        return DefPtnBinding(ptn_binding, expr)
+        
+
 
     def make_local_definition(self, tokens):
         return LocalDefinitions(tokens[1], tokens.lineno, tokens.lexpos)
