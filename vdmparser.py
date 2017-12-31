@@ -605,26 +605,39 @@ def p_elseif_expression(p):
 # cases 式 = ‘cases’, 式, ‘:’, cases 式選択肢群, [ ‘,’, others 式 ], ‘end’ ;
 def p_cases_expression(p):
     """ cases_expression : CASES expression COLON cases_expression_option_group optional_cases_expression END """
+    p[0] = ast.make_cases_expression(p)
 
 def p_optional_cases_expression(p):
     """ optional_cases_expression : COMMA others_expression
                                   | empty """
+    if len(p) == 3:
+        p[0] = p[2]
 
 # cases 式選択肢群 = cases 式選択肢, { ‘,’, cases 式選択肢 } ;
 def p_cases_expression_option_group(p):
     """ cases_expression_option_group : cases_expression_option cases_expression_option_group_part """
+    p[0] = [p[1]] + p[2]
 
 def p_cases_expression_option_group_part(p):
     """ cases_expression_option_group_part : cases_expression_option_group_part COMMA cases_expression_option 
                                            | empty"""
+    if len(p) != 2:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # cases 式選択肢 = パターンリスト, ‘->’, 式 ;
 def p_cases_expression_option(p):
     """ cases_expression_option : pattern_list ARROW expression """
+    p[0] = ast.make_cases_expr_option(p)
 
 # others 式 = ‘others’, ‘->’, 式 ;
 def p_others_expression(p):
     """ others_expression : OTHERS ARROW expression """
+    p[0] = p[3]
 
 # 単項式 = 接頭辞式 | 逆写像 ;
 def p_unary_expression(p):

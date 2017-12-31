@@ -349,6 +349,17 @@ class CasesExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+class CasesExprOption(VdmslNode):
+    """ cases式選択肢 """
+    _fields = ('pattern_list', 'expr',)
+
+    def __init__(self, pattern_list, expr, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.expr = expr
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+
 # 単項式
 class UnaryBaseExpression(VdmslNode):
     """ 単項式基底クラス """

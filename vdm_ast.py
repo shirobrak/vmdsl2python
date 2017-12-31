@@ -47,6 +47,14 @@ class VdmAstGenerator():
         """ elseif 式 ノード作成 """
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
+    def make_cases_expression(self, tokens):
+        """ cases 式 ノード作成 """
+        return CasesExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+
+    def make_cases_expr_option(self, tokens):
+        """ cases 式選択肢 """
+        return CasesExprOption(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
     def make_forall_expression(self, tokens):
         """ 全称限量式 ノード作成 """
         return ForallExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
