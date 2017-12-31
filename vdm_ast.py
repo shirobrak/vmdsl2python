@@ -14,6 +14,7 @@ class VdmAstGenerator():
         return Expression(tokens[1], tokens.lineno, tokens.lexpos)
 
     def make_brackets_expression(self, tokens):
+        """ 括弧式 ノード作成 """
         return BracketExpression(tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_let_expression(self, tokens):
@@ -39,9 +40,11 @@ class VdmAstGenerator():
         return LocalDefinitions(tokens[1], tokens.lineno, tokens.lexpos)
 
     def make_if_expression(self, tokens):
+        """ if 式 ノード作成 """
         return IfExpression(tokens[2], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
 
     def make_elseif_expression(self, tokens):
+        """ elseif 式 ノード作成 """
         return ElseIfExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos) 
 
     def make_forall_expression(self, tokens):

@@ -561,7 +561,6 @@ def p_let_expression_part(p):
     else:
         p[0] = []
 
-
 # let be 式 = ‘let’, 束縛, [ ‘be’, ‘st’, 式 ], ‘in’, 式 ;
 def p_let_be_expression(p):
     """ let_be_expression : LET binding optional_be_st_expression IN expression """
