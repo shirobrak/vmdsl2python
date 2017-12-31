@@ -363,10 +363,9 @@ class CasesExprOption(VdmslNode):
 # 単項式
 class UnaryBaseExpression(VdmslNode):
     """ 単項式基底クラス """
-    _fields = ('op', 'right',)
+    _fields = ('right',)
 
-    def __init__(self, op, right, lineno, lexpos):
-        self.op = op
+    def __init__(self, right, lineno, lexpos):
         self.right = right
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)

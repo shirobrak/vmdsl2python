@@ -643,6 +643,7 @@ def p_others_expression(p):
 def p_unary_expression(p):
     """ unary_expression : prefix_expression
                          | inverse_mapping  """
+    p[0] = p[1]
 
 # 接頭辞式 = 単項演算子, 式 ;
 def p_prefix_expression(p):
@@ -664,10 +665,12 @@ def p_prefix_expression(p):
                           | DOM expression
                           | RNG expression
                           | MERGE expression """
+    p[0] = ast.make_prefix_expression(p)
 
 # 逆写像 = ‘inverse’, 式 ;
 def p_inverse_mapping(p):
     """ inverse_mapping : INVERSE expression """
+    p[0] = ast.make_inverse_mapping(p)
 
 # 2項式 = 式, 2 項演算子, 式 ;
 def p_binomial_expression(p):

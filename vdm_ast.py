@@ -34,6 +34,50 @@ class VdmAstGenerator():
         """ def 式 パターン束縛&式 組 """
         return DefPtnBinding(ptn_binding, expr)
         
+    def make_prefix_expression(self, tokens):
+        """ 接頭辞式 ノード作成 """
+        if tokens[1] == '+':
+            return Plus(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == '-':
+            return Minus(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'abs':
+            return Abs(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'floor':
+            return Floor(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'not':
+            return Not(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'card':
+            return Card(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'power':
+            return Power(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'dunion':
+            return Dunion(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'dinter':
+            return Dinter(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'hd':
+            return Hd(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'tl':
+            return Tl(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'len':
+            return Len(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'elems':
+            return Elems(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'inds':
+            return Inds(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'conc':
+            return Conc(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'dom':
+            return Dom(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'rng':
+            return Rng(tokens[2], tokens.lineno, tokens.lexpos)
+        elif tokens[1] == 'merge':
+            return Merge(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return None
+    
+    def make_inverse_mapping(self, tokens):
+        """ 逆写像 ノード作成 """
+        return Inverse(tokens[2], tokens.lineno, tokens.lexpos)
 
 
     def make_local_definition(self, tokens):
