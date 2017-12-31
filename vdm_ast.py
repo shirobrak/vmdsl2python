@@ -697,6 +697,14 @@ class VdmAstGenerator():
         """ 恒等文 ノード作成 """
         return Skip(tokens.lineno, tokens.lexpos)
 
+    # 状態指示子
+    def make_item_reference(self, tokens):
+        """ 項目参照 """
+        return ItemReference(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_map_or_column_reference(self, tokens):
+        """ 写像参照または列参照 """
+        return MapOrColReference(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
 
     # パターン

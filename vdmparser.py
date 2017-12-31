@@ -77,6 +77,7 @@ def p_is_basic_type(p):
 # 括弧型 = ‘(’, 型, ‘)’ ;
 def p_brackets_type(p):
     """ brackets_type : LPAR vdmsl_type RPAR """
+    p[0] = ast.make_brackets_expression(p)
 
 # 基本型 = ‘bool’ | ‘nat’ | ‘nat1’ | ‘int’ | ‘rat’ | ‘real’ | ‘char’ | ‘token’ ;
 def p_basic_type(p):
@@ -338,7 +339,8 @@ def p_type_variable_list_part(p):
 # 型変数リストオプション
 def p_type_variable_list_option(p):
     """ type_variable_list_option : type_variable_list 
-                                    | empty """
+                                  | empty """
+    p[0] = p[1]
 
 # 陽関数定義 = 識別子, [ 型変数リスト ], ‘:’, 関数型, 識別子, パラメーターリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ], [ ‘measure’, 名称 ] ; 
 def p_explicit_function_definition(p):
@@ -1333,14 +1335,17 @@ def p_status_indicator(p):
     """ status_indicator : name
                          | item_reference 
                          | map_or_column_reference """
+    p[0] = p[1]
 
 # 項目参照 = 状態指示子, ‘.’, 識別子 ;
 def p_item_reference(p):
     """ item_reference : status_indicator DOT IDENT """
+    p[0] = ast.make_item_reference(p)
 
 # 写像参照または列参照 = 状態指示子, ‘(’, 式, ‘)’ ;
 def p_map_or_column_reference(p):
     """ map_or_column_reference : status_indicator LPAR expression RPAR """
+    p[0] = ast.make_map_or_column_reference(p)
 
 # パターン
 def p_pattern(p):
@@ -1544,6 +1549,9 @@ def p_option_expression_list(p):
 def p_optional_byop_expression(p):
     """ optional_byop_expression : BY expression
                                  | empty """
+    if len(p) = 3:
+        p[0] = p[2]
+
 # Optional(':=' + expression)
 def p_optional_coleqop_expression(p):
     """ optional_coleqop_expression : COLEQUAL expression
@@ -1555,6 +1563,7 @@ def p_optional_coleqop_expression(p):
 def p_optional_expression(p):
     """ optional_expression : expression 
                             | empty """
+    p[0] = p[1]
 
 # Optional({',' + expression})
 def p_optional_comma_expression(p):
@@ -1594,6 +1603,8 @@ def p_optional_be_st_expression(p):
 def p_optional_else_statement(p):
     """ optional_else_statement : ELSE statement 
                                 | empty """
+    if len(p) = 3:
+        p[0] = p[2]
 
 # Optional('reverse')
 def p_optional_reverse(p):
