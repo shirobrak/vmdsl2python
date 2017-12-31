@@ -57,11 +57,13 @@ tokens = (
     'PREX',
     'INSET',
     'NOTINSET',
+    'MK_',
+    'COMTRIDOTCOM',
 )
 
 # キーワードリスト
 keyword = {
-    'abs': 'ABS', 'all': 'ALL', 'always': 'ALWAYS', 'and': 'AND', 'as': 'AS', 'atomic': 'ATOMIC', 'be': 'BE', 'bool': 'BOOL', 'by': 'BY', 'card': 'CARD', 'cases': 'CASES', 'char': 'CHAR', 'comp': 'COMP', 'compose': 'COMPOSE', 'conc': 'CONC', 'dcl': 'DCL', 'def': 'DEF', 'definitions': 'DEFINITIONS', 'dinter': 'DINTER', 'div': 'DIV', 'dlmodule': 'DLMODULE', 'do': 'DO', 'dom': 'DOM', 'dunion': 'DUNION', 'elems': 'ELEMS', 'else': 'ELSE', 'elseif': 'ELSEIF', 'end': 'END', 'error': 'ERROR', 'errs': 'ERRS', 'exists': 'EXISTS', 'exists1': 'EXISTS1', 'exit': 'EXIT', 'exports': 'EXPORTS', 'ext': 'EXT', 'false': 'FALSE', 'floor': 'FLOOR', 'for': 'FOR', 'forall': 'FORALL', 'from': 'FROM', 'functions': 'FUNCTIONS', 'hd': 'HD', 'if': 'IF', 'imports': 'IMPORTS', 'in': 'IN', 'inds': 'INDS', 'init': 'INIT', 'inmap': 'INMAP', 'int': 'INT', 'inter': 'INTER', 'inv': 'INV', 'inverse': 'INVERSE', 'iota': 'IOTA', 'is_': 'IS_', 'lambda': 'LAMBDA', 'len': 'LEN', 'let': 'LET', 'make_': 'MAKE_', 'map': 'MAP', 'narrow_': 'NARROW_', 'measure': 'MEASURE', 'merge': 'MERGE', 'mod': 'MOD', 'module': 'MODULE', 'mu_': 'MU_', 'munion': 'MUNION', 'nat': 'NAT', 'nat1': 'NAT1', 'nil': 'NIL', 'not': 'NOT', 'of': 'OF', 'operations': 'OPERATIONS', 'or': 'OR', 'others': 'OTHERS', 'post': 'POST', 'power': 'POWER', 'pre': 'PRE', 'psubset': 'PSUBSET', 'rat': 'RAT', 'rd': 'RD', 'real': 'REAL', 'rem': 'REM', 'renamed': 'RENAMED', 'return': 'RETURN', 'reverse': 'REVERSE', 'rng': 'RNG', 'seq': 'SEQ', 'seq1': 'SEQ1', 'set': 'SET', 'skip': 'SKIP', 'specified': 'SPECIFIED', 'st': 'ST', 'state': 'STATE', 'struct': 'STRUCT', 'subset': 'SUBSET', 'then': 'THEN', 'tixe': 'TIXE', 'tl': 'TL', 'to': 'TO', 'token': 'TOKEN', 'trap': 'TRAP', 'true': 'TRUE', 'types': 'TYPES', 'undefined': 'UNDEFINED', 'union': 'UNION', 'uselib': 'USELIB', 'values': 'VALUES', 'while': 'WHILE', 'with': 'WITH', 'wr': 'WR', 'yet': 'YET', 'RESULT': 'RESULT', 'mk_' : 'MK_', 'is': 'IS', 'mu': 'MU', 'is_bool' : 'IS_BOOL', 'is_nat' : 'IS_NAT', 'is_nat1' : 'IS_NAT1', 'is_int' : 'IS_INT', 'is_rat' : 'IS_RAT', 'is_real' : 'IS_REAL', 'is_char' : 'IS_CHAR', 'is_token' : 'IS_TOKEN',
+    'abs': 'ABS', 'all': 'ALL', 'always': 'ALWAYS', 'and': 'AND', 'as': 'AS', 'atomic': 'ATOMIC', 'be': 'BE', 'bool': 'BOOL', 'by': 'BY', 'card': 'CARD', 'cases': 'CASES', 'char': 'CHAR', 'comp': 'COMP', 'compose': 'COMPOSE', 'conc': 'CONC', 'dcl': 'DCL', 'def': 'DEF', 'definitions': 'DEFINITIONS', 'dinter': 'DINTER', 'div': 'DIV', 'dlmodule': 'DLMODULE', 'do': 'DO', 'dom': 'DOM', 'dunion': 'DUNION', 'elems': 'ELEMS', 'else': 'ELSE', 'elseif': 'ELSEIF', 'end': 'END', 'error': 'ERROR', 'errs': 'ERRS', 'exists': 'EXISTS', 'exists1': 'EXISTS1', 'exit': 'EXIT', 'exports': 'EXPORTS', 'ext': 'EXT', 'false': 'FALSE', 'floor': 'FLOOR', 'for': 'FOR', 'forall': 'FORALL', 'from': 'FROM', 'functions': 'FUNCTIONS', 'hd': 'HD', 'if': 'IF', 'imports': 'IMPORTS', 'in': 'IN', 'inds': 'INDS', 'init': 'INIT', 'inmap': 'INMAP', 'int': 'INT', 'inter': 'INTER', 'inv': 'INV', 'inverse': 'INVERSE', 'iota': 'IOTA', 'is_': 'IS_', 'lambda': 'LAMBDA', 'len': 'LEN', 'let': 'LET', 'make_': 'MAKE_', 'map': 'MAP', 'narrow_': 'NARROW_', 'measure': 'MEASURE', 'merge': 'MERGE', 'mod': 'MOD', 'module': 'MODULE', 'mu_': 'MU_', 'munion': 'MUNION', 'nat': 'NAT', 'nat1': 'NAT1', 'nil': 'NIL', 'not': 'NOT', 'of': 'OF', 'operations': 'OPERATIONS', 'or': 'OR', 'others': 'OTHERS', 'post': 'POST', 'power': 'POWER', 'pre': 'PRE', 'psubset': 'PSUBSET', 'rat': 'RAT', 'rd': 'RD', 'real': 'REAL', 'rem': 'REM', 'renamed': 'RENAMED', 'return': 'RETURN', 'reverse': 'REVERSE', 'rng': 'RNG', 'seq': 'SEQ', 'seq1': 'SEQ1', 'set': 'SET', 'skip': 'SKIP', 'specified': 'SPECIFIED', 'st': 'ST', 'state': 'STATE', 'struct': 'STRUCT', 'subset': 'SUBSET', 'then': 'THEN', 'tixe': 'TIXE', 'tl': 'TL', 'to': 'TO', 'token': 'TOKEN', 'trap': 'TRAP', 'true': 'TRUE', 'types': 'TYPES', 'undefined': 'UNDEFINED', 'union': 'UNION', 'uselib': 'USELIB', 'values': 'VALUES', 'while': 'WHILE', 'with': 'WITH', 'wr': 'WR', 'yet': 'YET', 'RESULT': 'RESULT', 'is': 'IS', 'mu': 'MU', 'is_bool' : 'IS_BOOL', 'is_nat' : 'IS_NAT', 'is_nat1' : 'IS_NAT1', 'is_int' : 'IS_INT', 'is_rat' : 'IS_RAT', 'is_real' : 'IS_REAL', 'is_char' : 'IS_CHAR', 'is_token' : 'IS_TOKEN',
     }
 
 # キーワードを追加
@@ -113,6 +115,10 @@ t_DOTSHARP = r'\.\#'
 t_BACKSLASH = r'\\'
 t_COLEQUAL = r':='
 
+def t_COMTRIDOTCOM(t):
+    r',[\s]?\.\.\.[\s]?,'
+    return t
+
 def t_INSET(t):
     r'in\sset'
     return t
@@ -123,6 +129,10 @@ def t_NOTINSET(t):
 
 def t_PRE(t):
     r'pre_'
+    return t
+
+def t_MK_(t):
+    r'mk_'
     return t
 
 # 識別子

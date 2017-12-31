@@ -208,7 +208,7 @@ class VdmAstGenerator():
 
     def make_subsequence(self, tokens):
         """ 部分列 ノード作成 """
-        return SubseqExpression(tokens[1], tokens[3], tokens[7], tokens.lineno, tokens.lexpos)
+        return SubseqExpression(tokens[1], tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
 
     def make_map_enumeration(self, tokens):
         """ 写像列挙 ノード作成 """

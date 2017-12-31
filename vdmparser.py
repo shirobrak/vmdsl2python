@@ -860,7 +860,7 @@ def p_set_comprehension(p):
 
 # 集合範囲式 = ‘{’, 式, ‘,’, ‘...’, ‘,’, 式, ‘}’ ;
 def p_set_range_expression(p):
-    """ set_range_expression : LBRACE expression COMMA TRIDOT COMMA expression RBRACE """
+    """ set_range_expression : LBRACE expression COMTRIDOTCOM expression RBRACE """
     p[0] = ast.make_set_range_expression(p)
 
 # 列列挙 = ‘[’, [ 式リスト ], ‘]’ ;
@@ -875,9 +875,8 @@ def p_column_comprehension(p):
 
 # 部分列 = 式, ‘(’, 式, ‘,’, ‘...’, ‘,’, 式, ‘)’ ;
 def p_subsequence(p):
-    """ subsequence : expression LPAR expression COMMA TRIDOT COMMA expression RPAR """
+    """ subsequence : expression LPAR expression COMTRIDOTCOM expression RPAR """
     p[0] = ast.make_subsequence(p)
-
 
 # 写像列挙 = ‘{’, 写, { ‘,’, 写 }, ‘}’ | ‘{’, ‘|->’, ‘}’ ;
 def p_map_enumeration(p):
@@ -1631,7 +1630,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='function_definition_group')
+        parser = yacc.yacc(start='expression')
     else:
         parser = yacc.yacc(start=grammer) 
 
