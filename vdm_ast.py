@@ -262,32 +262,39 @@ class VdmAstGenerator():
         return FuncInstExpression(tokens[1], [tokens[3]] + tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_lambda_expression(self, tokens):
+        """ ラムダ式 ノード作成 """
         return LambdaExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_is_expression(self, tokens):
+        """ is式 ノード作成 """
         if len(tokens) == 6:
             return IsExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
         else:
             return IsExpression(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)   
 
     def make_type_judgment(self, tokens):
+        """ 型判定 ノード作成 """
         return TypeJudgeExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
 
     def make_undefined_expression(self, tokens):
+        """ 未定義式 ノード作成 """
         return UnDefExpression(tokens[1], tokens.lineno, tokens.lexpos)
 
     def make_pre_condition_expression(self, tokens):
-        """ 事前条件式 """
+        """ 事前条件式 ノード作成 """
         return PreCondExpression([tokens[3]]+tokens[4], tokens.lineno, tokens.lexpos)
     
     def make_name(self, tokens):
+        """ 名称 ノード作成 """
         return Name(tokens[1], tokens.lineno, tokens.lexpos)
     
     def make_oldname(self, tokens):
+        """ 旧名称 ノード作成 """
         old_name = tokens[1] + tokens[2]
         return OldName(old_name, tokens.lineno, tokens.lexpos)
 
     def make_symbol_literal(self, tokens):
+        """ シンボルリテラル ノード作成 """
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
     # 型定義
