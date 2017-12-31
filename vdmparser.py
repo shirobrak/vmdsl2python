@@ -1549,7 +1549,7 @@ def p_option_expression_list(p):
 def p_optional_byop_expression(p):
     """ optional_byop_expression : BY expression
                                  | empty """
-    if len(p) = 3:
+    if len(p) == 3:
         p[0] = p[2]
 
 # Optional(':=' + expression)
@@ -1603,7 +1603,7 @@ def p_optional_be_st_expression(p):
 def p_optional_else_statement(p):
     """ optional_else_statement : ELSE statement 
                                 | empty """
-    if len(p) = 3:
+    if len(p) == 3:
         p[0] = p[2]
 
 # Optional('reverse')
