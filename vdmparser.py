@@ -279,40 +279,61 @@ def p_value_definition(p):
 
 # 関数定義群 = ‘functions’, [ 関数定義, { ‘;’, 関数定義 }, [ ‘;’ ] ] ;
 def p_function_definition_group(p):
-    """ function_definition_group : FUNCTIONS function_definition_group_option
+    """ function_definition_group : FUNCTIONS function_definition_group_option option_semi_expression
                                   | FUNCTIONS """
+    p[0] = ast.make_function_definition_group(p)
 
 def p_function_definition_group_option(p):
-    """ function_definition_group_option : function_definition function_definition_group_option_part SEMI """
+    """ function_definition_group_option : function_definition function_definition_group_option_part """
+    p[0] = [p[1]] + p[2]
 
 def p_function_definition_group_option_part(p):
     """ function_definition_group_option_part : function_definition_group_option_part SEMI function_definition
                                               | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = [] 
 
 # 関数定義 = 陽関数定義 | 陰関数定義 | 拡張陽関数定義 ;
 def p_function_definition(p):
     """ function_definition : explicit_function_definition
                             | implicit_function_definition
                             | expanded_explicit_function_definition """
+    p[0] = p[1]
 
 # 事前条件オプション
 def p_pre_cond_option(p):
     """ pre_cond_option : PRE expression
                         | empty """
+    if len(p) == 3:
+        p[0] = p[2]
 
 # 事後条件オプション
 def p_post_cond_option(p):
     """ post_cond_option : POST expression
                          | empty """
-
+    if len(p) == 3:
+        p[0] = p[2]
 
 # 型変数リスト = ‘[’, 型変数識別子, { ‘,’, 型変数識別子 }, ‘]’ ;
 def p_type_variable_list(p):
     """ type_variable_list : LBRACK type_variable_ident type_variable_list_part RBRACK """
+    p[0] = ast.make_type_variable_list(p)
 
 def p_type_variable_list_part(p):
     """ type_variable_list_part : type_variable_list_part COMMA type_variable_ident 
                                   | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # 型変数リストオプション
 def p_type_variable_list_option(p):
@@ -322,70 +343,111 @@ def p_type_variable_list_option(p):
 # 陽関数定義 = 識別子, [ 型変数リスト ], ‘:’, 関数型, 識別子, パラメーターリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ], [ ‘measure’, 名称 ] ; 
 def p_explicit_function_definition(p):
     """ explicit_function_definition : IDENT type_variable_list_option COLON function_type IDENT param_list WEQUAL function_body pre_cond_option post_cond_option explicit_function_definition_option1 """
+    p[0] = ast.make_explicit_function_definition(p)
 
 def p_explicit_function_definition_option1(p):
     """ explicit_function_definition_option1 : MEASURE name
                                              | empty """
+    if len(p)==3:
+        p[0] = p[2]
 
 # 陰関数定義 = 識別子, [ 型変数リスト ], パラメーター型, 識別子型ペアリスト, [ ‘pre’, 式 ], ‘post’, 式 ;
 def p_implicit_function_definition(p):
     """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option POST expression """
+    p[0] = ast.make_implicit_function_definition(p)
 
 
 # 拡張陽関数定義 = 識別子, [ 型変数リスト ],パラメーター型, 識別子型ペアリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
 def p_expanded_explicit_function_definition(p):
     """ expanded_explicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list WEQUAL function_body pre_cond_option post_cond_option """
+    p[0] = ast.make_expanded_explicit_function_definition(p)
 
 
 # 識別子型ペア = 識別子, ‘:’, 型 ;
 def p_ident_type_pair(p):
     """ ident_type_pair : IDENT  COLON vdmsl_type """
+    p[0] = ast.make_ident_type_pair(p)
 
 # パラメーター型 = ‘(’, [ パターン型ペアリスト ], ‘)’ ;
 def p_param_type(p):
     """ param_type : LPAR pattern_type_pair_list_option RPAR """
+    p[0] = ast.make_param_type(p)
 
 # 識別子型ペアリスト = 識別子, ‘:’, 型, { ‘,’, 識別子, ‘:’, 型 } ;
 def p_ident_type_pair_list(p):
-    """ ident_type_pair_list : IDENT COLON vdmsl_type ident_type_pair_list_part """
+    """ ident_type_pair_list : ident_type_pair ident_type_pair_list_part """
+    p[0] = ast.make_ident_type_pair_list(p)
 
 def p_ident_type_pair_list_part(p):
-    """ ident_type_pair_list_part : ident_type_pair_list_part COMMA IDENT COLON vdmsl_type
+    """ ident_type_pair_list_part : ident_type_pair_list_part COMMA ident_type_pair
                                   | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 # パターン型ペアリスト = パターンリスト, ‘:’, 型, { ‘,’, パターンリスト,‘:’, 型 } ;
 def p_pattern_type_pair_list(p):
-    """ pattern_type_pair_list : pattern_list COLON vdmsl_type pattern_type_pair_list_part """
+    """ pattern_type_pair_list : pattern_type_pair pattern_type_pair_list_part """
+    p[0] = ast.make_pattern_type_pair_list(p)
+
+def p_pattern_type_pair(p):
+    """ pattern_type_pair : pattern_list COLON vdmsl_type """
+    p[0] = ast.make_pattern_type_pair(p)
 
 def p_pattern_type_pair_list_part(p):
-    """ pattern_type_pair_list_part : pattern_type_pair_list_part COMMA pattern_list COLON vdmsl_type 
+    """ pattern_type_pair_list_part : pattern_type_pair_list_part COMMA pattern_type_pair 
                                     | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
 
 def p_pattern_type_pair_list_option(p):
     """ pattern_type_pair_list_option : pattern_type_pair_list
-                               | empty """
+                                      | empty """
+    p[0] = p[1]
 
 # パラメーターリスト = パラメーター群, { パラメーター群 } ;
 def p_param_list(p):
     """ param_list : param_group param_list_part """
+    p[0] = [p[1]] + p[2]
 
 def p_param_list_part(p):
     """ param_list_part : param_list_part param_group
                         | empty """
+    if len(p) == 3:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + p[2]
+    else:
+        p[0] = []
 
 # パターンリストオプション
 def p_pattern_list_option(p):
     """ pattern_list_option : pattern_list
                             | empty """
+    p[0] = p[1]
 
 # パラメーター群 = ‘(’, [ パターンリスト ], ‘)’ ;
 def p_param_group(p):
     """ param_group : LPAR pattern_list_option RPAR """
+    p[0] = ast.make_param_group(p)
+
 
 # 関数本体 = 式 | ‘is not yet specified’ ;
 def p_function_body(p):
     """ function_body : expression 
-                      | IS_ NOT YET SPECIFIED """
+                      | IS_ NOT YET SPECIFIED """   
+    p[0] = ast.make_function_body(p)
+        
 
 
 # 操作定義群 = ‘operations’, [ 操作定義, { ‘;’, 操作定義 }, [ ‘;’ ] ] ;
@@ -1403,7 +1465,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='value_definition_group')
+        parser = yacc.yacc(start='function_definition_group')
     else:
         parser = yacc.yacc(start=grammer) 
 

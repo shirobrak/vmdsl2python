@@ -456,7 +456,7 @@ class VdmAstGenerator():
             return ValueDefinitionGroup([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
         else:
             return ValueDefinitionGroup([], tokens.lineno, tokens.lexpos)
-        
+
     def make_value_definition(self, tokens):
         """ 値定義 ノード作成 """
         if len(tokens) == 6:
@@ -465,6 +465,61 @@ class VdmAstGenerator():
             return ValueDefinition(tokens[1], None, tokens[3], tokens.lineno, tokens.lexpos)
         else:
             return ValueDefinition(tokens[1], None, tokens[3], tokens.lineno, tokens.lexpos)
+
+    # 関数定義
+    def make_function_definition_group(self, tokens):
+        """ 関数定義群 ノード作成 """
+        if len(tokens) == 4:
+            return FuncDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)
+        else:
+            return FuncDefinitionGroup([], tokens.lineno, tokens.lexpos)
+
+    def make_explicit_function_definition(self, tokens):
+        """ 陽関数定義 ノード作成 """
+        return ExpFuncDefinition(tokens[1], tokens[2], tokens[4], tokens[5], tokens[6], tokens[8], tokens[9], tokens[10], tokens[11], tokens.lineno, tokens.lexpos)
+
+    def make_implicit_function_definition(self, tokens):
+        """ 陰関数定義 ノード作成 """
+        return ImpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
+
+    def make_expanded_explicit_function_definition(self, tokens):
+        """ 拡張陽関数定義 ノード作成 """
+        return ExpandExpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[6], tokens[7], tokens[8], tokens.lineno, tokens.lexpos)
+
+    def make_type_variable_list(self, tokens):
+        """ 型変数リスト ノード作成 """
+        return TypeVariableList([tokens[2]]+tokens[3], tokens.lineno, tokens.lexpos)
+
+    def make_ident_type_pair(self, tokens):
+        """ 識別子型ペア ノード作成 """
+        return IdentTypePair(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+        
+    def make_param_type(self, tokens):
+        """ パラメーター型 ノード作成 """
+        return ParamType(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_ident_type_pair_list(self, tokens):
+        """ 識別子ペアリスト ノード作成 """
+        return IdentTypePairList(tokens[1]+tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_param_group(self, tokens):
+        """ パラメータ群 ノード作成 """
+        return ParamGroup(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_pattern_type_pair_list(self, tokens):
+        """ パターン型ペアリスト ノード作成 """
+        return PatternTypePairList(tokens[1]+tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_pattern_type_pair(self, tokens):
+        """ パターン型ペア ノード作成 """
+        return PatternTypePair(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
+    
+    def make_function_body(self, tokens):
+        """ 関数本体 ノード作成 """
+        if len(tokens) == 2:
+            return FunctionBody(tokens[1], tokens.lineno, tokens.lexpos)
+        else:
+            return FunctionBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
 
     # パターン
     def make_pattern_ident(self, tokens):

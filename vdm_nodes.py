@@ -1403,7 +1403,7 @@ class FunctionBody(VdmslNode):
     """ 関数本体 """
     _fields = ('expression',)
 
-    def __init__(self, expressions, lineno, lexpos):
+    def __init__(self, expression, lineno, lexpos):
         self.expression = expression
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
