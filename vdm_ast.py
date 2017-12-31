@@ -11,6 +11,7 @@ class VdmAstGenerator():
 
     # 式
     def make_expression(self, tokens):
+        """ 式　ノード作成 """
         return Expression(tokens[1], tokens.lineno, tokens.lexpos)
 
     def make_brackets_expression(self, tokens):
@@ -274,6 +275,10 @@ class VdmAstGenerator():
 
     def make_undefined_expression(self, tokens):
         return UnDefExpression(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_pre_condition_expression(self, tokens):
+        """ 事前条件式 """
+        return PreCondExpression([tokens[3]]+tokens[4], tokens.lineno, tokens.lexpos)
     
     def make_name(self, tokens):
         return Name(tokens[1], tokens.lineno, tokens.lexpos)

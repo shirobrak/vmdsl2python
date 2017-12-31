@@ -504,6 +504,7 @@ def p_expression_list_part(p):
         else:
             p[0] = p[1] + [p[3]]
 
+
 # 式
 def p_expression(p):
     """ expression : brackets_expression
@@ -534,6 +535,7 @@ def p_expression(p):
                    | lambda_expression
                    | general_is_expression
                    | undefined_expression
+                   | pre_condition_expression
                    | name
                    | oldname
                    | symbol_ltr """      
@@ -882,6 +884,11 @@ def p_type_judgment(p):
 def p_undefined_expression(p):
     """ undefined_expression : UNDEFINED """
     p[0] = ast.make_undefined_expression(p)
+
+# 事前条件式 = 'pre_', '(', 式 [ ',', 式 ], ')'
+def p_pre_condition_expression(p):
+    """ pre_condition_expression : PRE LPAR expression optional_comma_expression RPAR """
+    p[0] = ast.make_pre_condition_expression(p)
 
 # 名称
 def p_name(p):
@@ -1329,6 +1336,19 @@ def p_optional_coleqop_expression(p):
 def p_optional_expression(p):
     """ optional_expression : expression 
                             | empty """
+
+# Optional({',' + expression})
+def p_optional_comma_expression(p):
+    """ optional_comma_expression : optional_comma_expression COMMA expression 
+                                  | empty """
+    if len(p) == 4:
+        if p[1] == None:
+            p[0] = [p[3]]
+        else:
+            p[0] = p[1] + [p[3]]
+    else:
+        p[0] = []
+
 
 # Optional('&' + expression)
 def p_option_andop_expression(p):

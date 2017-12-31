@@ -54,6 +54,7 @@ tokens = (
     'DOTSHARP',
     'BACKSLASH',
     'COLEQUAL',
+    'PREX',
     'INSET',
     'NOTINSET',
 )
@@ -118,6 +119,10 @@ def t_INSET(t):
 
 def t_NOTINSET(t):
     r'not\sin\sset'
+    return t
+
+def t_PRE(t):
+    r'pre_'
     return t
 
 # 識別子
