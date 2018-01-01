@@ -11,6 +11,22 @@ from vdm_ast import VdmAstGenerator
 
 ast = VdmAstGenerator()
 
+# モジュール本体 定義ブロック, { 定義ブロック }
+def p_module_body(p):
+    """ module_body : definition_block module_body_part """
+    p[0] = [p[1]] + p[2]
+
+def p_module_body_part(p):
+    """ module_body_part : module_body_part definition_block
+                         | empty """
+    if len(p) == 3:
+        if p[1] == None:
+            p[0] = [p[2]]
+        else:
+            p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
+
 # 定義ブロック = 型定義群 | 状態定義群 | 値定義群 | 関数定義群 | 操作定義群 ;
 def p_definition_block(p):
     """ definition_block : type_definition_group
@@ -93,7 +109,7 @@ def p_basic_type(p):
 
 # 引用型 = ‘<’, 引用リテラル, ‘>’ ;
 def p_quotation_type(p):
-    """ quotation_type : LT QUOTELTR GT """
+    """ quotation_type : QUOTELTR """
     p[0] = ast.make_quote_type(p)
 
 # レコード型 = ‘compose’, 識別子, ‘of’, 項目リスト, ‘end’ ;
@@ -1622,7 +1638,6 @@ precedence = (
 # 空（繰り返し対策）
 def p_empty(p):
     'empty :'
-    print("empty")
     pass
 
 # 構文エラー
@@ -1639,7 +1654,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='definition_block')
+        parser = yacc.yacc(start='module_body')
     else:
         parser = yacc.yacc(start=grammer) 
 
@@ -1653,7 +1668,4 @@ if __name__ == '__main__':
         result = parser.parse(s, debug=log)
         print(result)
 
-        # print("== symbol table ==")
-        # for k, v in ast.symbol_table.items():
-        #     print("%10s  %10s" % (k, v.__class__.__name__))
 

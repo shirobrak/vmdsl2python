@@ -110,7 +110,7 @@ class SyntheticDataType(VdmslNode):
     """ 合成型基底クラス """
     _fields = ('type_name',)
 
-    def __init__(self, value, lineno, lexpos):
+    def __init__(self, type_name, lineno, lexpos):
         self.type_name = type_name
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)

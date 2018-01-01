@@ -193,25 +193,9 @@ if __name__ == '__main__':
 
     # ここからテスト記述
     print("program test...\n")
-    # data = '''
-    #   is_bool is_boolean in set
-    #   cases e :
-    #    p11, p12,...,p1n -> e1,
-    #     ...
-    #    pm1, pm2,...,pmn -> em,
-    #    others -> e(m+1)
-    #    e.#te
-    #   end]
-    # '''
-    # lexer.input(data)
-    # while True:
-    #     tok = lexer.token()
-    #     if not tok:  
-    #         print("これ以上トークンはない")
-    #         break
-    #     print(tok)
-    
+
     # テスト(データ入力版)
+    
     while True:
         try:
             text = input('vdmlexer input > ')
