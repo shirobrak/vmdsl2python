@@ -1602,6 +1602,22 @@ def p_optional_else_statement(p):
 def p_optional_reverse(p):
     """ optional_reverse : REVERSE
                          | empty """
+                        
+                    
+# 演算子優先度
+precedence = (
+        ('right', 'COMP', 'WASTER'),
+        ('left', 'PLUS', 'MINUS', 'UNION', 'BACKSLASH', 'MUNION', 'WPLUS', 'MUL'),
+        ('left', 'ASTER', 'SLASH', 'INTER', 'REM', 'MOD', 'DIV'),
+        ('left', 'INVERSE'),
+        ('right', 'LTCOL', 'LARCOL'),
+        ('left', 'COLGT', 'RARCOL'),
+        ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
+        ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
+        ('nonassoc', 'LTEQGT', 'EQARROW', 'OR', 'AND', 'NOT'),
+        ('right', 'ARROW', 'PARROW'),
+        ('left', 'VERTICAL')
+    )
 
 # 空（繰り返し対策）
 def p_empty(p):
@@ -1623,7 +1639,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='operation_definition')
+        parser = yacc.yacc(start='definition_block')
     else:
         parser = yacc.yacc(start=grammer) 
 
