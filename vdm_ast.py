@@ -469,7 +469,7 @@ class VdmAstGenerator():
     # 関数定義
     def make_function_definition_group(self, tokens):
         """ 関数定義群 ノード作成 """
-        if len(tokens) == 4:
+        if len(tokens) == 3:
             return FuncDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)
         else:
             return FuncDefinitionGroup([], tokens.lineno, tokens.lexpos)
@@ -768,13 +768,13 @@ class VdmAstGenerator():
         return Binding(tokens[1], tokens.lineno, tokens.lexpos)
 
     def make_set_binding(self, tokens):
-        return SetBinding(tokens[1], tokens[4], tokens.lineno, tokens.lexpos)
+        return SetBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
     def make_type_binding(self, tokens):
         return TypeBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
     def make_multi_set_binding(self, tokens):
-        return MultiSetBinding(tokens[1], tokens[4], tokens.lineno, tokens.lexpos)
+        return MultiSetBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
 
     def make_multi_type_binding(self, tokens):
         return MultiTypeBinding(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)

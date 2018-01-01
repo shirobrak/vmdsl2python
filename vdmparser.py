@@ -215,17 +215,34 @@ def p_function_type(p):
 
 # 部分関数型 = 任意の型, ‘->’, 型
 def p_partial_function_type(p):
-    """ partial_function_type : any_type ARROW vdmsl_type """
+    """ partial_function_type : non_partial_any_type ARROW vdmsl_type """
     p[0] = ast.make_partial_function_type(p)
 
 # 全関数型 = 任意の型, ‘+>’, 型
 def p_full_function_type(p):
     """ full_function_type : any_type PARROW vdmsl_type """
     p[0] = ast.make_full_function_type(p)
+
+# 部分関数型を除いた任意の型
+def p_non_partial_any_type(p):
+    """ non_partial_any_type : brackets_type
+                             | basic_type
+                             | quotation_type 
+                             | record_type 
+                             | merger_type 
+                             | tuple_type 
+                             | selective_type 
+                             | set_type 
+                             | column_type 
+                             | map_type  
+                             | type_name 
+                             | type_variable 
+                             | LPAR RPAR """
+    p[0] = p[1]
     
 # 任意の型 = 型 | ‘(’, ‘)’ ;
 def p_any_type(p):
-    """ any_type : vdmsl_type 
+    """ any_type : vdmsl_type
                  | LPAR RPAR """
     p[0] = ast.make_any_type(p)
 
@@ -296,13 +313,17 @@ def p_value_definition(p):
 
 # 関数定義群 = ‘functions’, [ 関数定義, { ‘;’, 関数定義 }, [ ‘;’ ] ] ;
 def p_function_definition_group(p):
-    """ function_definition_group : FUNCTIONS function_definition_group_option option_semi_expression
+    """ function_definition_group : FUNCTIONS function_definition_group_option
                                   | FUNCTIONS """
     p[0] = ast.make_function_definition_group(p)
 
 def p_function_definition_group_option(p):
-    """ function_definition_group_option : function_definition function_definition_group_option_part """
-    p[0] = [p[1]] + p[2]
+    """ function_definition_group_option : function_definition function_definition_group_option_part option_semi_expression
+                                         | empty """
+    if len(p) == 2:
+        p[0] = []
+    else:
+        p[0] = [p[1]] + p[2]
 
 def p_function_definition_group_option_part(p):
     """ function_definition_group_option_part : function_definition_group_option_part SEMI function_definition
@@ -321,6 +342,27 @@ def p_function_definition(p):
                             | implicit_function_definition
                             | expanded_explicit_function_definition """
     p[0] = p[1]
+
+# 陽関数定義 = 識別子, [ 型変数リスト ], ‘:’, 関数型, 識別子, パラメーターリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ], [ ‘measure’, 名称 ] ; 
+def p_explicit_function_definition(p):
+    """ explicit_function_definition : IDENT type_variable_list_option COLON function_type IDENT param_list WEQUAL function_body pre_cond_option post_cond_option explicit_function_definition_option1 """
+    p[0] = ast.make_explicit_function_definition(p)
+
+def p_explicit_function_definition_option1(p):
+    """ explicit_function_definition_option1 : MEASURE name
+                                             | empty """
+    if len(p)==3:
+        p[0] = p[2]
+
+# 陰関数定義 = 識別子, [ 型変数リスト ], パラメーター型, 識別子型ペアリスト, [ ‘pre’, 式 ], ‘post’, 式 ;
+def p_implicit_function_definition(p):
+    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option POST expression """
+    p[0] = ast.make_implicit_function_definition(p)
+
+# 拡張陽関数定義 = 識別子, [ 型変数リスト ],パラメーター型, 識別子型ペアリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
+def p_expanded_explicit_function_definition(p):
+    """ expanded_explicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list WEQUAL function_body pre_cond_option post_cond_option """
+    p[0] = ast.make_expanded_explicit_function_definition(p)
 
 # 事前条件オプション
 def p_pre_cond_option(p):
@@ -357,28 +399,6 @@ def p_type_variable_list_option(p):
     """ type_variable_list_option : type_variable_list 
                                   | empty """
     p[0] = p[1]
-
-# 陽関数定義 = 識別子, [ 型変数リスト ], ‘:’, 関数型, 識別子, パラメーターリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ], [ ‘measure’, 名称 ] ; 
-def p_explicit_function_definition(p):
-    """ explicit_function_definition : IDENT type_variable_list_option COLON function_type IDENT param_list WEQUAL function_body pre_cond_option post_cond_option explicit_function_definition_option1 """
-    p[0] = ast.make_explicit_function_definition(p)
-
-def p_explicit_function_definition_option1(p):
-    """ explicit_function_definition_option1 : MEASURE name
-                                             | empty """
-    if len(p)==3:
-        p[0] = p[2]
-
-# 陰関数定義 = 識別子, [ 型変数リスト ], パラメーター型, 識別子型ペアリスト, [ ‘pre’, 式 ], ‘post’, 式 ;
-def p_implicit_function_definition(p):
-    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option POST expression """
-    p[0] = ast.make_implicit_function_definition(p)
-
-
-# 拡張陽関数定義 = 識別子, [ 型変数リスト ],パラメーター型, 識別子型ペアリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
-def p_expanded_explicit_function_definition(p):
-    """ expanded_explicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list WEQUAL function_body pre_cond_option post_cond_option """
-    p[0] = ast.make_expanded_explicit_function_definition(p)
 
 
 # 識別子型ペア = 識別子, ‘:’, 型 ;
@@ -1480,7 +1500,7 @@ def p_binding(p):
 
 # 集合束縛
 def p_set_binding(p):
-    """ set_binding : pattern IN SET expression """
+    """ set_binding : pattern INSET expression """
     p[0] = ast.make_set_binding(p)
 
 # 型束縛
@@ -1514,7 +1534,7 @@ def p_multi_binding(p):
 
 # 多重集合束縛
 def p_multi_set_binding(p):
-    """ multi_set_binding : pattern_list IN SET expression """
+    """ multi_set_binding : pattern_list INSET expression """
     p[0] = ast.make_multi_set_binding(p)
 
 # 多重型束縛
