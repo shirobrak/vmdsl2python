@@ -1622,17 +1622,17 @@ def p_optional_reverse(p):
                     
 # 演算子優先度
 precedence = (
-        ('right', 'COMP', 'WASTER'),
-        ('left', 'PLUS', 'MINUS', 'UNION', 'BACKSLASH', 'MUNION', 'WPLUS', 'MUL'),
-        ('left', 'ASTER', 'SLASH', 'INTER', 'REM', 'MOD', 'DIV'),
-        ('left', 'INVERSE'),
-        ('right', 'LTCOL', 'LARCOL'),
-        ('left', 'COLGT', 'RARCOL'),
-        ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
-        ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
         ('nonassoc', 'LTEQGT', 'EQARROW', 'OR', 'AND', 'NOT'),
+        ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
         ('right', 'ARROW', 'PARROW'),
-        ('left', 'VERTICAL')
+        ('left', 'VERTICAL'),
+        ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
+        ('left', 'COLGT', 'RARCOL'),
+        ('right', 'LTCOL', 'LARCOL'),
+        ('left', 'INVERSE'),
+        ('right', 'COMP', 'WASTER'),
+        ('left', 'ASTER', 'SLASH', 'INTER', 'REM', 'MOD', 'DIV'),
+        ('left', 'PLUS', 'MINUS', 'UNION', 'BACKSLASH', 'MUNION', 'WPLUS', 'MUL')
     )
 
 # 空（繰り返し対策）
@@ -1644,8 +1644,9 @@ def p_empty(p):
 def p_error(p):
     print("Syntax error in input")
 
+parser = yacc.yacc(start='module_body')
 
-# デバッグ
+# デバッグ用記述
 if __name__ == '__main__':  
     
     import logging
@@ -1654,9 +1655,9 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='module_body')
+        debug_parser = yacc.yacc(start='module_body')
     else:
-        parser = yacc.yacc(start=grammer) 
+        debug_parser = yacc.yacc(start=grammer) 
 
     while True:
         try:
@@ -1665,7 +1666,7 @@ if __name__ == '__main__':
             break
         if not s:
             continue
-        result = parser.parse(s, debug=log)
+        result = debug_parser.parse(s, debug=log)
         print(result)
 
 
