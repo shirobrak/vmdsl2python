@@ -14,7 +14,7 @@ ast = VdmAstGenerator()
 # モジュール本体 定義ブロック, { 定義ブロック }
 def p_module_body(p):
     """ module_body : definition_block module_body_part """
-    p[0] = [p[1]] + p[2]
+    p[0] = ast.make_module_body(p)
 
 def p_module_body_part(p):
     """ module_body_part : module_body_part definition_block

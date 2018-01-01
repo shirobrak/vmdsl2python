@@ -13,6 +13,7 @@ class VdmslNode(object):
                     for field in self._fields])
     )
 
+    @classmethod
     def _p(self, v, indent):
         print("{}{}".format(self.SPACER * indent, v))
 
@@ -23,18 +24,30 @@ class VdmslNode(object):
             value = getattr(self, field)
             if type(value) == list:
                 for value2 in value:
-                    if isinstance(value2, ASTNode):
+                    if isinstance(value2, VdmslNode):
                         value2.dumps(indent + 2)
                     else:
                         self._p(value2, indent + 2)
             else:
                 if value:
-                    if isinstance(value, ASTNode):
+                    if isinstance(value, VdmslNode):
                         value.dumps(indent + 2)
                     else:
                         self._p(value, indent + 2)
         self._p(')', indent)
 
+
+# モジュール本体
+
+class ModuleBody(VdmslNode):
+    """ モジュール本体 """
+    _fields = ('blocks',)
+
+    def __init__(self, blocks, lineno, lexpos):
+        self.blocks = blocks
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
 
 # データ型定義
 

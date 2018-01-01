@@ -8,6 +8,12 @@ class VdmAstGenerator():
     def __init__(self):
         self.symbol_table = {}
 
+    
+    # モジュール本体
+    def make_module_body(self, tokens):
+        """ モジュール本体 """
+        return ModuleBody([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
+
 
     # 式
     def make_expression(self, tokens):
