@@ -714,7 +714,7 @@ def p_elseif_expression(p):
 
 # cases 式 = ‘cases’, 式, ‘:’, cases 式選択肢群, [ ‘,’, others 式 ], ‘end’ ;
 def p_cases_expression(p):
-    """ cases_expression : CASES expression COLON cases_expression_option cases_expression_option_group_part optional_cases_expression END """
+    """ cases_expression : CASES expression COLON cases_expression_option cases_expression_option_group optional_cases_expression END """
     p[0] = ast.make_cases_expression(p)
 
 # cases 式選択肢 = パターンリスト, ‘->’, 式 ;
@@ -729,9 +729,9 @@ def p_optional_cases_expression(p):
     if len(p) == 3:
         p[0] = p[2]
 
-def p_cases_expression_option_group_part(p):
-    """ cases_expression_option_group_part : cases_expression_option_group_part COMMA cases_expression_option 
-                                           | empty"""
+def p_cases_expression_option_group(p):
+    """ cases_expression_option_group : cases_expression_option_group COMMA cases_expression_option 
+                                      | empty"""
     if len(p) != 2:
         if p[1] == None:
             p[0] = [p[3]]
@@ -1188,23 +1188,13 @@ def p_elseif_statement(p):
 
 # cases 文 = ‘cases’, 式, ‘:’, cases 文選択肢群, [ ‘,’, others 文 ], ‘end’ ;
 def p_cases_statement(p):
-    """ cases_statement : CASES expression COLON cases_statement_option_group optional_commma_others_statement """
+    """ cases_statement : CASES expression COLON cases_statement_option cases_statement_option_group optional_commma_others_statement END """
     p[0] = ast.make_cases_statement(p)
 
-def p_optional_commma_others_statement(p):
-    """ optional_commma_others_statement : COMMA others_statement 
-                                         | empty """
-    if len(p) == 3:
-        p[0] = p[2]                      
-
-# cases 文選択肢群 = cases 文選択肢, { ‘,’, cases 文選択肢 } ;
+# cases 文選択肢群 = { ‘,’, cases 文選択肢 } ;
 def p_cases_statement_option_group(p):
-    """ cases_statement_option_group : cases_statement_option cases_statement_option_group_part """
-    p[0] = [p[1]] + p[2]
-
-def p_cases_statement_option_group_part(p):
-    """ cases_statement_option_group_part : cases_statement_option_group_part COMMA cases_statement_option 
-                                          | empty """
+    """ cases_statement_option_group : cases_statement_option_group COMMA cases_statement_option 
+                                     | empty """
     if len(p) == 4:
         if p[1] != None:
             p[0] = p[1] + [p[3]]
@@ -1212,6 +1202,12 @@ def p_cases_statement_option_group_part(p):
             p[0] = [p[3]]
     else:
         p[0] = []
+
+def p_optional_commma_others_statement(p):
+    """ optional_commma_others_statement : COMMA others_statement 
+                                         | empty """
+    if len(p) == 3:
+        p[0] = p[2]                      
 
 # cases 文選択肢 = パターンリスト, ‘->’, 文 ;
 def p_cases_statement_option(p):
@@ -1627,7 +1623,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        parser = yacc.yacc(start='expression')
+        parser = yacc.yacc(start='operation_definition')
     else:
         parser = yacc.yacc(start=grammer) 
 

@@ -1474,7 +1474,7 @@ class EqualDefinition(VdmslNode):
 # ブロック文
 class BlockStatement(VdmslNode):
     """ ブロック文 """
-    _fields =('dcl_stmt', 'statements',)
+    _fields =('dcl_stmt', 'statement',)
 
     def __init__(self, dcl_stmt, statement, lineno, lexpos):
         self.dcl_stmt = dcl_stmt
@@ -1587,7 +1587,7 @@ class CasesStatement(VdmslNode):
     """ cases文 """
     _fields = ('cond', 'case_stmt_options', 'other_stmt',)
 
-    def __init__(self, cond, case_stmt_options, other, lineno, lexpos):
+    def __init__(self, cond, case_stmt_options, other_stmt, lineno, lexpos):
         self.cond = cond
         self.case_stmt_options = case_stmt_options
         self.other_stmt = other_stmt

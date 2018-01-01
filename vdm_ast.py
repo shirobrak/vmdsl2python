@@ -663,7 +663,7 @@ class VdmAstGenerator():
 
     def make_return_statement(self, tokens):
         """ return 文 ノード作成 """
-        return RecursiveTrapStatement(tokens[2], tokens.lineno, tokens.lexpos)
+        return ReturnStatement(tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_specification_description_statement(self, tokens):
         """ 仕様記述文 ノード作成 """
