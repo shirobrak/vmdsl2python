@@ -361,7 +361,7 @@ class VdmAstGenerator():
             return None
     
     def make_quote_type(self, tokens):
-        return QuoteType(tokens[2], tokens.lineno, tokens.lexpos)    
+        return QuoteType(tokens[1], tokens.lineno, tokens.lexpos)    
 
     def make_set_type(self, tokens):
         return SetType(tokens[3], tokens.lineno, tokens.lexpos)
