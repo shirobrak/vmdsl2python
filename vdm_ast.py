@@ -500,7 +500,7 @@ class VdmAstGenerator():
 
     def make_ident_type_pair_list(self, tokens):
         """ 識別子ペアリスト ノード作成 """
-        return IdentTypePairList(tokens[1]+tokens[2], tokens.lineno, tokens.lexpos)
+        return IdentTypePairList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_param_group(self, tokens):
         """ パラメータ群 ノード作成 """
@@ -508,7 +508,7 @@ class VdmAstGenerator():
 
     def make_pattern_type_pair_list(self, tokens):
         """ パターン型ペアリスト ノード作成 """
-        return PatternTypePairList(tokens[1]+tokens[2], tokens.lineno, tokens.lexpos)
+        return PatternTypePairList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
 
     def make_pattern_type_pair(self, tokens):
         """ パターン型ペア ノード作成 """

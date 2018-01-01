@@ -1145,7 +1145,7 @@ class ImpOpeDefinition(VdmslNode):
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
-    _fields = ('ext_sec', 'pre_expr', 'post_expr', 'except',)
+    _fields = ('ext_sec', 'pre_expr', 'post_expr', 'exception',)
 
     def __init__(self, ext_sec, pre_expr, post_expr, exception, lineno, lexpos):
         self.ext_sec = ext_sec
