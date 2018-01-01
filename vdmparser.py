@@ -488,13 +488,17 @@ def p_function_body(p):
 
 # 操作定義群 = ‘operations’, [ 操作定義, { ‘;’, 操作定義 }, [ ‘;’ ] ] ;
 def p_operation_definition_group(p):
-    """ operation_definition_group : OPERATIONS operation_definition_group_option option_semi_expression 
+    """ operation_definition_group : OPERATIONS operation_definition_group_option  
                                    | OPERATIONS """
     p[0] = ast.make_operation_definition_group(p)
 
 def p_operation_definition_group_option(p):
-    """ operation_definition_group_option : operation_definition operation_definition_group_option_part """
-    p[0] = [p[1]] + p[2]
+    """ operation_definition_group_option : operation_definition operation_definition_group_option_part option_semi_expression 
+                                          | empty """
+    if len(p) == 2:
+        p[0] = []
+    else:
+        p[0] = [p[1]] + p[2]
 
 def p_operation_definition_group_option_part(p):
     """ operation_definition_group_option_part : operation_definition_group_option_part SEMI operation_definition 

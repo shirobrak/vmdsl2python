@@ -524,7 +524,7 @@ class VdmAstGenerator():
     # 操作定義
     def make_operation_definition_group(self, tokens):
         """ 操作定義群 ノード作成 """
-        if len(tokens) == 4:
+        if len(tokens) == 3:
             return OpeDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)
         else:
             return OpeDefinitionGroup([], tokens.lineno, tokens.lexpos)
