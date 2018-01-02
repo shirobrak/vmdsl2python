@@ -58,7 +58,7 @@ def p_optional_type_definition_group_part(p):
 # 型定義
 def p_type_definition(p):
     """ type_definition : IDENT EQUAL vdmsl_type inv_condition_option 
-                        | IDENT COLON COLON item_list inv_condition_option """
+                        | IDENT WCOLON item_list inv_condition_option """
     p[0] = ast.make_type_definition(p)
 
 # 型
@@ -123,14 +123,14 @@ def p_item_list(p):
                   | empty """
     if len(p) == 3:
         if p[1] != None:
-            p[0] = p[1:]
+            p[0] = p[1] + [p[2]]
         else:
-            p[0] = p[2]
+            p[0] = [p[2]]
 
 # 項目 = [ 識別子, ‘:’ ], 型 | [ 識別子, ‘:-’ ], 型 ;
 def p_item(p):
     """ item : IDENT COLON vdmsl_type
-             | IDENT COLON MINUS vdmsl_type
+             | IDENT COLMINUS vdmsl_type
              | vdmsl_type """
     p[0] = ast.make_item(p)
 
@@ -1396,7 +1396,7 @@ def p_pattern(p):
 # パターン識別子
 def p_pattern_ident(p):
     """ pattern_ident : IDENT
-                      | '-' """
+                      | MINUS """
     p[0] = ast.make_pattern_ident(p)
 
 # 一致値

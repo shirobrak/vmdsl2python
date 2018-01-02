@@ -323,8 +323,6 @@ class VdmAstGenerator():
     def make_type_definition(self, tokens):
         if len(tokens) == 5:
             return TypeDefinition(tokens[1], tokens[3], tokens[4], tokens.lineno, tokens.lexpos)
-        elif len(tokens) == 6:
-            return TypeDefinition(tokens[1], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
         else:
             return None
 
@@ -405,8 +403,6 @@ class VdmAstGenerator():
             return Item(None, tokens[1], tokens.lineno, tokens.lexpos)
         elif tok_len == 4:
             return Item(tokens[1], tokens[3], tokens.lineno, tokens.lexpos)
-        elif tok_len == 5:
-            return Item(tokens[1], tokens[4], tokens.lineno, tokens.lexpos)
         else:
             return Item()
 

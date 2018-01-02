@@ -59,6 +59,8 @@ tokens = (
     'NOTINSET',
     'MK_',
     'COMTRIDOTCOM',
+    'COLMINUS',
+    'WCOLON',
 )
 
 # キーワードリスト
@@ -114,6 +116,8 @@ t_TRIDOT = r'\.\.\.'
 t_DOTSHARP = r'\.\#'
 t_BACKSLASH = r'\\'
 t_COLEQUAL = r':='
+t_COLMINUS = r':-'
+t_WCOLON = r'::'
 
 def t_COMTRIDOTCOM(t):
     r',[\s]?\.\.\.[\s]?,'
