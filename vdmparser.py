@@ -794,8 +794,8 @@ def p_unary_expression(p):
 
 # 接頭辞式 = 単項演算子, 式 ;
 def p_prefix_expression(p):
-    """ prefix_expression : PLUS expression 
-                          | MINUS expression
+    """ prefix_expression : PLUS expression %prec UPLUS
+                          | MINUS expression %prec UMINUS
                           | ABS expression
                           | FLOOR expression
                           | NOT expression
@@ -1655,6 +1655,7 @@ precedence = (
         ('left', 'INVERSE'),
         ('right', 'LTCOL', 'LARCOL'),
         ('left', 'COLGT', 'RARCOL'),
+        ('right', 'UPLUS', 'UMINUS'),
         ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
         ('right', 'COMP', 'WASTER'),
         ('nonassoc', 'LPAR', 'RPAR', 'LBRACK', 'RBRACK', 'LBRACE', 'RBRACE')
