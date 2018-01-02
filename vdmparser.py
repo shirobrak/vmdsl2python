@@ -258,7 +258,7 @@ def p_type_variable(p):
 
 # 状態定義 = ‘state’, 識別子, ‘of’, 項目リスト, [ 不変条件 ], [ 初期化 ], ‘end’, [ ‘;’ ] ;
 def p_state_definition(p):
-    """ state_definition : STATE IDENT OF item_list inv_condition_option initialization_option END SEMI """
+    """ state_definition : STATE IDENT OF item_list inv_condition_option initialization_option END option_semi_expression """
     p[0] = ast.make_state_definition(p)
 
 # 不変条件 = ‘inv’, 不変条件初期関数 ;
