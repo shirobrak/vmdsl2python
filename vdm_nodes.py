@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 class VdmslNode(object):
+    SPACER = " "
     """ VDM-SLのASTノード基底クラス """
     _fields = ()
     _attributes = ('lineno', 'lexpos')
@@ -12,7 +13,66 @@ class VdmslNode(object):
                     for field in self._fields])
     )
 
+    @classmethod
+    def _p(self, v, indent):
+        output = "{}{}".format(self.SPACER * indent, v)
+        return output + '\n'
+
+    def dumps(self, indent=0):
+        output = ""
+        output += self._p(self.__class__.__name__ + '(', indent)
+        for field in self._fields:
+            output += self._p(field + '=', indent + 1)
+            value = getattr(self, field)
+            if type(value) == list:
+                for value2 in value:
+                    if isinstance(value2, VdmslNode):
+                        output += value2.dumps(indent + 2)
+                    else:
+                        output += self._p(value2, indent + 2)
+            else:
+                if value:
+                    if isinstance(value, VdmslNode):
+                        output += value.dumps(indent + 2)
+                    else:
+                        output += self._p(value, indent + 2)
+        output += self._p(')', indent)
+        return output
+
+# モジュール本体
+
+class ModuleBody(VdmslNode):
+    """ モジュール本体 """
+    _fields = ('blocks',)
+
+    def __init__(self, blocks, lineno, lexpos):
+        self.blocks = blocks
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
+
 # データ型定義
+
+class TypeDefinitionGroup(VdmslNode):
+    """ 型定義群 """
+    _fields = ('type_definitions',)
+
+    def __init__(self, type_definitions, lineno, lexpos):
+        self.type_definitions = type_definitions
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+class TypeDefinition(VdmslNode):
+    """ 型定義 """
+    _fields = ('id', 'type', 'inv_cond',)
+
+    def __init__(self, id, type, inv_cond, lineno, lexpos):
+        self.id = id
+        self.type = type
+        self.inv_cond = inv_cond
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+        
 
 # 基本データ型
 class BasicDataType(VdmslNode):
@@ -65,7 +125,7 @@ class SyntheticDataType(VdmslNode):
     """ 合成型基底クラス """
     _fields = ('type_name',)
 
-    def __init__(self, value, lineno, lexpos):
+    def __init__(self, type_name, lineno, lexpos):
         self.type_name = type_name
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
@@ -82,22 +142,32 @@ class Seq1Type(SyntheticDataType):
     """ 空列を含まない列型 """
     pass
 
-class MapType(SyntheticDataType):
+class MapType(VdmslNode):
     """ 一般写像型 """
-    pass
+    _fields = ('type1', 'type2',)
+
+    def __init__(self, type1, type2, lineno, lexpos):
+        self.type1 = type1
+        self.type2 = type2
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class InMapType(SyntheticDataType):
     """ 1対1写像型 """
-    pass
+    _fields = ('type1', 'type2',)
+
+    def __init__(self, type1, type2, lineno, lexpos):
+        self.type1 = type1
+        self.type2 = type2
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
 
 class TupleType(VdmslNode):
     """ 組型 """
-    _fields = ('type1', 'type2', 'type_list',)
+    _fields = ('type_list',)
 
-    def __init__(self, type1, type2, type_list):
-        self.type1 = type1
-        self.type2 = type2
-        self.type_list =type_list
+    def __init__(self, type_list, lineno, lexpos):
+        self.type_list = type_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -123,12 +193,10 @@ class Item(VdmslNode):
 
 class MergerType(VdmslNode):
     """ 合併型 """
-    _fields = ('type1', 'type2', 'type_list',)
+    _fields = ('type_list',)
 
-    def __init__(self, type1, type2, type_list):
-        self.type1 = type1
-        self.type2 = type2
-        self.type_list =type_list
+    def __init__(self, type_list, lineno, lexpos):
+        self.type_list = type_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -152,11 +220,11 @@ class FuncionType(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class PartialFunctionType(VdmslNode):
+class PartialFunctionType(FuncionType):
     """ 部分関数型 """
     pass
 
-class FullFuntionType(VdmslNode):
+class FullFuntionType(FuncionType):
     """ 全関数型 """
     pass
 
@@ -172,10 +240,10 @@ class AnyType(VdmslNode):
 
 class NameBase(VdmslNode):
     """ 名称基底クラス """
-    _fields = ('name',)
+    _fields = ('id',)
 
-    def __init__(self, name, lineno, lexpos):
-        self.name = name
+    def __init__(self, id, lineno, lexpos):
+        self.id = id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -190,6 +258,15 @@ class OldName(NameBase):
 class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
+
+class TypeName(NameBase):
+    """ 型名称 """
+    pass
+
+class TypeVariableIdent(NameBase):
+    """ 型変数識別子 """
+    pass
+
 
 # 式
 class Expression(VdmslNode):
@@ -245,14 +322,22 @@ class DefExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+class DefPtnBinding(VdmslNode):
+    """ def式 パターン束縛&式の組 """
+    _fields = ('ptn_binding', 'expr',)
+
+    def __init__(self, ptn_binding, expr):
+        self.ptn_binding = ptn_binding
+        self.expr = expr
+
 # 条件式
 class IfExpression(VdmslNode):
     """ if式 """
-    _fields = ('cond', 'body', 'elseif', 'else',)
+    _fields = ('cond', 'body', 'elseif', 'else_',)
 
-    def __init__(self, cond, then, elseif, else_, lineno, lexpos):
+    def __init__(self, cond, body, elseif, else_, lineno, lexpos):
         self.cond = cond
-        self.then = then
+        self.body = body
         self.elseif = elseif
         self.else_ = else_
         self.__setattr__('lineno', lineno)
@@ -279,13 +364,23 @@ class CasesExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+class CasesExprOption(VdmslNode):
+    """ cases式選択肢 """
+    _fields = ('pattern_list', 'expr',)
+
+    def __init__(self, pattern_list, expr, lineno, lexpos):
+        self.pattern_list = pattern_list
+        self.expr = expr
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
+
 # 単項式
 class UnaryBaseExpression(VdmslNode):
     """ 単項式基底クラス """
-    _fields = ('op', 'right',)
+    _fields = ('right',)
 
-    def __init__(self, op, right, lineno, lexpos):
-        self.op = op
+    def __init__(self, right, lineno, lexpos):
         self.right = right
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
@@ -350,10 +445,9 @@ class Inverse(UnaryBaseExpression):
 # 二項式
 class BinBaseExpression(VdmslNode):
     """ 二項式基底クラス """
-    _fields = ('op', 'left', 'right',)
+    _fields = ('left', 'right',)
 
-    def __init__(self, op, left, right, lineno, lexpos):
-        self.op = op
+    def __init__(self, left, right, lineno, lexpos):
         self.left = left
         self.right = right
         self.__setattr__('lineno', lineno)
@@ -680,21 +774,23 @@ class AppExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class ItemChoiceExpression(VdmslNode):
+class ItemChoice(VdmslNode):
     """ 項目選択式 """
-    _fields = ('body',)
+    _fields = ('expr', 'ident',)
 
-    def __init__(self, body, lineno, lexpos):
-        self.body = body
+    def __init__(self, expr, ident, lineno, lexpos):
+        self.expr = expr
+        self.ident = ident
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class TupleChoiceExpression(VdmslNode):
+class TupleChoice(VdmslNode):
     """ 組選択式 """
-    _fields = ('body',)
+    _fields = ('expr', 'number',)
 
-    def __init__(self, body, lineno, lexpos):
-        self.body = body
+    def __init__(self, expr, number, lineno, lexpos):
+        self.expr = expr
+        self.number = number
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -781,10 +877,10 @@ class Pattern(VdmslNode):
 
 class PatternIdent(VdmslNode):
     """ パターン識別子 """
-    _fields = ('pattern_ident',)
+    _fields = ('ptn_id',)
 
-    def __init__(self, pattern_ident, lineno, lexpos):
-        self.pattern_ident = pattern_ident
+    def __init__(self, ptn_id, lineno, lexpos):
+        self.ptn_id = ptn_id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -799,10 +895,10 @@ class MatchValue(VdmslNode):
 
 class SetEnumPattern(VdmslNode):
     """ 集合列挙パターン """
-    _fields = ('pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern_list, lineno, lexpos):
-        self.pattern_list = pattern_list
+    def __init__(self, ptn_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -818,10 +914,10 @@ class SetUnionPattern(VdmslNode):
 
 class ColEnumPattern(VdmslNode):
     """ 列列挙パターン """
-    _fields = ('pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern_list, lineno, lexpos):
-        self.pattern_list = pattern_list
+    def __init__(self, ptn_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -866,11 +962,10 @@ class MapMunionPattern(VdmslNode):
 
 class TuplePattern(VdmslNode):
     """ 組パターン """
-    _fields = ('pattern', 'pattern_list',)
+    _fields = ('ptn_list',)
 
-    def __init__(self, pattern, pattern_list, lineno, lexpos):
-        self.pattern = pattern
-        self.pattern_list = pattern_list
+    def __init__(self, pattern_list, lineno, lexpos):
+        self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -955,7 +1050,7 @@ class MultiTypeBinding(VdmslNode):
 # 値定義
 class ValueDefinitionGroup(VdmslNode):
     """ 値定義群 """
-    _fields = ('value_definitions')
+    _fields = ('value_definitions',)
 
     def __init__(self, value_definitions, lineno, lexpos):
         self.value_definitions = value_definitions
@@ -969,6 +1064,7 @@ class ValueDefinition(VdmslNode):
     def __init__(self, pattern, type, expr, lineno, lexpos):
         self.pattern = pattern
         self.type = type
+        self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -1064,7 +1160,7 @@ class ImpOpeDefinition(VdmslNode):
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
-    _fields = ('ext_sec', 'pre_expr', 'post_expr', 'except',)
+    _fields = ('ext_sec', 'pre_expr', 'post_expr', 'exception',)
 
     def __init__(self, ext_sec, pre_expr, post_expr, exception, lineno, lexpos):
         self.ext_sec = ext_sec
@@ -1178,7 +1274,7 @@ class ErrorList(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
-class Error(VdmslNode):
+class ErrorExpr(VdmslNode):
     """ エラー """
     _fields = ('ident', 'left', 'right',)
 
@@ -1322,7 +1418,7 @@ class FunctionBody(VdmslNode):
     """ 関数本体 """
     _fields = ('expression',)
 
-    def __init__(self, expressions, lineno, lexpos):
+    def __init__(self, expression, lineno, lexpos):
         self.expression = expression
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
@@ -1393,7 +1489,7 @@ class EqualDefinition(VdmslNode):
 # ブロック文
 class BlockStatement(VdmslNode):
     """ ブロック文 """
-    _fields =('dcl_stmt', 'statements',)
+    _fields =('dcl_stmt', 'statement',)
 
     def __init__(self, dcl_stmt, statement, lineno, lexpos):
         self.dcl_stmt = dcl_stmt
@@ -1506,7 +1602,7 @@ class CasesStatement(VdmslNode):
     """ cases文 """
     _fields = ('cond', 'case_stmt_options', 'other_stmt',)
 
-    def __init__(self, cond, case_stmt_options, other, lineno, lexpos):
+    def __init__(self, cond, case_stmt_options, other_stmt, lineno, lexpos):
         self.cond = cond
         self.case_stmt_options = case_stmt_options
         self.other_stmt = other_stmt
