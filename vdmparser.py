@@ -1650,13 +1650,14 @@ precedence = (
         ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
         ('right', 'ARROW', 'PARROW'),
         ('left', 'VERTICAL'),
-        ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
-        ('left', 'COLGT', 'RARCOL'),
-        ('right', 'LTCOL', 'LARCOL'),
-        ('left', 'INVERSE'),
-        ('right', 'COMP', 'WASTER'),
+        ('left', 'PLUS', 'MINUS', 'UNION', 'BACKSLASH', 'MUNION', 'WPLUS', 'MUL'),
         ('left', 'ASTER', 'SLASH', 'INTER', 'REM', 'MOD', 'DIV'),
-        ('left', 'PLUS', 'MINUS', 'UNION', 'BACKSLASH', 'MUNION', 'WPLUS', 'MUL')
+        ('left', 'INVERSE'),
+        ('right', 'LTCOL', 'LARCOL'),
+        ('left', 'COLGT', 'RARCOL'),
+        ('left', 'CARD', 'DOM', 'LEN', 'POWER', 'RNG', 'ELEMS', 'ABS', 'DINTER', 'MERGE', 'HD', 'TL', 'FLOOR', 'DUNION', 'CONC', 'INDS'),
+        ('right', 'COMP', 'WASTER'),
+        ('nonassoc', 'LPAR', 'RPAR', 'LBRACK', 'RBRACK', 'LBRACE', 'RBRACE')
     )
 
 # 空（繰り返し対策）
@@ -1691,6 +1692,6 @@ if __name__ == '__main__':
         if not s:
             continue
         result = debug_parser.parse(s, debug=log)
-        print(result)
+        print(result.dumps())
 
 
