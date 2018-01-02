@@ -1692,6 +1692,6 @@ if __name__ == '__main__':
         if not s:
             continue
         result = debug_parser.parse(s, debug=log)
-        print(result.dumps())
+        print(result)
 
 

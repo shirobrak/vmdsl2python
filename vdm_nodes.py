@@ -15,27 +15,29 @@ class VdmslNode(object):
 
     @classmethod
     def _p(self, v, indent):
-        print("{}{}".format(self.SPACER * indent, v))
+        output = "{}{}".format(self.SPACER * indent, v)
+        return output + '\n'
 
     def dumps(self, indent=0):
-        self._p(self.__class__.__name__ + '(', indent)
+        output = ""
+        output += self._p(self.__class__.__name__ + '(', indent)
         for field in self._fields:
-            self._p(field + '=', indent + 1)
+            output += self._p(field + '=', indent + 1)
             value = getattr(self, field)
             if type(value) == list:
                 for value2 in value:
                     if isinstance(value2, VdmslNode):
-                        value2.dumps(indent + 2)
+                        output += value2.dumps(indent + 2)
                     else:
-                        self._p(value2, indent + 2)
+                        output += self._p(value2, indent + 2)
             else:
                 if value:
                     if isinstance(value, VdmslNode):
-                        value.dumps(indent + 2)
+                        output += value.dumps(indent + 2)
                     else:
-                        self._p(value, indent + 2)
-        self._p(')', indent)
-
+                        output += self._p(value, indent + 2)
+        output += self._p(')', indent)
+        return output
 
 # モジュール本体
 
