@@ -1,6 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import ast as pyast
+import re
+
+# 数値リテラル用正規表現
+HEXNUM = re.compile(r"(0x|0X)[0-9a-fA-F]+")
+INTNUM = re.compile(r"\d+((E|e)(\+|\-)?\d+)?")
+FLOATNUM = re.compile(r"\dA+\.(\d+)((E|e)(\+|\-)?\d+)?")
+
 
 class VdmslNode(object):
     SPACER = " "
@@ -251,6 +258,9 @@ class NameBase(VdmslNode):
         self.id = id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.Name(self.id, pyast.Load())
 
 class Name(NameBase):
     """ 名称 """
@@ -268,23 +278,42 @@ class SymbolLiteral(NameBase):
 
 class VdmBool(NameBase):
     """ ブールリテラル """
-    pass
+    def toPy(self):
+        if self.id == 'true':
+            return pyast.NameConstant(True)
+        elif self.id == 'false':
+            return pyast.NameConstant(False)
+        else:
+            return pyast.NameConstant(None)
 
 class VdmNum(NameBase):
     """ 数値リテラル """
-    pass
+    def toPy(self):
+        # 数値型チェック
+        if re.fullmatch(HEXNUM, self.id):
+            return pyast.Num(int(self.id, 16))
+        elif re.fullmatch(FLOATNUM, self.id):
+            print(self.id)
+            return pyast.Num(float(self.id))
+        elif re.fullmatch(INTNUM, self.id):
+            return pyast.Num(int(self.id))
 
 class VdmChar(NameBase):
     """ 文字リテラル """
-    pass
+    def toPy(self):
+        char = self.id.replace('’','')
+        return pyast.Str(char)
 
 class VdmText(NameBase):
     """ テキストリテラル """
-    pass
+    def toPy(self):
+        txt = self.id.replace('"','')
+        return pyast.Str(txt)
 
 class VdmQuote(NameBase):
     """ 引用リテラル """
-    pass
+    def toPy(self):
+        return pyast.Str(self.id)
 
 class TypeName(NameBase):
     """ 型名称 """
