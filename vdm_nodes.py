@@ -401,6 +401,12 @@ class IfExpression(VdmslNode):
         self.else_ = else_
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.elseif:
+            return pyast.If(self.cond.toPy(), self.body.toPy(), [self.elseif.toPy(), self.else_.toPy()])
+        else:
+            return pyast.If(self.cond.toPy(), self.body.toPy(), [self.else_.toPy()])
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
@@ -411,6 +417,9 @@ class ElseIfExpression(VdmslNode):
         self.then = then
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.If(self.cond.toPy(), self.then.toPy())
 
 class CasesExpression(VdmslNode):
     """ cases式 """
@@ -942,6 +951,9 @@ class UnDefExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.NameConstant(None)
 
 # 事前条件式
 class PreCondExpression(VdmslNode):
