@@ -335,7 +335,7 @@ class Expression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
     def toPy(self):
-        return pyast.Expr(self.value.toPy())
+        return pyast.Expression(self.value.toPy())
 
 # 括弧式
 class BracketExpression(VdmslNode):
@@ -448,10 +448,12 @@ class Plus(UnaryBaseExpression):
     pass
 
 class Minus(UnaryBaseExpression):
-    pass
+    def toPy(self):
+        return pyast.UnaryOp(pyast.USub(), self.right.toPy())
 
 class Abs(UnaryBaseExpression):
-    pass
+    def toPy(self):
+        return pyast.Call(pyast.Name('abs', pyast.Load()), [self.right.toPy()], [])
 
 class Floor(UnaryBaseExpression):
     pass
@@ -461,9 +463,12 @@ class Not(UnaryBaseExpression):
         return pyast.UnaryOp(pyast.Not(), self.right.toPy())
 
 class Card(UnaryBaseExpression):
-    pass
+    """ 集合の濃度 """
+    def toPy(self):
+        return pyast.Call(pyast.Name('len', pyast.Load()), [self.right.toPy()], [])
 
 class Power(UnaryBaseExpression):
+    """ べき集合 """
     pass
 
 class Dunion(UnaryBaseExpression):
@@ -515,23 +520,28 @@ class BinBaseExpression(VdmslNode):
 
 class Add(BinBaseExpression):
     """ 加算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Add(), self.right.toPy())
 
 class Sub(BinBaseExpression):
     """ 減算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Sub(), self.right.toPy())
 
 class Mul(BinBaseExpression):
     """ 乗算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Mult(), self.right.toPy())
 
 class Div(BinBaseExpression):
     """ 除算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Div(), self.right.toPy())
 
 class IntDiv(BinBaseExpression):
     """ 整数除算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.FloorDiv(), self.right.toPy())
 
 class Rem(BinBaseExpression):
     """ 剰余算 """
@@ -539,7 +549,8 @@ class Rem(BinBaseExpression):
 
 class Mod(BinBaseExpression):
     """ 法算 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Mod(), self.right.toPy())
 
 class Lt(BinBaseExpression):
     """ より小さい """
@@ -613,15 +624,18 @@ class PSubset(BinBaseExpression):
 
 class Union(BinBaseExpression):
     """ 集合合併 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.BitOr(), self.right.toPy())
 
 class SetDiff(BinBaseExpression):
     """ 集合差 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Sub(), self.right.toPy())
 
 class Inter(BinBaseExpression):
     """ 集合共通部分 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.BitAnd(), self.right.toPy())
 
 class ColLink(BinBaseExpression):
     """ 列連結 """
