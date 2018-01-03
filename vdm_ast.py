@@ -303,6 +303,26 @@ class VdmAstGenerator():
         """ シンボルリテラル ノード作成 """
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
+    def make_bool_ltr(self, tokens):
+        """ ブールリテラル ノード作成 """
+        return VdmBool(tokens[1], tokens.lineno, tokens.lexpos)
+    
+    def make_number_ltr(self, tokens):
+        """ 数値リテラル ノード作成 """
+        return VdmNum(tokens[1], tokens.lineno, tokens.lexpos)
+    
+    def make_char_ltr(self, tokens):
+        """ 文字リテラル ノード作成 """
+        return VdmChar(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_text_ltr(self, tokens):
+        """ テキストリテラル ノード作成 """
+        return VdmText(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_quote_ltr(self, tokens):
+        """ 引用リテラル ノード作成 """
+        return VdmQuote(tokens[1], tokens.lineno, tokens.lexpos)
+
     # 型定義
     def make_type_definition_group(self, tokens):
         return TypeDefinitionGroup(tokens[2], tokens.lineno, tokens.lexpos)

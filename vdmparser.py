@@ -1048,14 +1048,44 @@ def p_oldname(p):
 
 # 記号リテラル
 def p_symbol_ltr(p):
-    """symbol_ltr : NUMLTR
-                  | TRUE
-                  | FALSE
-                  | NIL
-                  | CHARLTR
-                  | TEXTLTR
-                  | QUOTELTR """
-    p[0] = ast.make_symbol_literal(p)
+    """symbol_ltr : bool_ltr
+                  | num_ltr
+                  | nil_ltr
+                  | char_ltr
+                  | text_ltr
+                  | quote_ltr """
+    p[0] = p[1]
+
+# ブールリテラル
+def p_bool_ltr(p):
+    """ bool_ltr : TRUE
+                 | FALSE """
+    p[0] = ast.make_bool_ltr(p)
+
+# 数値リテラル
+def p_num_ltr(p):
+    """ num_ltr : NUMLTR """
+    p[0] = ast.make_number_ltr(p)
+
+# Nilリテラル
+def p_nil_ltr(p):
+    """ nil_ltr : NIL """
+    p[0] = ast.make_nil_ltr(p)
+
+# 文字リテラル
+def p_char_ltr(p):
+    """ char_ltr : CHARLTR """
+    p[0] = ast.make_char_ltr(p)
+
+# テキストリテラル
+def p_text_ltr(p):
+    """ text_ltr : TEXTLTR """
+    p[0] = ast.make_text_ltr(p)
+
+# 引用リテラル
+def p_quote_ltr(p):
+    """ quote_ltr : QUOTELTR """
+    p[0] = ast.make_quote_ltr(p)
 
 # 文構文
 def p_statement(p):
@@ -1676,12 +1706,13 @@ parser = yacc.yacc(start='module_body')
 if __name__ == '__main__':  
     
     import logging
+    import ast as pyast
     log = logging.getLogger()
 
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        debug_parser = yacc.yacc(start='module_body')
+        debug_parser = yacc.yacc(start='expression')
     else:
         debug_parser = yacc.yacc(start=grammer) 
 
@@ -1694,5 +1725,6 @@ if __name__ == '__main__':
             continue
         result = debug_parser.parse(s, debug=log)
         print(result)
+        print(pyast.dump(result.toPy()))
 
 

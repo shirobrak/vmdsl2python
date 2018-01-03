@@ -43,7 +43,7 @@ class VdmslNode(object):
     
     def toPy(self):
         return pyast.AST
-    
+
 # モジュール本体
 
 class ModuleBody(VdmslNode):
@@ -264,6 +264,26 @@ class OldName(NameBase):
 
 class SymbolLiteral(NameBase):
     """ 記号リテラル """
+    pass
+
+class VdmBool(NameBase):
+    """ ブールリテラル """
+    pass
+
+class VdmNum(NameBase):
+    """ 数値リテラル """
+    pass
+
+class VdmChar(NameBase):
+    """ 文字リテラル """
+    pass
+
+class VdmText(NameBase):
+    """ テキストリテラル """
+    pass
+
+class VdmQuote(NameBase):
+    """ 引用リテラル """
     pass
 
 class TypeName(NameBase):
