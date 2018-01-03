@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import ast as pyast
+
 class VdmslNode(object):
     SPACER = " "
     """ VDM-SLのASTノード基底クラス """
@@ -38,7 +40,10 @@ class VdmslNode(object):
                         output += self._p(value, indent + 2)
         output += self._p(')', indent)
         return output
-
+    
+    def toPy(self):
+        return pyast.AST
+    
 # モジュール本体
 
 class ModuleBody(VdmslNode):
@@ -249,11 +254,13 @@ class NameBase(VdmslNode):
 
 class Name(NameBase):
     """ 名称 """
-    pass
+    def toPy(self):
+        return pyast.Name(self.id, pyast.Load())
 
 class OldName(NameBase):
     """ 旧名称 """
-    pass
+    def toPy(self):
+        return pyast.Name(self.id, pyast.Load())
 
 class SymbolLiteral(NameBase):
     """ 記号リテラル """
@@ -277,6 +284,9 @@ class Expression(VdmslNode):
         self.value = value
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        return pyast.Expr(self.value.toPy())
 
 # 括弧式
 class BracketExpression(VdmslNode):
@@ -398,7 +408,8 @@ class Floor(UnaryBaseExpression):
     pass
 
 class Not(UnaryBaseExpression):
-    pass
+    def toPy(self):
+        return pyast.UnaryOp(pyast.Not(), self.right.toPy())
 
 class Card(UnaryBaseExpression):
     pass
@@ -483,59 +494,73 @@ class Mod(BinBaseExpression):
 
 class Lt(BinBaseExpression):
     """ より小さい """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.Lt()], self.right.toPy())
 
 class LtEq(BinBaseExpression):
     """ より小さいか等しい """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.LtE()], self.right.toPy())
 
 class Gt(BinBaseExpression):
     """ より大きい """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.Gt()], self.right.toPy())
 
 class GtEq(BinBaseExpression):
     """ より大きいか等しい """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.GtE()], self.right.toPy())
 
 class Equal(BinBaseExpression):
     """ 相等 """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.Eq()], self.right.toPy())
 
 class NotEq(BinBaseExpression):
     """ 不等 """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.NotEq()], self.right.toPy())
 
 class Or(BinBaseExpression):
     """ 論理和 """
-    pass
+    def toPy(self):
+        return pyast.BoolOp(pyast.Or(), [self.left.toPy(), self.right.toPy()])
 
 class And(BinBaseExpression):
     """ 論理積 """
-    pass
+    def toPy(self):
+        return pyast.BoolOp(pyast.And(), [self.left.toPy(), self.right.toPy()])
 
 class Imp(BinBaseExpression):
     """ 含意 """
-    pass
+    def toPy(self):
+        return pyast.BoolOp(pyast.Or(), [pyast.UnaryOp(pyast.Not(), self.left.toPy()), self.right.toPy()])
 
 class Equivalence(BinBaseExpression):
     """ 同値 """
-    pass
+    def toPy(self):
+        return pyast.BoolOp(pyast.And(), [pyast.BoolOp(pyast.Or(), [pyast.UnaryOp(pyast.Not(), self.left.toPy()), self.right.toPy()]), pyast.BoolOp(pyast.Or(), [pyast.UnaryOp(pyast.Not(), self.right.toPy()), self.left.toPy()])])
 
 class InSet(BinBaseExpression):
     """ 帰属 """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.In()], self.right.toPy())
 
 class NotInSet(BinBaseExpression):
     """ 非帰属 """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.NotIn()], self.right.toPy())
 
 class Subset(BinBaseExpression):
     """ 包含 """
-    pass
-
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.GtE()], self.right.toPy())
+    
 class PSubset(BinBaseExpression):
     """ 真包含 """
-    pass
+    def toPy(self):
+        return pyast.Compare(self.left.toPy(), [pyast.Gt()], self.right.toPy())
 
 class Union(BinBaseExpression):
     """ 集合合併 """
