@@ -404,9 +404,9 @@ class IfExpression(VdmslNode):
     
     def toPy(self):
         if self.elseif:
-            return pyast.If(self.cond.toPy(), self.body.toPy(), [self.elseif.toPy(), self.else_.toPy()])
+            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), [self.elseif.toPy(), self.else_.toPy()])
         else:
-            return pyast.If(self.cond.toPy(), self.body.toPy(), [self.else_.toPy()])
+            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), [self.else_.toPy()])
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
@@ -419,7 +419,7 @@ class ElseIfExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        return pyast.If(self.cond.toPy(), self.then.toPy())
+        return pyast.IfExp(self.cond.toPy(), self.then.toPy())
 
 class CasesExpression(VdmslNode):
     """ cases式 """
@@ -912,6 +912,10 @@ class LambdaExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        args = [x.pattern.toPy() for x in self.type_bind_list]
+        return pyast.Lambda(args, self.body.toPy())
+
 # is式
 class GeneralIsExpression(VdmslNode):
     """ 一般is式 """
@@ -983,6 +987,9 @@ class PatternIdent(VdmslNode):
         self.ptn_id = ptn_id
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.Name(self.ptn_id, pyast.Load())
 
 class MatchValue(VdmslNode):
     """ 一致値 """
