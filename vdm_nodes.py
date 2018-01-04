@@ -454,7 +454,8 @@ class UnaryBaseExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 class Plus(UnaryBaseExpression):
-    pass
+    def toPy(self):
+        return pyast.UnaryOp(pyast.UAdd(), self.right.toPy())
 
 class Minus(UnaryBaseExpression):
     def toPy(self):
@@ -487,34 +488,50 @@ class Dinter(UnaryBaseExpression):
     pass
 
 class Hd(UnaryBaseExpression):
-    pass
+    """ 列の先頭 """
+    def toPy(self):
+        return pyast.Subscript(self.right.toPy(), pyast.Index(pyast.Num(n=0)), pyast.Load())
 
 class Tl(UnaryBaseExpression):
-    pass
+    """ 列の尾部 """
+    def toPy(self):
+        return pyast.Subscript(self.right.toPy(), pyast.Index(pyast.UnaryOp(pyast.USub(), pyast.Num(n=1))), pyast.Load())
 
 class Len(UnaryBaseExpression):
-    pass
+    """ 列の長さ """
+    def toPy(self):
+        return pyast.Call(pyast.Name('len', pyast.Load()), [self.right.toPy()], [])
 
 class Elems(UnaryBaseExpression):
-    pass
+    """ 要素集合 """
+    def toPy(self):
+        return pyast.Call(pyast.Name('set', pyast.Load()), [self.right.toPy()], [])
 
 class Inds(UnaryBaseExpression):
-    pass
+    """ 索引集合 """
+    def toPy(self):
+        return pyast.ListComp(pyast.Name('e', pyast.Load()), [pyast.comprehension(pyast.Name('e', pyast.Store()), pyast.Call(pyast.Name('range', pyast.Load()), [pyast.Call(pyast.Name('len', pyast.Load()), [self.right.toPy()], [])], []), [], 0)])
 
 class Conc(UnaryBaseExpression):
     pass
 
 class Dom(UnaryBaseExpression):
-    pass
+    """ 定義域 """
+    def toPy(self):
+        return pyast.Call(pyast.Name('set', pyast.Load()), [pyast.Call(pyast.Attribute(self.right.toPy(), 'keys', pyast.Load()), [], [])], [])
 
 class Rng(UnaryBaseExpression):
-    pass
+    """ 値域 """
+    def toPy(self):
+        return pyast.Call(pyast.Name('set', pyast.Load()), [pyast.Call(pyast.Attribute(self.right.toPy(), 'values', pyast.Load()), [], [])], [])
 
 class Merge(UnaryBaseExpression):
     pass
 
 class Inverse(UnaryBaseExpression):
-    pass
+    """ 逆写像 """
+    def toPy(self):
+        return pyast.DictComp(pyast.Name('v', pyast.Load()), pyast.Name('k', pyast.Load()), [pyast.comprehension(pyast.Tuple([pyast.Name('k', pyast.Store()), pyast.Name('v', pyast.Store())], pyast.Store()), pyast.Call(pyast.Attribute(self.right.toPy(), 'items', pyast.Load()), [], []), [], 0)])
 
 # 二項式
 class BinBaseExpression(VdmslNode):
@@ -648,15 +665,18 @@ class Inter(BinBaseExpression):
 
 class ColLink(BinBaseExpression):
     """ 列連結 """
-    pass
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Add(), self.right.toPy())
 
 class MapColUpdate(BinBaseExpression):
     """ 写像修正または列修正 """
-    pass
+    def toPy(self):
+        type()
 
 class Munion(BinBaseExpression):
     """ 写像併合 """
-    pass
+    def toPy(self):
+        return pyast.Call(pyast.Attribute(self.left.toPy(), 'update', pyast.Load()), [self.right.toPy()], [])
 
 class MapDomRes(BinBaseExpression):
     """ 写像定義域限定 """
@@ -664,7 +684,8 @@ class MapDomRes(BinBaseExpression):
 
 class MapDomRed(BinBaseExpression):
     """ 写像定義域削減 """
-    pass
+    def toPy(self):
+        return pyast.SetComp(pyast.Call(pyast.Attribute(self.left.toPy(), 'pop', pyast.Load()), [pyast.Name('k', pyast.Load())], []), [pyast.comprehension(pyast.Name('k', pyast.Store()), self.right.toPy(), [pyast.Compare(pyast.Name('k', pyast.Load()), [pyast.In()], [self.left.toPy()])], 0)])
 
 class MapRangeRes(BinBaseExpression):
     """ 写像値域限定 """
