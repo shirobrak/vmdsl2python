@@ -98,39 +98,48 @@ class BasicDataType(VdmslNode):
 
 class BoolType(BasicDataType):
     """ ブール型 """
-    pass
+    def toPy(self):
+        return pyast.Name('bool', pyast.Load())
 
 class NatType(BasicDataType):
     """ Nat型(自然数) """
-    pass
+    def toPy(self):
+        return pyast.Name('nat', pyast.Load())
 
 class Nat1Type(BasicDataType):
     """ Nat1型(正の自然数) """
-    pass
+    def toPy(self):
+        return pyast.Name('nat1', pyast.Load())
 
 class IntType(BasicDataType):
     """ Int型(整数) """
-    pass
+    def toPy(self):
+        return pyast.Name('int', pyast.Load())
 
 class RatType(BasicDataType):
     """ Rat型(有理数) """
-    pass
+    def toPy(self):
+        return pyast.Name('rat', pyast.Load())
 
 class RealType(BasicDataType):
     """ Real型(実数) """
-    pass
+    def toPy(self):
+        return pyast.Name('real', pyast.Load())
 
 class CharType(BasicDataType):
     """ 文字型 """
-    pass
+    def toPy(self):
+        return pyast.Name('char', pyast.Load())
 
 class QuoteType(BasicDataType):
     """ 引用型 """
-    pass
+    def toPy(self):
+        return pyast.Name('quote', pyast.Load())
 
 class TokenType(BasicDataType):
     """ トークン型 """
-    pass
+    def toPy(self):
+        return pyast.Name('token', pyast.Load())
 
 # 合成型
 class SyntheticDataType(VdmslNode):
@@ -293,7 +302,6 @@ class VdmNum(NameBase):
         if re.fullmatch(HEXNUM, self.id):
             return pyast.Num(int(self.id, 16))
         elif re.fullmatch(FLOATNUM, self.id):
-            print(self.id)
             return pyast.Num(float(self.id))
         elif re.fullmatch(INTNUM, self.id):
             return pyast.Num(int(self.id))
@@ -317,7 +325,8 @@ class VdmQuote(NameBase):
 
 class TypeName(NameBase):
     """ 型名称 """
-    pass
+    def toPy(self):
+        return self.id.toPy()
 
 class TypeVariableIdent(NameBase):
     """ 型変数識別子 """
@@ -335,7 +344,7 @@ class Expression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
     def toPy(self):
-        return pyast.Expression(self.value.toPy())
+        return self.value.toPy()
 
 # 括弧式
 class BracketExpression(VdmslNode):
@@ -404,9 +413,10 @@ class IfExpression(VdmslNode):
     
     def toPy(self):
         if self.elseif:
+            # Python のIf式は条件式が一つしかおけない (else ifが無い)
             return pyast.IfExp(self.cond.toPy(), self.body.toPy(), [self.elseif.toPy(), self.else_.toPy()])
         else:
-            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), [self.else_.toPy()])
+            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), self.else_.toPy())
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
@@ -581,32 +591,32 @@ class Mod(BinBaseExpression):
 class Lt(BinBaseExpression):
     """ より小さい """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.Lt()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.Lt()], [self.right.toPy()])
 
 class LtEq(BinBaseExpression):
     """ より小さいか等しい """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.LtE()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.LtE()], [self.right.toPy()])
 
 class Gt(BinBaseExpression):
     """ より大きい """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.Gt()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.Gt()], [self.right.toPy()])
 
 class GtEq(BinBaseExpression):
     """ より大きいか等しい """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.GtE()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.GtE()], [self.right.toPy()])
 
 class Equal(BinBaseExpression):
     """ 相等 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.Eq()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.Eq()], [self.right.toPy()])
 
 class NotEq(BinBaseExpression):
     """ 不等 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.NotEq()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.NotEq()], [self.right.toPy()])
 
 class Or(BinBaseExpression):
     """ 論理和 """
@@ -631,22 +641,22 @@ class Equivalence(BinBaseExpression):
 class InSet(BinBaseExpression):
     """ 帰属 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.In()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.In()], [self.right.toPy()])
 
 class NotInSet(BinBaseExpression):
     """ 非帰属 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.NotIn()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.NotIn()], [self.right.toPy()])
 
 class Subset(BinBaseExpression):
     """ 包含 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.GtE()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.GtE()], [self.right.toPy()])
     
 class PSubset(BinBaseExpression):
     """ 真包含 """
     def toPy(self):
-        return pyast.Compare(self.left.toPy(), [pyast.Gt()], self.right.toPy())
+        return pyast.Compare(self.left.toPy(), [pyast.Gt()], [self.right.toPy()])
 
 class Union(BinBaseExpression):
     """ 集合合併 """
@@ -1285,6 +1295,12 @@ class ImpOpeDefinition(VdmslNode):
         self.imp_body = imp_body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        name = self.ident
+        args = self.param_type.toPy()
+        body = [pyast.Pass()]
+        return pyast.FunctionDef(name, args, body, [], None)
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
@@ -1467,6 +1483,12 @@ class ImpFuncDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        name = self.ident
+        args = self.param_type.toPy()
+        body = [pyast.Pass()]
+        return pyast.FunctionDef(name, args, body, [], None)
+
 class ExpandExpFuncDefinition(VdmslNode):
     """ 拡張陽関数定義 """
     _fields = ('ident', 'type_variable_list', 'param_type', 'ident_type_pair_list',
@@ -1521,6 +1543,9 @@ class ParamType(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        return self.pattern_type_pair_list.toPy()
+
 class PatternTypePairList(VdmslNode):
     """ パターン型ペアリスト """
     _fields = ('pattern_type_pairs',)
@@ -1529,6 +1554,14 @@ class PatternTypePairList(VdmslNode):
         self.pattern_type_pairs = pattern_type_pairs
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        arg_list = []
+        for ptn_pair in self.pattern_type_pairs:
+            type = ptn_pair.type
+            ptn_list = ptn_pair.pattern_list
+            arg_list += [ pyast.arg(ptn.toPy().id, type.toPy()) for ptn in ptn_list.patterns ]
+        return pyast.arguments(arg_list, None, [], [], None, [])
 
 class PatternTypePair(VdmslNode):
     """ パターン型ペア """
