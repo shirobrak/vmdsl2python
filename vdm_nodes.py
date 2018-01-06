@@ -62,6 +62,11 @@ class ModuleBody(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
+    def toPy(self):
+        stmt_list = []
+        for block in self.blocks:
+            stmt_list += block.toPy()
+        return pyast.Module(stmt_list)
 
 # データ型定義
 
@@ -1195,6 +1200,10 @@ class ValueDefinitionGroup(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    # 出力 stmt* body
+    def toPy(self):
+        return [stmt.toPy() for stmt in self.value_definitions]
+
 class ValueDefinition(VdmslNode):
     """ 値定義 """
     _fields = ('pattern', 'type', 'expr',)
@@ -1205,6 +1214,13 @@ class ValueDefinition(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.type == None:
+            return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
+        else:
+            return pyast.AnnAssign(self.pattern.toPy(), self.type.toPy(), self.expr.toPy(), 1)
+        
 
 # 状態定義
 class StateDefinition(VdmslNode):
@@ -1438,6 +1454,10 @@ class FuncDefinitionGroup(VdmslNode):
         self.function_definitions = function_definitions
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+     # 出力 stmt* body
+    def toPy(self):
+        return [stmt.toPy() for stmt in self.function_definitions]
 
 class FuncDefinition(VdmslNode):
     """ 関数定義 """
@@ -1447,6 +1467,9 @@ class FuncDefinition(VdmslNode):
         self.function_definition = function_definition
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        return self.function_definition.toPy()
 
 class ExpFuncDefinition(VdmslNode):
     """ 陽関数定義 """
