@@ -626,7 +626,12 @@ class IntDiv(BinBaseExpression):
 
 class Rem(BinBaseExpression):
     """ 剰余算 """
-    pass
+    def toPy(self):
+        attr = 'rem'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Mod(BinBaseExpression):
     """ 法算 """
