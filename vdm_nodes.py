@@ -1028,6 +1028,13 @@ class RecordConExpression(VdmslNode):
         self.expr_list = expr_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        exprs = [ expr.toPy() for expr in self.expr_list ]
+        func = self.record_name.toPy()
+        args = [ e for e in exprs ]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class RecordModExpression(VdmslNode):
     """ レコード修正子 """
@@ -1038,6 +1045,9 @@ class RecordModExpression(VdmslNode):
         self.record_update_list = record_update_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        pass
 
 class RecordUpdateExpression(VdmslNode):
     """ レコード修正 """
@@ -1069,6 +1079,12 @@ class ItemChoice(VdmslNode):
         self.ident = ident
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        value = self.expr.toPy()
+        attr = self.ident
+        ctx = pyast.Store()
+        return pyast.Attribute(value, attr, ctx)
 
 class TupleChoice(VdmslNode):
     """ 組選択式 """
