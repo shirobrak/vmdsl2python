@@ -202,7 +202,7 @@ class VdmAstGenerator():
 
     def make_set_range_expression(self, tokens):
         """ 集合範囲式 ノード作成 """
-        return SetRangeExpression(tokens[2], tokens[6], tokens.lineno, tokens.lexpos)
+        return SetRangeExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_column_enumeration(self, tokens):
         """ 列列挙 ノード作成 """
@@ -234,7 +234,8 @@ class VdmAstGenerator():
 
     def make_tuple_constructor(self, tokens):
         """ 組構成子 ノード作成　"""
-        return TupleConExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+        elts = [tokens[3]]+tokens[5]
+        return TupleConExpression(elts, tokens.lineno, tokens.lexpos)
 
     def make_record_constructor(self, tokens):
         """ レコード構成子 ノード作成 """

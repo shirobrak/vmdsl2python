@@ -1006,11 +1006,10 @@ class MapCompExpression(VdmslNode):
 # 組構成子式
 class TupleConExpression(VdmslNode):
     """ 組構成子 """
-    _fields = ('body', 'expr_list',)
+    _fields = ('elts',)
 
-    def __init__(self, body, expr_list, lineno, lexpos):
-        self.body = body
-        self.expr_list = expr_list
+    def __init__(self, elts, lineno, lexpos):
+        self.elts = elts
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
