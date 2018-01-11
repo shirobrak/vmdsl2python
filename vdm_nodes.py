@@ -360,6 +360,9 @@ class BracketExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return self.body.toPy()
 
 # let式
 class LetExpression(VdmslNode):
@@ -770,6 +773,12 @@ class SetEnumExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        # 集合の集合対策してない. 
+        # リストの対策も. 
+        elts = [ e.toPy() for e in self.expr_list ]
+        return pyast.Set(elts)
+
 class SetCompExpression(VdmslNode):
     """ 集合内包 """
     _fields = ('body', 'bind_list', 'predicate',)
@@ -781,6 +790,17 @@ class SetCompExpression(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        # 集合束縛のパターンは1つしか受け付けれない
+        elt = self.body.toPy()
+        binding = self.bind_list[0]
+        target = binding.pattern_list.toPy()[0]
+        iter = binding.expr.toPy()
+        ifs = [self.predicate.toPy()]
+        generators = [pyast.comprehension(target, iter, ifs, 0)]
+        return pyast.SetComp(elt, generators)
+        
+
 class SetRangeExpression(VdmslNode):
     """ 集合範囲式 """
     _fields = ('start','end',)
@@ -790,6 +810,17 @@ class SetRangeExpression(VdmslNode):
         self.end = end
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        elt = pyast.Name('e', pyast.Load())
+        start = self.start.toPy()
+        if type(self.end.toPy()) == pyast.Num:
+            end = pyast.Num(self.end.toPy().n+1)
+        else:
+            end = pyast.BinOp(self.end.toPy(), pyast.Add(), pyast.Num(1))
+        generators = [pyast.comprehension(pyast.Name('e', pyast.Store()), 
+                      pyast.Call(pyast.Name('range', pyast.Load()), [start, end], []), [], 0)]
+        return pyast.SetComp(elt, generators)
 
 # 列式
 class ColEnumExpression(VdmslNode):
@@ -800,6 +831,10 @@ class ColEnumExpression(VdmslNode):
         self.expr_list = expr_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self): 
+        elts = [ e.toPy() for e in self.expr_list ]
+        return pyast.List(elts, pyast.Load())
 
 class ColCompExpression(VdmslNode):
     """ 列内包 """
@@ -811,6 +846,15 @@ class ColCompExpression(VdmslNode):
         self.predicate = predicate
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        # 集合束縛のパターンは1つしか受け付けれない
+        elt = self.body.toPy()
+        target = self.set_bind.pattern.toPy()
+        iter = self.set_bind.expr.toPy()
+        ifs = [self.predicate.toPy()]
+        generators = [pyast.comprehension(target, iter, ifs, 0)]
+        return pyast.ListComp(elt, generators)
 
 class SubseqExpression(VdmslNode):
     """ 部分列 """
@@ -822,6 +866,21 @@ class SubseqExpression(VdmslNode):
         self.end = end
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        value = self.column.toPy()
+        if type(self.start.toPy()) == pyast.Num:
+            lower = pyast.Num(self.start.toPy().n-1)
+        else:
+            lower = pyast.BinOp(self.start.toPy(), pyast.Sub(), pyast.Num(1))
+        if type(self.end.toPy()) == pyast.Num:
+            upper = pyast.Num(self.end.toPy().n-1)
+        else:
+            upper = pyast.BinOp(self.end.toPy(), pyast.Sub(), pyast.Num(1))
+        slice = pyast.Slice(lower, upper, None)
+        ctx = pyast.Load()
+        return pyast.Subscript(value, slice, ctx)
+        
 
 # 写像式
 class MapEnumExpression(VdmslNode):
@@ -832,6 +891,14 @@ class MapEnumExpression(VdmslNode):
         self.map_list = map_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        keys = []
+        values = []
+        for map in self.map_list:
+            keys.append(map.dom.toPy())
+            values.append(map.range.toPy())
+        return pyast.Dict(keys, values)
 
 class MapExpression(VdmslNode):
     """ 写像 """
@@ -853,6 +920,18 @@ class MapCompExpression(VdmslNode):
         self.predicate = predicate
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        # 写像束縛のパターンは1つしか受け付けれない
+        key = self.map.dom.toPy()
+        value = self.map.range.toPy()
+        binding = self.bind_list[0]
+        elts = [ e for e in binding.pattern_list.toPy() ]
+        target = pyast.Tuple(elts, pyast.Store())
+        iter = binding.expr.toPy()
+        ifs = [self.predicate.toPy()]
+        generators = [pyast.comprehension(target, iter, ifs, 0)]
+        return pyast.DictComp(key, value, generators)
         
 # 組構成子式
 class TupleConExpression(VdmslNode):
@@ -1035,6 +1114,8 @@ class MatchValue(VdmslNode):
         self.match_value = match_value
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    def toPy(self):
+        return self.match_value.toPy()
 
 class SetEnumPattern(VdmslNode):
     """ 集合列挙パターン """
@@ -1044,6 +1125,10 @@ class SetEnumPattern(VdmslNode):
         self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        elts = [ ptn.toPy() for ptn in self.ptn_list ]
+        return pyast.Set(elts)
 
 class SetUnionPattern(VdmslNode):
     """ 集合合併パターン """
@@ -1054,6 +1139,9 @@ class SetUnionPattern(VdmslNode):
         self.right = right
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.BitOr(), self.right.toPy())
 
 class ColEnumPattern(VdmslNode):
     """ 列列挙パターン """
@@ -1063,6 +1151,10 @@ class ColEnumPattern(VdmslNode):
         self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        elts = [ ptn.toPy() for ptn in self.ptn_list ]
+        return List(elts, pyast.Load())
 
 class ColLinkPattern(VdmslNode):
     """ 列連結パターン """
@@ -1073,6 +1165,9 @@ class ColLinkPattern(VdmslNode):
         self.right = right
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.BinOp(self.left.toPy(), pyast.Add(), self.right.toPy())
 
 class MapEnumPattern(VdmslNode):
     """ 写像列挙パターン """
@@ -1082,14 +1177,22 @@ class MapEnumPattern(VdmslNode):
         self.map_pattern_list = map_pattern_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
+    def toPy(self):
+        keys = []
+        values = []
+        for map_ptn in self.map_pattern_list:
+            keys.append(map_ptn.key.toPy())
+            values.append(map_ptn.value.toPy())
+        return pyast.Dict(keys, values)
+        
 class MapPattern(VdmslNode):
     """ 写パターン """
-    _fields = ('left', 'right',)
+    _fields = ('key', 'value',)
 
-    def __init__(self, left, right, lineno, lexpos):
-        self.left = left
-        self.right = right
+    def __init__(self, key, value, lineno, lexpos):
+        self.key = key
+        self.value = value
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
@@ -1102,6 +1205,9 @@ class MapMunionPattern(VdmslNode):
         self.right = right
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return pyast.Call(pyast.Attribute(self.left.toPy(), 'update', pyast.Load()), [self.right.toPy()], [])
 
 class TuplePattern(VdmslNode):
     """ 組パターン """
@@ -1141,6 +1247,9 @@ class SetBinding(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return 
 
 class TypeBinding(VdmslNode):
     """ 型束縛 """
@@ -1160,7 +1269,7 @@ class BindingList(VdmslNode):
         self.multi_bindings = multi_bindings
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
 class MultiBinding(VdmslNode):
     """ 多重束縛 """
     _fields = ('bindings',)
@@ -1377,7 +1486,10 @@ class PatternList(VdmslNode):
         self.patterns = patterns
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
+    def toPy(self):
+        return [ p.toPy() for p in self.patterns ] 
+        
 class OperationBody(VdmslNode):
     """ 操作本体 """
     _fields = ('statement',)
