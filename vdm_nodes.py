@@ -3,6 +3,9 @@
 import ast as pyast
 import re
 
+# 定数
+VDMFUNC_MODULE_NAME = 'vdmslfunc'
+
 # 数値リテラル用正規表現
 HEXNUM = re.compile(r"(0x|0X)[0-9a-fA-F]+")
 INTNUM = re.compile(r"\d+((E|e)(\+|\-)?\d+)?")
@@ -472,21 +475,31 @@ class UnaryBaseExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 class Plus(UnaryBaseExpression):
+    """ 正符号 """
     def toPy(self):
         return pyast.UnaryOp(pyast.UAdd(), self.right.toPy())
 
 class Minus(UnaryBaseExpression):
+    """ 負符号 """
     def toPy(self):
         return pyast.UnaryOp(pyast.USub(), self.right.toPy())
 
 class Abs(UnaryBaseExpression):
+    """ 算術絶対値 """
     def toPy(self):
         return pyast.Call(pyast.Name('abs', pyast.Load()), [self.right.toPy()], [])
 
 class Floor(UnaryBaseExpression):
-    pass
+    """ 底値 """
+    def toPy(self):
+        attr = 'floor'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Not(UnaryBaseExpression):
+    """ 否定 """
     def toPy(self):
         return pyast.UnaryOp(pyast.Not(), self.right.toPy())
 
@@ -497,13 +510,30 @@ class Card(UnaryBaseExpression):
 
 class Power(UnaryBaseExpression):
     """ べき集合 """
-    pass
+    def toPy(self):
+        attr = 'power'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Dunion(UnaryBaseExpression):
-    pass
+    """ 分配的集合合併 """
+    def toPy(self):
+        attr = 'dunion'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Dinter(UnaryBaseExpression):
-    pass
+    """ 分配的集合共通部分 """
+    def toPy(self):
+        attr = 'dinter'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Hd(UnaryBaseExpression):
     """ 列の先頭 """
@@ -531,7 +561,13 @@ class Inds(UnaryBaseExpression):
         return pyast.ListComp(pyast.Name('e', pyast.Load()), [pyast.comprehension(pyast.Name('e', pyast.Store()), pyast.Call(pyast.Name('range', pyast.Load()), [pyast.Call(pyast.Name('len', pyast.Load()), [self.right.toPy()], [])], []), [], 0)])
 
 class Conc(UnaryBaseExpression):
-    pass
+    """ 分配的列連結 """
+    def toPy(self):
+        attr = 'conc'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Dom(UnaryBaseExpression):
     """ 定義域 """
@@ -544,6 +580,7 @@ class Rng(UnaryBaseExpression):
         return pyast.Call(pyast.Name('set', pyast.Load()), [pyast.Call(pyast.Attribute(self.right.toPy(), 'values', pyast.Load()), [], [])], [])
 
 class Merge(UnaryBaseExpression):
+    """ 分配的写像併合 """
     pass
 
 class Inverse(UnaryBaseExpression):
