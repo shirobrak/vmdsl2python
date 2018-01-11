@@ -52,6 +52,7 @@ class VdmslNode(object):
         return output
     
     def toPy(self):
+        """ this func is converter VDM-SL Node to Python Node of ast module """
         return pyast.AST
 
 # モジュール本体
@@ -731,7 +732,11 @@ class ColLink(BinBaseExpression):
 class MapColUpdate(BinBaseExpression):
     """ 写像修正または列修正 """
     def toPy(self):
-        type()
+        attr = 'map_or_list_update'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Munion(BinBaseExpression):
     """ 写像併合 """
