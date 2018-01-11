@@ -587,7 +587,11 @@ class Merge(UnaryBaseExpression):
 class Inverse(UnaryBaseExpression):
     """ 逆写像 """
     def toPy(self):
-        return pyast.DictComp(pyast.Name('v', pyast.Load()), pyast.Name('k', pyast.Load()), [pyast.comprehension(pyast.Tuple([pyast.Name('k', pyast.Store()), pyast.Name('v', pyast.Store())], pyast.Store()), pyast.Call(pyast.Attribute(self.right.toPy(), 'items', pyast.Load()), [], []), [], 0)])
+        attr = 'map_inverse'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 # 二項式
 class BinBaseExpression(VdmslNode):
@@ -745,20 +749,39 @@ class Munion(BinBaseExpression):
 
 class MapDomRes(BinBaseExpression):
     """ 写像定義域限定 """
-    pass
+    def toPy(self):
+        attr = 'limit_map_dom'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class MapDomRed(BinBaseExpression):
     """ 写像定義域削減 """
     def toPy(self):
-        return pyast.SetComp(pyast.Call(pyast.Attribute(self.left.toPy(), 'pop', pyast.Load()), [pyast.Name('k', pyast.Load())], []), [pyast.comprehension(pyast.Name('k', pyast.Store()), self.right.toPy(), [pyast.Compare(pyast.Name('k', pyast.Load()), [pyast.In()], [self.left.toPy()])], 0)])
+        attr = 'reduce_map_dom'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class MapRangeRes(BinBaseExpression):
     """ 写像値域限定 """
-    pass
+    def toPy(self):
+        attr = 'limit_map_range'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class MapRangeRed(BinBaseExpression):
     """ 写像値域削減 """
-    pass
+    def toPy(self):
+        attr = 'reduce_map_range'
+        func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, pyast.Load()), attr, pyast.Load())
+        args = [self.left.toPy(), self.right.toPy()]
+        keywords = []
+        return pyast.Call(func, args, keywords)
 
 class Comp(BinBaseExpression):
     """ 合成 """
