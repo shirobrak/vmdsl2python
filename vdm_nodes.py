@@ -1012,6 +1012,11 @@ class TupleConExpression(VdmslNode):
         self.elts = elts
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        elts = [e.toPy() for e in self.elts]
+        ctx = pyast.Load()
+        return pyast.Tuple(elts, ctx)
 
 # レコード式
 class RecordConExpression(VdmslNode):
@@ -1067,13 +1072,19 @@ class ItemChoice(VdmslNode):
 
 class TupleChoice(VdmslNode):
     """ 組選択式 """
-    _fields = ('expr', 'number',)
+    _fields = ('expr', 'index',)
 
-    def __init__(self, expr, number, lineno, lexpos):
+    def __init__(self, expr, index, lineno, lexpos):
         self.expr = expr
-        self.number = number
+        self.index = index
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        value = self.expr.toPy()
+        slice = pyast.Index(pyast.Num(int(self.index)))
+        ctx = pyast.Load()
+        return pyast.Subscript(value, slice, ctx)
 
 class FuncInstExpression(VdmslNode):
     """ 関数型インスタンス化 """
@@ -1282,10 +1293,15 @@ class TuplePattern(VdmslNode):
     """ 組パターン """
     _fields = ('ptn_list',)
 
-    def __init__(self, pattern_list, lineno, lexpos):
+    def __init__(self, ptn_list, lineno, lexpos):
         self.ptn_list = ptn_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        elts = [e.toPy() for e in self.ptn_list]
+        ctx = pyast.Load()
+        return pyast.Tuple(elts, ctx)
 
 class RecordPattern(VdmslNode):
     """ レコードパターン """
