@@ -378,7 +378,18 @@ class LetExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
+    def toPy(self):
+        body = self.body.toPy()
+        ptns = []
+        exprs = []
+        for ld in self.local_definition:
+            ptns += [pyast.arg(ld.definition.pattern.toPy(), None)]
+            exprs += [ld.definition.expr.toPy()]
+        args = pyast.arguments(ptns, None, [], [], None, [])
+        func = pyast.Lambda(args, body)
+        return pyast.Call(func, exprs,[])
+         
 class LetBeExpression(VdmslNode):
     """ letbe式 """
     _fields = ('binding', 'option_expr', 'body',)
@@ -401,6 +412,17 @@ class DefExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        body = self.body.toPy()
+        pbs = []
+        exprs = []
+        for pb in self.pattern_binding:
+            pbs += [pyast.arg(pb.ptn_binding.toPy(), None)]
+            exprs += [pb.expr.toPy()]
+        args = pyast.arguments(pbs, None, [], [], None, [])
+        func = pyast.Lambda(args, body)
+        return pyast.Call(func, exprs,[])
 
 class DefPtnBinding(VdmslNode):
     """ def式 パターン束縛&式の組 """
