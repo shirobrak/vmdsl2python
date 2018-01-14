@@ -913,6 +913,15 @@ class IotaExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ctx = pyast.Load()
+        cond_args = pyast.arguments([self.bind.bindings.pattern.toPy()], None, [], [], None, [])
+        cond_expr = pyast.Lambda(cond_args, self.body.toPy())
+        attr = 'iota'
+        call_func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, ctx), attr, ctx)
+        call_args = [self.bind.bindings.expr.toPy(), cond_expr]
+        return pyast.Call(call_func, call_args, [])
 
 # 集合式
 class SetEnumExpression(VdmslNode):
