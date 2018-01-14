@@ -1159,6 +1159,11 @@ class AppExpression(VdmslNode):
         self.expr_list = expr_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        func = self.body.toPy()
+        args = [ e.toPy() for e in self.expr_list ]
+        return pyast.Call(func, args, [])
 
 class ItemChoice(VdmslNode):
     """ 項目選択式 """
