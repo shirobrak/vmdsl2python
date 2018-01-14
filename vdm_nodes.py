@@ -446,11 +446,16 @@ class IfExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        if self.elseif:
-            # Python のIf式は条件式が一つしかおけない (else ifが無い)
-            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), [self.elseif.toPy(), self.else_.toPy()])
-        else:
-            return pyast.IfExp(self.cond.toPy(), self.body.toPy(), self.else_.toPy())
+        el = self.else_
+        def create_orelse(elifs):
+            if elifs == []:
+                return el.toPy()
+            elif len(elifs) == 1:
+                return pyast.IfExp(elifs[0].cond.toPy(), elifs[0].then.toPy(), el.toPy())
+            else:
+                return pyast.IfExp(elifs[0].cond.toPy(), elifs[0].then.toPy(), create_orelse(elifs[1:]))
+
+        return pyast.IfExp(self.cond.toPy(), self.body.toPy(), create_orelse(self.elseif))
 
 class ElseIfExpression(VdmslNode):
     """ elseif式 """
@@ -461,9 +466,6 @@ class ElseIfExpression(VdmslNode):
         self.then = then
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-    
-    def toPy(self):
-        return pyast.IfExp(self.cond.toPy(), self.then.toPy())
 
 class CasesExpression(VdmslNode):
     """ cases式 """
@@ -475,7 +477,25 @@ class CasesExpression(VdmslNode):
         self.other = other
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        cond = self.cond.toPy()
+        ops = [pyast.Eq()]
 
+        def make_comp_expr(comparators):
+            return pyast.Compare(cond, ops, comparators.toPy())
+
+        def make_case_group(cgs):
+            if len(cgs) == 1:
+                if self.other == []:
+                    return pyast.IfExp(make_comp_expr(cgs[0].pattern_list), cgs[0].expr.toPy(), None)
+                else:
+                    return pyast.IfExp(make_comp_expr(cgs[0].pattern_list), cgs[0].expr.toPy(), self.other.toPy())
+            else:
+                return pyast.IfExp(make_comp_expr(cgs[0].pattern_list), cgs[0].expr.toPy(), make_case_group(cgs[1:]))
+
+        return make_case_group(self.case_group)
+        
 class CasesExprOption(VdmslNode):
     """ cases式選択肢 """
     _fields = ('pattern_list', 'expr',)

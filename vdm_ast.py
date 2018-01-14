@@ -170,7 +170,7 @@ class VdmAstGenerator():
 
     def make_cases_expression(self, tokens):
         """ cases 式 ノード作成 """
-        return CasesExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return CasesExpression(tokens[2], [tokens[4]]+tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_cases_expr_option(self, tokens):
         """ cases 式選択肢 """
@@ -738,7 +738,7 @@ class VdmAstGenerator():
         if len(tokens) == 4:
             return MatchValue(tokens[2], tokens.lineno, tokens.lexpos)
         else:
-            return MatchValue(tokens[1])
+            return MatchValue(tokens[1], tokens.lineno, tokens.lexpos)
     
     def make_set_enumration_pattern(self, tokens):
         if len(tokens) == 4:
