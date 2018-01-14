@@ -1214,7 +1214,7 @@ class LambdaExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
     def toPy(self):
-        args = [x.pattern.toPy() for x in self.type_bind_list]
+        args = pyast.arguments([x.pattern.toPy() for x in self.type_bind_list], None, [], [], None, [])
         return pyast.Lambda(args, self.body.toPy())
 
 # is式
