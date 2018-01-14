@@ -843,6 +843,21 @@ class ForallExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ptns = []
+        binds = []
+        for e in self.bind_list:
+            ptns += e.pattern_list.patterns
+            binds += [e.expr.toPy()]
+        
+        ctx = pyast.Load()
+        args = pyast.arguments([pyast.arg(p.toPy(), None) for p in ptns], None, [], [], None, [])
+        cond_expr = pyast.Lambda(args, self.body.toPy())
+        attr = 'forall'
+        call_func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, ctx), attr, ctx)
+        call_args = [pyast.List(binds, ctx), cond_expr]
+        return pyast.Call(call_func, call_args, [])
 
 class ExistsExpression(VdmslNode):
     """ 存在限量式 """
@@ -853,6 +868,21 @@ class ExistsExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ptns = []
+        binds = []
+        for e in self.bind_list:
+            ptns += e.pattern_list.patterns
+            binds += [e.expr.toPy()]
+        
+        ctx = pyast.Load()
+        args = pyast.arguments([pyast.arg(p.toPy(), None) for p in ptns], None, [], [], None, [])
+        cond_expr = pyast.Lambda(args, self.body.toPy())
+        attr = 'exists'
+        call_func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, ctx), attr, ctx)
+        call_args = [pyast.List(binds, ctx), cond_expr]
+        return pyast.Call(call_func, call_args, [])
 
 class Exist1Expression(VdmslNode):
     """ 1存在限量式 """
@@ -863,6 +893,15 @@ class Exist1Expression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ctx = pyast.Load()
+        cond_args = pyast.arguments([self.bind.bindings.pattern.toPy()], None, [], [], None, [])
+        cond_expr = pyast.Lambda(cond_args, self.body.toPy())
+        attr = 'exists1'
+        call_func = pyast.Attribute(pyast.Name(VDMFUNC_MODULE_NAME, ctx), attr, ctx)
+        call_args = [self.bind.bindings.expr.toPy(), cond_expr]
+        return pyast.Call(call_func, call_args, [])
 
 # iota式
 class IotaExpression(VdmslNode):
@@ -1412,7 +1451,7 @@ class BindingList(VdmslNode):
         self.multi_bindings = multi_bindings
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-    
+            
 class MultiBinding(VdmslNode):
     """ 多重束縛 """
     _fields = ('bindings',)
