@@ -1201,7 +1201,7 @@ class FuncInstExpression(VdmslNode):
         self.type_list = type_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
 # ラムダ式
 class LambdaExpression(VdmslNode):
     """ ラムダ式 """
@@ -1236,6 +1236,13 @@ class IsExpression(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ctx = pyast.Load()
+        call = pyast.Call(pyast.Name('type', ctx), [self.body.toPy()], [])
+        ops = [pyast.Eq()]
+        comparators = [pyast.Name(self.type_name, ctx)]
+        return pyast.Compare(call, ops, comparators)
 
 class TypeJudgeExpression(VdmslNode):
     """ 型判定 """
@@ -1246,6 +1253,13 @@ class TypeJudgeExpression(VdmslNode):
         self.type_name = type_name
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ctx = pyast.Load()
+        call = pyast.Call(pyast.Name('type', ctx), [self.body.toPy()], [])
+        ops = [pyast.Eq()]
+        comparators = [self.type_name.toPy()]
+        return pyast.Compare(call, ops, comparators)
 
 # 未定義式
 class UnDefExpression(VdmslNode):
