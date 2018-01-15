@@ -2178,6 +2178,26 @@ class CasesStatement(VdmslNode):
         self.other_stmt = other_stmt
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        cond = self.cond.toPy()
+        ops = [pyast.Eq()]
+
+        def make_test_expr(comparators):
+            return pyast.Compare(cond, ops, comparators.toPy())
+
+        def convert_cases_to_if_stmt(cgs):
+            test_expr = make_test_expr(cgs[0].pattern_list)
+            body_stmts = cgs[0].statement.toPy()
+            if len(cgs) == 1:
+                if self.other_stmt == []:
+                    return [pyast.If(test_expr, body_stmts, [])]
+                else:
+                    return [pyast.If(test_expr, body_stmts, self.other_stmt.toPy())]
+            else:
+                return pyast.If(test_expr, body_stmts, convert_cases_to_if_stmt(cgs[1:]))
+
+        return [convert_cases_to_if_stmt(self.case_stmt_options)]
 
 class CaseStmtOption(VdmslNode):
     """ case文選択肢 """
