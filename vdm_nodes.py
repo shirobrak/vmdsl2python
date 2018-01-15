@@ -2298,7 +2298,13 @@ class NonDeterminationStatement(VdmslNode):
         self.statements = statements
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
+    def toPy(self):
+        stmts = []
+        for stmt in self.statements:
+            stmts += stmt.toPy()
+        return stmts
+        
 # call文
 class CallStatement(VdmslNode):
     """ call文 """
