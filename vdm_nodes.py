@@ -2082,7 +2082,7 @@ class StatusIndicator(VdmslNode):
 
     def __init__(self, indicator, lineno, lexpos):
         self.indicator = indicator
-        self.indicator = lineno
+        self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
 class ItemReference(VdmslNode):
@@ -2094,6 +2094,11 @@ class ItemReference(VdmslNode):
         self.ident = ident
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        value = self.status_indicator.toPy()
+        attr = self.ident
+        return pyast.Attribute(value, attr, pyast.Load())
 
 class MapOrColReference(VdmslNode):
     """ 写像参照または列参照 """
