@@ -2406,6 +2406,9 @@ class Error(VdmslNode):
     def __init__(self, lineno, lexpos):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return [pyast.Raise(None, None)]
 
 # 恒等文
 class Skip(VdmslNode):
