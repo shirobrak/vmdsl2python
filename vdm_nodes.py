@@ -2257,6 +2257,22 @@ class IndexForStatement(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+
+        def set_iter_args(s, e, step):
+            """ range の引数設定 """
+            if step == None:
+                return [s.toPy(), e.toPy()]
+            else: 
+                return [s.toPy(), e.toPy(), step.toPy()]
+
+        ctx_load = pyast.Load()
+        target = pyast.Name(self.ident, ctx_load)
+        iter_args = set_iter_args(self.expr, self.to_expr, self.by_expr)
+        iter_expr = pyast.Call(pyast.Name('range', ctx_load), iter_args, [])
+        stmt_body = [pyast.Expr(self.body.toPy())]
+        return [pyast.For(target, iter_expr, stmt_body, [])]
+
 # while ループ文
 class WhileStatement(VdmslNode):
     """ whileループ """
