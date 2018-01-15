@@ -2220,6 +2220,12 @@ class ColForStatement(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno) 
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        target = self.pattern_binding.toPy()
+        iter_expr = self.expr.toPy()
+        stmt_body = self.body.toPy()
+        return [pyast.For(target, iter_expr, stmt_body, [])]
 
 class SetForStatement(VdmslNode):
     """ 集合forループ """
