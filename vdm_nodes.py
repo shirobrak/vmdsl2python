@@ -2075,6 +2075,11 @@ class AssignStatement(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        targets = [self.status_indicator.toPy()]
+        value = self.expr.toPy()
+        return pyast.Assign(targets, value)
 
 class StatusIndicator(VdmslNode):
     """ 状態指示子 """
