@@ -1796,10 +1796,10 @@ class FuncDefinition(VdmslNode):
 class ExpFuncDefinition(VdmslNode):
     """ 陽関数定義 """
     _fields = ('ident1', 'type_variable_list', 'func_type', 'ident2', 'param_list', 
-               'func_body', 'pre_expr', 'post_expr', 'name',)
+               'func_body', 'pre_expr', 'post_expr', 'measure_expr',)
     
     def __init__(self, ident1, type_variable_list, func_type, ident2, param_list, 
-               func_body, pre_expr, post_expr, name, lineno, lexpos):
+               func_body, pre_expr, post_expr, measure_expr, lineno, lexpos):
         self.ident1 = ident1
         self.type_variable_list = type_variable_list
         self.func_type = func_type
@@ -1808,9 +1808,17 @@ class ExpFuncDefinition(VdmslNode):
         self.func_body = func_body
         self.pre_expr = pre_expr
         self.post_expr = post_expr
-        self.name = name
+        self.measure_expr = measure_expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        func_name = self.ident1
+        func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
+        func_body = [pyast.Return(self.func_body.expression.toPy())]
+        decorator_list = []
+        returns = None
+        return pyast.FunctionDef(func_name, func_args, func_body, decorator_list, returns)
 
 class ImpFuncDefinition(VdmslNode):
     """ 陰関数定義 """
