@@ -2079,7 +2079,19 @@ class AssignStatement(VdmslNode):
     def toPy(self):
         targets = [self.status_indicator.toPy()]
         value = self.expr.toPy()
-        return pyast.Assign(targets, value)
+        return [pyast.Assign(targets, value)]
+
+class MultiAssignStatement(VdmslNode):
+    """ 多重代入文 """
+    _fields = ('assign_stmts',)
+
+    def __init__(self, assign_stmts, lineno, lexpos):
+        self.assign_stmts = assign_stmts
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return [stmt.toPy()[0] for stmt in self.assign_stmts]
 
 class StatusIndicator(VdmslNode):
     """ 状態指示子 """
@@ -2120,14 +2132,6 @@ class MapOrColReference(VdmslNode):
         slice = pyast.Index(self.expr.toPy())
         return pyast.Subscript(value, slice, pyast.Load())
 
-class MultiAssignStatement(VdmslNode):
-    """ 多重代入文 """
-    _fields = ('assign_stmts',)
-
-    def __init__(self, assign_stmts, lineno, lexpos):
-        self.assign_stmts = assign_stmts
-        self.__setattr__('lineno', lineno)
-        self.__setattr__('lexpos', lexpos)
 
 # 条件文
 class IfStatement(VdmslNode):
