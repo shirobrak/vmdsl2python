@@ -2030,6 +2030,13 @@ class AssignDefinition(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        target = pyast.Name(self.ident, pyast.Store())
+        annotation = pyast.Name(self.type.toPy(), pyast.Load())
+        value = self.expr.toPy()
+        simple = 1
+        return pyast.AnnAssign(target, annotation, value, simple)
 
 # 代入文
 class GeneralAssignStatement(VdmslNode):
