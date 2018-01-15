@@ -2019,6 +2019,9 @@ class DclStatement(VdmslNode):
         self.assign_definitions = assign_definitions
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return [ stmt.toPy() for stmt in self.assign_definitions ]
 
 class AssignDefinition(VdmslNode):
     """ 代入定義 """
