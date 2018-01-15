@@ -2331,6 +2331,12 @@ class ReturnStatement(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.expr != None:
+            return [pyast.Return(self.expr.toPy())]
+        else:
+            return [pyast.Return(None)]
 
 # 例外処理文
 class AlwaysStatement(VdmslNode):
