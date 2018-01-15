@@ -746,6 +746,8 @@ def p_if_expression_part(p):
             p[0] = [p[2]]
         else:
             p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 # elseif 式 = ‘elseif’, 式, ‘then’, 式 ;
 def p_elseif_expression(p):
@@ -768,6 +770,8 @@ def p_optional_cases_expression(p):
                                   | empty """
     if len(p) == 3:
         p[0] = p[2]
+    else:
+        p[0] = []
 
 def p_cases_expression_option_group(p):
     """ cases_expression_option_group : cases_expression_option_group COMMA cases_expression_option 
@@ -984,7 +988,7 @@ def p_item_choice(p):
 
 # 組選択 = 式, ‘.#’, 数字 ;
 def p_tuple_choice(p):
-    """ tuple_choice : expression DOTSHARP number """
+    """ tuple_choice : expression DOTSHARP NUMLTR """
     p[0] = ast.make_tuple_choice(p)
 
 # 関数型インスタンス化 = 名称, ‘[’, 型, { ‘,’, 型 }, ‘]’
@@ -1015,8 +1019,15 @@ def p_general_is_expression(p):
 # is 式 = ‘is_’,24 名称, ‘(’, 式, ‘)’ | is 基本型, ‘(’, 式, ‘)’ ;
 # 24名称 : 境界文字は許されない
 def p_is_expression(p):
-    """ is_expression : IS_ name LPAR expression RPAR 
-                      | is_basic_type LPAR expression RPAR """
+    """ is_expression : IS_ name LPAR expression RPAR
+                      | IS_ BOOL LPAR expression RPAR
+                      | IS_ NAT LPAR expression RPAR
+                      | IS_ NAT1 LPAR expression RPAR
+                      | IS_ INT LPAR expression RPAR
+                      | IS_ REAL LPAR expression RPAR
+                      | IS_ CHAR LPAR expression RPAR
+                      | IS_ RAT LPAR expression RPAR 
+                      | IS_ TOKEN LPAR expression RPAR """
     p[0] = ast.make_is_expression(p)
 
 # 型判定 = ‘is_’, ‘(’, 式, ‘,’, 型, ‘)’ ;
@@ -1726,5 +1737,9 @@ if __name__ == '__main__':
         result = debug_parser.parse(s, debug=log)
         print(result)
         print(pyast.dump(result.toPy()))
+        import astor
+        res = result.toPy()
+        print(astor.to_source(res, ' '*4, False))
+
 
 
