@@ -2109,6 +2109,11 @@ class MapOrColReference(VdmslNode):
         self.expr = expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        value = self.status_indicator.toPy()
+        slice = pyast.Index(self.expr.toPy())
+        return pyast.Subscript(value, slice, pyast.Load())
 
 class MultiAssignStatement(VdmslNode):
     """ 多重代入文 """
