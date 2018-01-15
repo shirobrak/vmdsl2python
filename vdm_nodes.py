@@ -2315,6 +2315,12 @@ class CallStatement(VdmslNode):
         self.expr_list = expr_list
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        ctx_load = pyast.Load()
+        opname = self.opename
+        args = [ expr.toPy() for expr in self.expr_list ]
+        return [pyast.Expr(pyast.Call(opname, args, []))]
 
 # return文
 class ReturnStatement(VdmslNode):
