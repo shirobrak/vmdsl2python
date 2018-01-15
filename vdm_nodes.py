@@ -2391,6 +2391,12 @@ class ExitStatement(VdmslNode):
         self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.body == None:
+            return [pyast.Raise(None, None)]
+        else:
+            return [pyast.Raise(self.body.toPy(), None)]
 
 # error文
 class Error(VdmslNode):
