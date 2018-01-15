@@ -2138,14 +2138,26 @@ class IfStatement(VdmslNode):
     """ if文 """
     _fields = ('cond', 'body', 'elseif_stmts', 'else_stmt',)
 
-    def __init__(self, cond, then, elseif_stmts, else_stmt, lineno, lexpos):
+    def __init__(self, cond, body, elseif_stmts, else_stmt, lineno, lexpos):
         self.cond = cond
-        self.then = then
+        self.body = body
         self.elseif_stmts = elseif_stmts
         self.else_stmt = else_stmt
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
+    def toPy(self):
+        el = self.else_stmt
+        def make_orelse_stmt(elifs):
+            if elifs == []:
+                return el.toPy()
+            elif len(elifs) == 1:
+                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), el.toPy())
+            else:
+                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])
+
+        return [pyast.If(self.cond.toPy(), self.body.toPy(), [make_orelse_stmt(self.elseif_stmts)])]
+
 class ElseIfStatement(VdmslNode):
     """ elseif文 """
     _fields = ('cond', 'body',)
