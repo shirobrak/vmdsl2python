@@ -1708,6 +1708,10 @@ class OperationBody(VdmslNode):
         self.statement = statement
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        # 文構文変換デバッグ用記述
+        return pyast.Module(self.statement.toPy())
 
 class ExtSection(VdmslNode):
     """ 外部節 """
@@ -1938,14 +1942,18 @@ class FunctionBody(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 # 文
-class Statements(VdmslNode):
+class Statement(VdmslNode):
     """ 文 """
-    _fields = ('statement',)
+    _fields = ('body',)
 
-    def __init__(self, statement, lineno, lexpos):
-        self.statement = statement
+    def __init__(self, body, lineno, lexpos):
+        self.body = body
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        stmts = self.body.toPy()
+        return stmts
 
 # let 文
 class LetStatement(VdmslNode):
@@ -2003,13 +2011,20 @@ class EqualDefinition(VdmslNode):
 # ブロック文
 class BlockStatement(VdmslNode):
     """ ブロック文 """
-    _fields =('dcl_stmt', 'statement',)
+    _fields =('dcl_stmts', 'statements',)
 
-    def __init__(self, dcl_stmt, statement, lineno, lexpos):
-        self.dcl_stmt = dcl_stmt
-        self.statement = statement
+    def __init__(self, dcl_stmts, statements, lineno, lexpos):
+        self.dcl_stmts = dcl_stmts
+        self.statements = statements
         self.__setattr__('lineno', lineno) 
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        dcl_stmts = []
+        for dcl_stmt in self.dcl_stmts:
+            dcl_stmts += dcl_stmt.toPy()
+        stmts = [ stmt.toPy() for stmt in self.statements ]
+        return dcl_stmts + stmts
 
 class DclStatement(VdmslNode):
     """ dcl文 """
