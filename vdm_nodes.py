@@ -2284,6 +2284,11 @@ class WhileStatement(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
 
+    def toPy(self):
+        test_expr = self.cond.toPy()
+        body_stmts = [pyast.Expr(self.body.toPy())]
+        return [pyast.While(test_expr, body_stmts, [])]
+
 # 非決定文
 class NonDeterminationStatement(VdmslNode):
     """ 非決定文 """
