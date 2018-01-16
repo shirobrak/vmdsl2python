@@ -545,7 +545,7 @@ def p_ident_type_pair_list_option(p):
 
 # 陰操作本体 = [ 外部節 ], [ ‘pre’, 式 ], ‘post’, 式, [ 例外 ] ;
 def p_implicit_operation_body(p):
-    """ implicit_operation_body : ext_section_option pre_cond_option POST expression exception_option """
+    """ implicit_operation_body : ext_section_option pre_cond_option post_condition exception_option """
     p[0] = ast.make_implicit_operation_body(p)
 
 # 外部節オプション
@@ -1735,7 +1735,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        debug_parser = yacc.yacc(start='expression')
+        debug_parser = yacc.yacc(start='module_body')
     else:
         debug_parser = yacc.yacc(start=grammer) 
 

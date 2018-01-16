@@ -570,7 +570,7 @@ class VdmAstGenerator():
 
     def make_implicit_operation_body(self, tokens):
         """ 陰操作本体 ノード作成 """
-        return ImpOpeBody(tokens[1], tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return ImpOpeBody(tokens[1], tokens[2], tokens[3], tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_expanded_explicit_operation_definition(self, tokens):
         """ 拡張陽操作定義 ノード作成 """

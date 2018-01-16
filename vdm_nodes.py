@@ -1670,11 +1670,33 @@ class ImpOpeDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
-    def toPy(self):
-        name = self.ident
-        args = self.param_type.toPy()
-        body = [pyast.Pass()]
-        return pyast.FunctionDef(name, args, body, [], None)
+    def toPy(self): 
+        ctx = pyast.Load()
+        # 制約条件
+        if self.imp_body.pre_expr:
+            pre_stmt = self.imp_body.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        post_stmt = self.imp_body.post_expr.toPy()
+        # メインルーチン
+        func_name = self.param_ident
+        sub_func_name = func_name + "_subroutine"
+        func_args = self.param_type.toPy()
+        call_args = []
+        for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+            for ptn_list in ptn_type_pair.pattern_list.patterns:
+                call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+
+        # サブルーチン
+        sub_func_body = [pyast.Pass()]
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
