@@ -170,7 +170,7 @@ class VdmAstGenerator():
 
     def make_cases_expression(self, tokens):
         """ cases 式 ノード作成 """
-        return CasesExpression(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return CasesExpression(tokens[2], [tokens[4]]+tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_cases_expr_option(self, tokens):
         """ cases 式選択肢 """
@@ -202,7 +202,7 @@ class VdmAstGenerator():
 
     def make_set_range_expression(self, tokens):
         """ 集合範囲式 ノード作成 """
-        return SetRangeExpression(tokens[2], tokens[6], tokens.lineno, tokens.lexpos)
+        return SetRangeExpression(tokens[2], tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_column_enumeration(self, tokens):
         """ 列列挙 ノード作成 """
@@ -234,7 +234,8 @@ class VdmAstGenerator():
 
     def make_tuple_constructor(self, tokens):
         """ 組構成子 ノード作成　"""
-        return TupleConExpression(tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
+        elts = [tokens[3]]+tokens[5]
+        return TupleConExpression(elts, tokens.lineno, tokens.lexpos)
 
     def make_record_constructor(self, tokens):
         """ レコード構成子 ノード作成 """
@@ -302,6 +303,26 @@ class VdmAstGenerator():
     def make_symbol_literal(self, tokens):
         """ シンボルリテラル ノード作成 """
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_bool_ltr(self, tokens):
+        """ ブールリテラル ノード作成 """
+        return VdmBool(tokens[1], tokens.lineno, tokens.lexpos)
+    
+    def make_number_ltr(self, tokens):
+        """ 数値リテラル ノード作成 """
+        return VdmNum(tokens[1], tokens.lineno, tokens.lexpos)
+    
+    def make_char_ltr(self, tokens):
+        """ 文字リテラル ノード作成 """
+        return VdmChar(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_text_ltr(self, tokens):
+        """ テキストリテラル ノード作成 """
+        return VdmText(tokens[1], tokens.lineno, tokens.lexpos)
+
+    def make_quote_ltr(self, tokens):
+        """ 引用リテラル ノード作成 """
+        return VdmQuote(tokens[1], tokens.lineno, tokens.lexpos)
 
     # 型定義
     def make_type_definition_group(self, tokens):
@@ -587,6 +608,10 @@ class VdmAstGenerator():
         return NameList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
 
     # 文
+    def make_statement(self, tokens):
+        """ 文 ノード作成 """
+        return Statement(tokens[1], tokens.lineno, tokens.lexpos)
+
     def make_let_statement(self, tokens):
         """ let文 ノード作成 """
         return LetStatement([tokens[2]]+tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
@@ -621,7 +646,7 @@ class VdmAstGenerator():
 
     def make_multi_assignment_statement(self, tokens):
         """ 多重代入文 ノード作成 """
-        return MultiAssignStatement([tokens[3]]+[tokens[4]]+tokens[6], tokens.lineno, tokens.lexpos)
+        return MultiAssignStatement([tokens[3]]+[tokens[5]]+tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_if_statement(self, tokens):
         """ if 文 ノード作成 """
@@ -633,7 +658,7 @@ class VdmAstGenerator():
 
     def make_cases_statement(self, tokens):
         """ cases ノード作成 文 """
-        return CasesStatement(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return CasesStatement(tokens[2], [tokens[4]]+tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_cases_statement_option(self, tokens):
         """ cases 文選択肢 ノード作成 """
@@ -717,7 +742,7 @@ class VdmAstGenerator():
         if len(tokens) == 4:
             return MatchValue(tokens[2], tokens.lineno, tokens.lexpos)
         else:
-            return MatchValue(tokens[1])
+            return MatchValue(tokens[1], tokens.lineno, tokens.lexpos)
     
     def make_set_enumration_pattern(self, tokens):
         if len(tokens) == 4:

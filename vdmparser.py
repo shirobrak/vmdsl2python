@@ -746,6 +746,8 @@ def p_if_expression_part(p):
             p[0] = [p[2]]
         else:
             p[0] = p[1] + [p[2]]
+    else:
+        p[0] = []
 
 # elseif 式 = ‘elseif’, 式, ‘then’, 式 ;
 def p_elseif_expression(p):
@@ -768,6 +770,8 @@ def p_optional_cases_expression(p):
                                   | empty """
     if len(p) == 3:
         p[0] = p[2]
+    else:
+        p[0] = []
 
 def p_cases_expression_option_group(p):
     """ cases_expression_option_group : cases_expression_option_group COMMA cases_expression_option 
@@ -984,7 +988,7 @@ def p_item_choice(p):
 
 # 組選択 = 式, ‘.#’, 数字 ;
 def p_tuple_choice(p):
-    """ tuple_choice : expression DOTSHARP number """
+    """ tuple_choice : expression DOTSHARP NUMLTR """
     p[0] = ast.make_tuple_choice(p)
 
 # 関数型インスタンス化 = 名称, ‘[’, 型, { ‘,’, 型 }, ‘]’
@@ -1015,8 +1019,15 @@ def p_general_is_expression(p):
 # is 式 = ‘is_’,24 名称, ‘(’, 式, ‘)’ | is 基本型, ‘(’, 式, ‘)’ ;
 # 24名称 : 境界文字は許されない
 def p_is_expression(p):
-    """ is_expression : IS_ name LPAR expression RPAR 
-                      | is_basic_type LPAR expression RPAR """
+    """ is_expression : IS_ name LPAR expression RPAR
+                      | IS_ BOOL LPAR expression RPAR
+                      | IS_ NAT LPAR expression RPAR
+                      | IS_ NAT1 LPAR expression RPAR
+                      | IS_ INT LPAR expression RPAR
+                      | IS_ REAL LPAR expression RPAR
+                      | IS_ CHAR LPAR expression RPAR
+                      | IS_ RAT LPAR expression RPAR 
+                      | IS_ TOKEN LPAR expression RPAR """
     p[0] = ast.make_is_expression(p)
 
 # 型判定 = ‘is_’, ‘(’, 式, ‘,’, 型, ‘)’ ;
@@ -1048,14 +1059,44 @@ def p_oldname(p):
 
 # 記号リテラル
 def p_symbol_ltr(p):
-    """symbol_ltr : NUMLTR
-                  | TRUE
-                  | FALSE
-                  | NIL
-                  | CHARLTR
-                  | TEXTLTR
-                  | QUOTELTR """
-    p[0] = ast.make_symbol_literal(p)
+    """symbol_ltr : bool_ltr
+                  | num_ltr
+                  | nil_ltr
+                  | char_ltr
+                  | text_ltr
+                  | quote_ltr """
+    p[0] = p[1]
+
+# ブールリテラル
+def p_bool_ltr(p):
+    """ bool_ltr : TRUE
+                 | FALSE """
+    p[0] = ast.make_bool_ltr(p)
+
+# 数値リテラル
+def p_num_ltr(p):
+    """ num_ltr : NUMLTR """
+    p[0] = ast.make_number_ltr(p)
+
+# Nilリテラル
+def p_nil_ltr(p):
+    """ nil_ltr : NIL """
+    p[0] = ast.make_nil_ltr(p)
+
+# 文字リテラル
+def p_char_ltr(p):
+    """ char_ltr : CHARLTR """
+    p[0] = ast.make_char_ltr(p)
+
+# テキストリテラル
+def p_text_ltr(p):
+    """ text_ltr : TEXTLTR """
+    p[0] = ast.make_text_ltr(p)
+
+# 引用リテラル
+def p_quote_ltr(p):
+    """ quote_ltr : QUOTELTR """
+    p[0] = ast.make_quote_ltr(p)
 
 # 文構文
 def p_statement(p):
@@ -1080,7 +1121,7 @@ def p_statement(p):
                   | exit_statement
                   | error_statement
                   | identity_statement """
-    p[0] = p[1]
+    p[0] = ast.make_statement(p)
 
 # let 文 = ‘let’, ローカル定義, { ‘,’, ローカル定義 }, ‘in’, 文 ;
 def p_let_statement(p):
@@ -1213,7 +1254,7 @@ def p_if_statement(p):
 def p_if_statement_part(p):
     """ if_statement_part : if_statement_part elseif_statement
                           | empty """
-    if len(p) == 2:
+    if len(p) == 3:
         if p[1] == None:
             p[0] = [p[2]]
         else:
@@ -1247,7 +1288,9 @@ def p_optional_commma_others_statement(p):
     """ optional_commma_others_statement : COMMA others_statement 
                                          | empty """
     if len(p) == 3:
-        p[0] = p[2]                      
+        p[0] = p[2]
+    else:
+        p[0] = []                      
 
 # cases 文選択肢 = パターンリスト, ‘->’, 文 ;
 def p_cases_statement_option(p):
@@ -1583,6 +1626,8 @@ def p_optional_byop_expression(p):
                                  | empty """
     if len(p) == 3:
         p[0] = p[2]
+    else:
+        p[0] = None
 
 # Optional(':=' + expression)
 def p_optional_coleqop_expression(p):
@@ -1676,12 +1721,13 @@ parser = yacc.yacc(start='module_body')
 if __name__ == '__main__':  
     
     import logging
+    import ast as pyast
     log = logging.getLogger()
 
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        debug_parser = yacc.yacc(start='module_body')
+        debug_parser = yacc.yacc(start='expression')
     else:
         debug_parser = yacc.yacc(start=grammer) 
 
@@ -1694,5 +1740,10 @@ if __name__ == '__main__':
             continue
         result = debug_parser.parse(s, debug=log)
         print(result)
+        print(pyast.dump(result.toPy()))
+        import astor
+        res = result.toPy()
+        print(astor.to_source(res, ' '*4, False))
+
 
 
