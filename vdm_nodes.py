@@ -1693,7 +1693,10 @@ class ImpOpeDefinition(VdmslNode):
         main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
 
         # サブルーチン
-        sub_func_body = [pyast.Pass()]
+        global_stmt = []
+        if self.imp_body.ext_sec:
+            global_stmt = [self.imp_body.ext_sec.toPy()]
+        sub_func_body = global_stmt+[pyast.Pass()]
         sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
 
         return [main_routine, sub_routine]
@@ -1781,6 +1784,15 @@ class ExtSection(VdmslNode):
         self.var_infos = var_infos
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        var_infos = []
+        for var_info in self.var_infos:
+            var_infos += var_info.toPy()
+        if len(var_infos) == 0:
+            return None
+        else:
+            return pyast.Global(var_infos)
 
 class VarInfo(VdmslNode):
     """ var 情報 """
@@ -1792,6 +1804,12 @@ class VarInfo(VdmslNode):
         self.type = type
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.mode == 'wr':
+            return self.name_list.idents
+        else:
+            return []
 
 class NameList(VdmslNode):
     """ 名称リスト """
