@@ -544,6 +544,10 @@ class VdmAstGenerator():
         else:
             return FunctionBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
     
+    def make_pre_condition(self, tokens):
+        """ 事前条件 """
+        return PreCondition(tokens[2], tokens.lineno, tokens.lexpos)
+
     def make_post_condition(self, tokens):
         """ 事後条件 """
         return PostCondition(tokens[2], tokens.lineno, tokens.lexpos)

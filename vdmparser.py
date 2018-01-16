@@ -369,7 +369,9 @@ def p_pre_cond_option(p):
     """ pre_cond_option : PRE expression
                         | empty """
     if len(p) == 3:
-        p[0] = p[2]
+        p[0] = ast.make_pre_condition(p)
+    else:
+        p[0] = None
 
 # 事後条件オプション
 def p_post_cond_option(p):
