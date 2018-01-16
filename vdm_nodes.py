@@ -1536,10 +1536,12 @@ class ValueDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        if self.type == None:
-            return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
-        else:
-            return pyast.AnnAssign(self.pattern.toPy(), self.type.toPy(), self.expr.toPy(), 1)
+        return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
+        # Annotation Ver
+        # if self.type == None:
+        #     return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
+        # else:
+        #     return pyast.AnnAssign(self.pattern.toPy(), self.type.toPy(), self.expr.toPy(), 1)
         
 
 # 状態定義
@@ -2070,10 +2072,13 @@ class AssignDefinition(VdmslNode):
     
     def toPy(self):
         target = pyast.Name(self.ident, pyast.Store())
-        annotation = pyast.Name(self.type.toPy(), pyast.Load())
+        # annotation = pyast.Name(self.type.toPy(), pyast.Load())
         value = self.expr.toPy()
-        simple = 1
-        return pyast.AnnAssign(target, annotation, value, simple)
+        # simple = 1
+        return pyast.Assign([target], value)
+        
+        # Annotation Ver
+        # return pyast.AnnAssign(target, annotation, value, simple)
 
 # 代入文
 class GeneralAssignStatement(VdmslNode):
