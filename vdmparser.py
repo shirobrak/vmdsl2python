@@ -356,8 +356,12 @@ def p_explicit_function_definition_option1(p):
 
 # 陰関数定義 = 識別子, [ 型変数リスト ], パラメーター型, 識別子型ペアリスト, [ ‘pre’, 式 ], ‘post’, 式 ;
 def p_implicit_function_definition(p):
-    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option POST expression """
+    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option post_condition """
     p[0] = ast.make_implicit_function_definition(p)
+
+def p_post_condition(p):
+    """ post_condition : POST expression """
+    p[0] = ast.make_post_condition(p)
 
 # 拡張陽関数定義 = 識別子, [ 型変数リスト ],パラメーター型, 識別子型ペアリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
 def p_expanded_explicit_function_definition(p):

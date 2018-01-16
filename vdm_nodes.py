@@ -1802,7 +1802,10 @@ class FuncDefinitionGroup(VdmslNode):
     
      # 出力 stmt* body
     def toPy(self):
-        return [stmt.toPy() for stmt in self.function_definitions]
+        stmts = []
+        for stmt in self.function_definitions:
+            stmts += stmt.toPy()
+        return stmts
 
 class FuncDefinition(VdmslNode):
     """ 関数定義 """
@@ -1860,10 +1863,30 @@ class ImpFuncDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
     def toPy(self):
-        name = self.ident
+        ctx = pyast.Load()
+        func_name = self.ident
+        sub_routine_name = func_name + "_subroutine"
         args = self.param_type.toPy()
-        body = [pyast.Pass()]
-        return pyast.FunctionDef(name, args, body, [], None)
+        call_args = []
+        for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+            for ptn_list in ptn_type_pair.pattern_list.patterns:
+                call_args += [pyast.Name(ptn_list.ptn_id, ctx)]            
+        # 事前, 事後条件
+        pre_stmt = self.pre_expr.toPy()
+        post_stmt = self.post_expr.toPy()
+        # return 文
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        # サブルーチン処理の文作成
+        value = pyast.Call(pyast.Name(sub_routine_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], value)
+        # メインルーチン
+        main_stmts = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, args, main_stmts, [], None)
+        # サブルーチン
+        sub_stmts = [pyast.Pass()]
+        sub_routine = pyast.FunctionDef(sub_routine_name, args, sub_stmts, [], None)
+
+        return [main_routine, sub_routine]
 
 class ExpandExpFuncDefinition(VdmslNode):
     """ 拡張陽関数定義 """

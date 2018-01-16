@@ -503,7 +503,7 @@ class VdmAstGenerator():
 
     def make_implicit_function_definition(self, tokens):
         """ 陰関数定義 ノード作成 """
-        return ImpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
+        return ImpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_expanded_explicit_function_definition(self, tokens):
         """ 拡張陽関数定義 ノード作成 """
