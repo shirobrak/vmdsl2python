@@ -2446,6 +2446,20 @@ class Skip(VdmslNode):
     def toPy(self):
         return pyast.Pass()
 
+# 事後条件
+class PostCondition(VdmslNode):
+    """ 事後条件 """
+    _fields = ('cond',)
+
+    def __init__(self, cond, lineno, lexpos):
+        self.cond = cond
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        msg = pyast.Str("Post Condition Error.")
+        return pyast.Assert(self.cond.toPy(), msg)
+
 # 仕様記述文
 class SpecDecriptionStatement(VdmslNode):
     """ 仕様記述文 """

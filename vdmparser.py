@@ -376,7 +376,9 @@ def p_post_cond_option(p):
     """ post_cond_option : POST expression
                          | empty """
     if len(p) == 3:
-        p[0] = p[2]
+        p[0] = ast.make_post_condition(p)
+    else:
+        p[0] = None
 
 # 型変数リスト = ‘[’, 型変数識別子, { ‘,’, 型変数識別子 }, ‘]’ ;
 def p_type_variable_list(p):

@@ -543,6 +543,10 @@ class VdmAstGenerator():
             return FunctionBody(tokens[1], tokens.lineno, tokens.lexpos)
         else:
             return FunctionBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
+    
+    def make_post_condition(self, tokens):
+        """ 事後条件 """
+        return PostCondition(tokens[2], tokens.lineno, tokens.lexpos)
 
     # 操作定義
     def make_operation_definition_group(self, tokens):
