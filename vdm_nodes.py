@@ -68,6 +68,7 @@ class ModuleBody(VdmslNode):
     
     def toPy(self):
         stmt_list = []
+        stmt_list += [pyast.Import([pyast.alias('vdmslfunc', None)])]
         for block in self.blocks:
             stmt_list += block.toPy()
         return pyast.Module(stmt_list)
