@@ -1839,12 +1839,32 @@ class ExpFuncDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        func_name = self.ident1
+        ctx = pyast.Load()
+        # 制約条件
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        if self.post_expr:
+            post_stmt = self.post_expr.toPy()
+        else:
+            post_stmt = None
+
+        # メインルーチン
+        main_func_name = self.ident1
+        sub_func_name = main_func_name + "_subroutine"
         func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
-        func_body = [pyast.Return(self.func_body.expression.toPy())]
-        decorator_list = []
-        returns = None
-        return pyast.FunctionDef(func_name, func_args, func_body, decorator_list, returns)
+        call_args = [pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns]
+        value = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], value)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(main_func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = [pyast.Return(self.func_body.expression.toPy())]
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpFuncDefinition(VdmslNode):
     """ 陰関数定義 """
@@ -1872,7 +1892,8 @@ class ImpFuncDefinition(VdmslNode):
             for ptn_list in ptn_type_pair.pattern_list.patterns:
                 call_args += [pyast.Name(ptn_list.ptn_id, ctx)]            
         # 事前, 事後条件
-        pre_stmt = self.pre_expr.toPy()
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
         post_stmt = self.post_expr.toPy()
         # return 文
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
