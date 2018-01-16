@@ -1591,7 +1591,13 @@ class OpeDefinitionGroup(VdmslNode):
         self.operation_definitions = operation_definitions
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-
+    
+    def toPy(self):
+        stmts = []
+        for stmt in self.operation_definitions:
+            stmts += stmt.toPy()
+        return stmts
+        
 class OpeDefinition(VdmslNode):
     """ 操作定義 """
     _fields = ('operation_definition',)
@@ -1600,6 +1606,9 @@ class OpeDefinition(VdmslNode):
         self.operation_definition = operation_definition
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        return self.operation_definition.toPy()
 
 class ExpOpeDefinition(VdmslNode):
     """ 陽操作定義 """
@@ -1617,6 +1626,14 @@ class ExpOpeDefinition(VdmslNode):
         self.post_expr = post_expr
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        func_name = self.ope_ident
+        func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
+        ope_body = self.ope_body.toPy()
+        decorator_list = []
+        returns = None                  
+        return [pyast.FunctionDef(func_name, func_args, ope_body, decorator_list, returns)]
 
 class ImpOpeDefinition(VdmslNode):
     """ 陰操作定義 """
@@ -1710,8 +1727,7 @@ class OperationBody(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        # 文構文変換デバッグ用記述
-        return pyast.Module(self.statement.toPy())
+        return self.statement.toPy()
 
 class ExtSection(VdmslNode):
     """ 外部節 """
@@ -2023,7 +2039,9 @@ class BlockStatement(VdmslNode):
         dcl_stmts = []
         for dcl_stmt in self.dcl_stmts:
             dcl_stmts += dcl_stmt.toPy()
-        stmts = [ stmt.toPy() for stmt in self.statements ]
+        stmts = []
+        for stmt in self.statements:
+            stmts += stmt.toPy()
         return dcl_stmts + stmts
 
 class DclStatement(VdmslNode):

@@ -1121,7 +1121,7 @@ def p_statement(p):
                   | exit_statement
                   | error_statement
                   | identity_statement """
-    p[0] = p[1]
+    p[0] = ast.make_statement(p)
 
 # let 文 = ‘let’, ローカル定義, { ‘,’, ローカル定義 }, ‘in’, 文 ;
 def p_let_statement(p):
@@ -1254,7 +1254,7 @@ def p_if_statement(p):
 def p_if_statement_part(p):
     """ if_statement_part : if_statement_part elseif_statement
                           | empty """
-    if len(p) == 2:
+    if len(p) == 3:
         if p[1] == None:
             p[0] = [p[2]]
         else:
@@ -1288,7 +1288,9 @@ def p_optional_commma_others_statement(p):
     """ optional_commma_others_statement : COMMA others_statement 
                                          | empty """
     if len(p) == 3:
-        p[0] = p[2]                      
+        p[0] = p[2]
+    else:
+        p[0] = []                      
 
 # cases 文選択肢 = パターンリスト, ‘->’, 文 ;
 def p_cases_statement_option(p):
@@ -1624,6 +1626,8 @@ def p_optional_byop_expression(p):
                                  | empty """
     if len(p) == 3:
         p[0] = p[2]
+    else:
+        p[0] = None
 
 # Optional(':=' + expression)
 def p_optional_coleqop_expression(p):

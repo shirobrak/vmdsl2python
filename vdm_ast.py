@@ -608,6 +608,10 @@ class VdmAstGenerator():
         return NameList([tokens[1]]+tokens[2], tokens.lineno, tokens.lexpos)
 
     # 文
+    def make_statement(self, tokens):
+        """ 文 ノード作成 """
+        return Statement(tokens[1], tokens.lineno, tokens.lexpos)
+
     def make_let_statement(self, tokens):
         """ let文 ノード作成 """
         return LetStatement([tokens[2]]+tokens[3], tokens[5], tokens.lineno, tokens.lexpos)
@@ -642,7 +646,7 @@ class VdmAstGenerator():
 
     def make_multi_assignment_statement(self, tokens):
         """ 多重代入文 ノード作成 """
-        return MultiAssignStatement([tokens[3]]+[tokens[4]]+tokens[6], tokens.lineno, tokens.lexpos)
+        return MultiAssignStatement([tokens[3]]+[tokens[5]]+tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_if_statement(self, tokens):
         """ if 文 ノード作成 """
@@ -654,7 +658,7 @@ class VdmAstGenerator():
 
     def make_cases_statement(self, tokens):
         """ cases ノード作成 文 """
-        return CasesStatement(tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return CasesStatement(tokens[2], [tokens[4]]+tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_cases_statement_option(self, tokens):
         """ cases 文選択肢 ノード作成 """
