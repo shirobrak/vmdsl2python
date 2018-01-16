@@ -1630,13 +1630,32 @@ class ExpOpeDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
-    def toPy(self):
+    def toPy(self):             
+        # 制約条件
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        if self.post_expr:
+            post_stmt = self.post_expr.toPy()
+        else:
+            post_stmt = None
+        # メインルーチン
+        ctx = pyast.Load()
         func_name = self.ope_ident
+        sub_func_name = func_name + "_subroutine"
+        call_args = [pyast.Name(e.ptn_id, ctx) for e in self.param_group.pattern_list.patterns]
         func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
-        ope_body = self.ope_body.toPy()
-        decorator_list = []
-        returns = None                  
-        return [pyast.FunctionDef(func_name, func_args, ope_body, decorator_list, returns)]
+        call_func = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_func)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = self.ope_body.toPy()
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpOpeDefinition(VdmslNode):
     """ 陰操作定義 """
