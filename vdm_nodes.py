@@ -69,8 +69,14 @@ class ModuleBody(VdmslNode):
     def toPy(self):
         stmt_list = []
         stmt_list += [pyast.Import([pyast.alias('vdmslfunc', None)])]
+        stmt_list += [pyast.Import([pyast.alias('typing', None)])]
         for block in self.blocks:
-            stmt_list += block.toPy()
+            if type(block) == TypeDefinitionGroup:
+                pass
+            elif type(block) == StateDefinition:
+                pass
+            else:
+                stmt_list += block.toPy()
         return pyast.Module(stmt_list)
 
 # データ型定義
@@ -294,6 +300,11 @@ class OldName(NameBase):
 class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
+
+class Result(NameBase):
+    """ 予約語 RESULT """
+    def toPy(self):
+        return pyast.Name('ret', pyast.Load())
 
 class VdmBool(NameBase):
     """ ブールリテラル """
@@ -1163,7 +1174,10 @@ class AppExpression(VdmslNode):
     
     def toPy(self):
         func = self.body.toPy()
-        args = [ e.toPy() for e in self.expr_list ]
+        if self.expr_list:
+            args = [ e.toPy() for e in self.expr_list ]
+        else:
+            args = []
         return pyast.Call(func, args, [])
 
 class ItemChoice(VdmslNode):
@@ -1644,8 +1658,12 @@ class ExpOpeDefinition(VdmslNode):
         ctx = pyast.Load()
         func_name = self.ope_ident
         sub_func_name = func_name + "_subroutine"
-        call_args = [pyast.Name(e.ptn_id, ctx) for e in self.param_group.pattern_list.patterns]
-        func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
+        if self.param_group.pattern_list:
+            call_args = [pyast.Name(e.ptn_id, ctx) for e in self.param_group.pattern_list.patterns]
+            func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+            call_args = []
         call_func = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
         ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_func)
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
@@ -1681,11 +1699,14 @@ class ImpOpeDefinition(VdmslNode):
         # メインルーチン
         func_name = self.param_ident
         sub_func_name = func_name + "_subroutine"
-        func_args = self.param_type.toPy()
         call_args = []
-        for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
-            for ptn_list in ptn_type_pair.pattern_list.patterns:
-                call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        if self.param_type.pattern_type_pair_list:
+            func_args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
         call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
         ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
@@ -1908,12 +1929,18 @@ class ExpFuncDefinition(VdmslNode):
             post_stmt = self.post_expr.toPy()
         else:
             post_stmt = None
+        
+        # 引数処理
+        if self.param_list:
+            func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
+            call_args = [pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+            call_args = []    
 
         # メインルーチン
         main_func_name = self.ident1
         sub_func_name = main_func_name + "_subroutine"
-        func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
-        call_args = [pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns]
         value = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
         ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], value)
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
@@ -1945,14 +1972,20 @@ class ImpFuncDefinition(VdmslNode):
         ctx = pyast.Load()
         func_name = self.ident
         sub_routine_name = func_name + "_subroutine"
-        args = self.param_type.toPy()
         call_args = []
-        for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
-            for ptn_list in ptn_type_pair.pattern_list.patterns:
-                call_args += [pyast.Name(ptn_list.ptn_id, ctx)]            
+        if self.param_type.pattern_type_pair_list:
+            args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]            
+        else:
+            args = []
+            call_args = []
         # 事前, 事後条件
         if self.pre_expr:
             pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
         post_stmt = self.post_expr.toPy()
         # return 文
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
@@ -2274,16 +2307,20 @@ class IfStatement(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        el = self.else_stmt
+        if self.else_stmt:
+            else_stmt = self.else_stmt.toPy()
+        else:
+            else_stmt = []
         def make_orelse_stmt(elifs):
             if elifs == []:
-                return el.toPy()
+                return else_stmt
             elif len(elifs) == 1:
-                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), el.toPy())
+                return [pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), else_stmt)]
             else:
-                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])
+                return [pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])]
 
-        return [pyast.If(self.cond.toPy(), self.body.toPy(), [make_orelse_stmt(self.elseif_stmts)])]
+        print(make_orelse_stmt(self.elseif_stmts))
+        return [pyast.If(self.cond.toPy(), self.body.toPy(), make_orelse_stmt(self.elseif_stmts))]
 
 class ElseIfStatement(VdmslNode):
     """ elseif文 """
@@ -2607,18 +2644,7 @@ class Block(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 
-    
-    
-
-
 
 # デバッグ用記述
 if __name__ == '__main__':
     pass
-
-
-    
-
-
-
-    

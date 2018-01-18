@@ -618,7 +618,7 @@ def p_name_list_part(p):
         else:
             p[0] = p[1] + [p[3]]
     else:
-        p[0] = p[1]
+        p[0] = []
 
 # 例外 = ‘errs’, エラーリスト ;
 def p_exception(p):
@@ -1055,8 +1055,12 @@ def p_pre_condition_expression(p):
 
 # 名称
 def p_name(p):
-    """ name : IDENT """
-    p[0] = ast.make_name(p)
+    """ name : IDENT 
+             | RESULT """
+    if p[1] == 'RESULT':
+        p[0] = ast.make_result(p)
+    else:     
+        p[0] = ast.make_name(p)
 
 # 旧名称
 def p_oldname(p):

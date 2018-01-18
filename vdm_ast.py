@@ -304,6 +304,9 @@ class VdmAstGenerator():
         """ シンボルリテラル ノード作成 """
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
+    def make_result(self, tokens):
+        """ 予約語 RESULT ノード作成 """
+        return Result(tokens[1], tokens.lineno, tokens.lexpos)
     def make_bool_ltr(self, tokens):
         """ ブールリテラル ノード作成 """
         return VdmBool(tokens[1], tokens.lineno, tokens.lexpos)
