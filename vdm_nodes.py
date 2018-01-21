@@ -1751,6 +1751,45 @@ class ExpandExpOpeDefinition(VdmslNode):
         self.exception = exception
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        def option_stmt(node):
+            """ オプション処理関数 """
+            if node:
+                return node.toPy()
+            else:
+                return None
+            
+        ctx = pyast.Load()
+        # 制約条件
+        global_stmt = option_stmt(self.ext_sec)
+        pre_stmt = option_stmt(self.pre_expr)
+        post_stmt = option_stmt(self.post_expr)
+        exception_stmt = option_stmt(self.exception)
+        print(global_stmt, pre_stmt, post_stmt, exception_stmt)
+        # メインルーチン
+        func_name = self.ident
+        sub_func_name = func_name + "_subroutine"
+        call_args = []
+        if self.param_type.pattern_type_pair_list:
+            func_args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+        call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = [global_stmt] + self.ope_body.toPy()
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        print(main_routine)
+        print(sub_routine)
+        return [main_routine, sub_routine]       
 
 class OperationType(VdmslNode):
     """ 操作型 """

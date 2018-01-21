@@ -548,6 +548,11 @@ def p_implicit_operation_body(p):
     """ implicit_operation_body : ext_section_option pre_cond_option post_condition exception_option """
     p[0] = ast.make_implicit_operation_body(p)
 
+# 拡張陽操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], ‘==’, 操作本体, [ 外部節 ], [ ‘pre’, 式 ], [ ‘post’, 式 ], [ 例外 ] ;
+def p_expanded_explicit_operation_definition(p):
+    """ expanded_explicit_operation_definition : IDENT param_type ident_type_pair_list_option WEQUAL operation_body ext_section_option pre_cond_option post_cond_option exception_option """
+    p[0] = ast.make_expanded_explicit_operation_definition(p)
+    
 # 外部節オプション
 def p_ext_section_option(p):
     """ ext_section_option : ext_section 
@@ -559,10 +564,6 @@ def p_exception_option(p):
                          | empty """
     p[0] = p[1]
 
-# 拡張陽操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], ‘==’, 操作本体, [ 外部節 ], [ ‘pre’, 式 ], [ ‘post’, 式 ], [ 例外 ] ;
-def p_expanded_explicit_operation_definition(p):
-    """ expanded_explicit_operation_definition : IDENT param_type ident_type_pair_list_option WEQUAL operation_body ext_section_option pre_cond_option post_cond_option exception_option """
-    p[0] = ast.make_expanded_explicit_operation_definition(p)
 
 # 操作型 = 任意の型, ‘==>’, 任意の型 ;
 def p_operation_type(p):
