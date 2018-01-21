@@ -1704,7 +1704,8 @@ def p_optional_reverse(p):
                     
 # 演算子優先度
 precedence = (
-        ('nonassoc', 'LTEQGT', 'EQARROW', 'OR', 'AND', 'NOT'),
+        ('nonassoc', 'LTEQGT', 'EQARROW', 'NOT'),
+        ('left', 'AND', 'OR'),
         ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
         ('right', 'ARROW', 'PARROW'),
         ('left', 'VERTICAL'),
