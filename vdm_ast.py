@@ -464,7 +464,7 @@ class VdmAstGenerator():
 
     # 状態定義
     def make_state_definition(self, tokens):
-        return StateDefinition(tokens[2], tokens[3], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
+        return StateDefinition(tokens[2], tokens[4], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_inv_condition(self, tokens):
         return InvCondition(tokens[2], tokens.lineno, tokens.lexpos)

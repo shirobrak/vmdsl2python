@@ -73,8 +73,6 @@ class ModuleBody(VdmslNode):
         for block in self.blocks:
             if type(block) == TypeDefinitionGroup:
                 pass
-            elif type(block) == StateDefinition:
-                pass
             else:
                 stmt_list += block.toPy()
         return pyast.Module(stmt_list)
@@ -948,8 +946,11 @@ class SetEnumExpression(VdmslNode):
     def toPy(self):
         # 集合の集合対策してない. 
         # リストの対策も. 
-        elts = [ e.toPy() for e in self.expr_list ]
-        return pyast.Set(elts)
+        if self.expr_list:
+            elts = [ e.toPy() for e in self.expr_list ]
+            return pyast.Set(elts)
+        else:
+            return pyast.Call(pyast.Name('set', pyast.Load()), [], [])
 
 class SetCompExpression(VdmslNode):
     """ 集合内包 """
@@ -1570,6 +1571,21 @@ class StateDefinition(VdmslNode):
         self.init = init
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        def make_assign_stmt(target, value):
+            return pyast.Assign([target], value)    
+        # init が存在する場合初期化を行う記述を生成する.
+        if self.init:
+            targets = [ pyast.Name(item.ident, pyast.Load()) for item in self.item_list ]
+            expr_list = self.init.inv_condition_init_function.expr.value.right.value.expr_list
+            values = [ expr.value.toPy() for expr in expr_list ]
+            if len(targets) == len(values):
+                return [ make_assign_stmt(t, v) for t, v in zip(targets, values)]
+            else:
+                return []
+        else:
+            return []
 
 class InvCondition(VdmslNode):
     """ 不変条件 """
