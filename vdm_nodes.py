@@ -2538,7 +2538,10 @@ class CallStatement(VdmslNode):
     def toPy(self):
         ctx_load = pyast.Load()
         opname = self.opename
-        args = [ expr.toPy() for expr in self.expr_list ]
+        if self.expr_list:
+            args = [ expr.toPy() for expr in self.expr_list ]
+        else:
+            args = []
         return [pyast.Expr(pyast.Call(opname, args, []))]
 
 # return文
