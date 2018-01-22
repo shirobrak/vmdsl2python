@@ -50,7 +50,28 @@ class VdmslNode(object):
                         output += self._p(value, indent + 2)
         output += self._p(')', indent)
         return output
-    
+
+    def search_node(self, NodeType):
+        """ ノードを探索し, 該当するノードのリストを返す """
+        nodes = []
+        for field in self._fields:
+            value = getattr(self, field)
+            if type(value) == list:
+                for value2 in value:
+                    if isinstance(value2, VdmslNode):
+                        nodes.extend(value2.search_node(NodeType))
+                    else:
+                        pass
+            elif type(value) == NodeType:
+                nodes.extend([value])
+            else:
+                if value:
+                    if isinstance(value, VdmslNode):
+                        nodes.extend(value.search_node(NodeType))
+                    else:
+                        pass
+        return nodes
+
     def toPy(self):
         """ this func is converter VDM-SL Node to Python Node of ast module """
         return pyast.AST
@@ -292,6 +313,12 @@ class Name(NameBase):
 
 class OldName(NameBase):
     """ 旧名称 """
+    # ~ はPythonでは不正な文字列なので, _ に変更.
+    def __init__(self, id, lineno, lexpos):
+        self.id = "_"+id.replace("~", "")
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
     def toPy(self):
         return pyast.Name(self.id, pyast.Load())
 
@@ -1768,7 +1795,7 @@ class ExpandExpOpeDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
-    def toPy(self):
+    def toPy(self):       
         def option_stmt(node):
             """ オプション処理関数 """
             if node:
@@ -1777,12 +1804,22 @@ class ExpandExpOpeDefinition(VdmslNode):
                 return None
             
         ctx = pyast.Load()
+
+        # 旧名称を探索し, 退避する記述作成
+        old_name_stmts = []
+        if self.post_expr:
+            old_names = self.post_expr.search_node(OldName)
+            if old_names != []:
+                for old_name in old_names:
+                    name_id = old_name.id.replace("_", "")
+                    value = pyast.Name(name_id, pyast.Load())
+                    targets = [pyast.Name(old_name.id, pyast.Store())]
+                    old_name_stmts.append(pyast.Assign(targets, value))
         # 制約条件
         global_stmt = option_stmt(self.ext_sec)
         pre_stmt = option_stmt(self.pre_expr)
         post_stmt = option_stmt(self.post_expr)
         exception_stmt = option_stmt(self.exception)
-        print(global_stmt, pre_stmt, post_stmt, exception_stmt)
         # メインルーチン
         func_name = self.ident
         sub_func_name = func_name + "_subroutine"
@@ -1798,13 +1835,11 @@ class ExpandExpOpeDefinition(VdmslNode):
         ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
         return_stmt = pyast.Return(pyast.Name('ret', ctx))
         main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_func_body[1:1] = old_name_stmts
         main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
         # サブルーチン
         sub_func_body = [global_stmt] + self.ope_body.toPy()
         sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
-
-        print(main_routine)
-        print(sub_routine)
         return [main_routine, sub_routine]       
 
 class OperationType(VdmslNode):
@@ -2374,7 +2409,6 @@ class IfStatement(VdmslNode):
             else:
                 return [pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])]
 
-        print(make_orelse_stmt(self.elseif_stmts))
         return [pyast.If(self.cond.toPy(), self.body.toPy(), make_orelse_stmt(self.elseif_stmts))]
 
 class ElseIfStatement(VdmslNode):
