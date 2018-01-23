@@ -146,7 +146,7 @@ def t_IS_(t):
 
 # 識別子
 def t_IDENT(t):
-    r'[a-zA-Z][a-zA-Z_0-9]*'                    
+    r'[a-zA-Z一-龥ぁ-んァ-ンー][a-zA-Z_0-9一-龥ぁ-んァ-ンー]*'                    
     # キーワードのチェック
     t.type = keyword.get(t.value, 'IDENT')
     return t
@@ -164,17 +164,17 @@ def t_NUMLTR(t):
 
 # テキストリテラル
 def t_TEXTLTR(t):
-    r'\"((\"\")|([a-zA-Z0-9])|\s)*\"'
+    r'\"((\"\")|([a-zA-Z0-9一-龥ぁ-んァ-ンー])|\s)*\"'
     return t
 
 #　文字リテラル（多文字対応後回し）
 def t_CHARLTR(t):
-    r'’[a-zA-Z0-9]’'
+    r'’[a-zA-Z0-9一-龥ぁ-んァ-ンー]’'
     return t
 
 # 引用リテラル
 def t_QUOTELTR(t):
-    r'<[a-zA-Z](_|\w)*>'
+    r'<[a-zA-Z一-龥ぁ-んァ-ンー](_|\w)*>'
     return t
 
 # 数字
