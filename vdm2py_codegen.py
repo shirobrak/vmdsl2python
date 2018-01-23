@@ -7,7 +7,8 @@ from vdmparser import parser
 import astor
 import re
 
-COMMENT = re.compile(r"--.*")
+COMMENT = re.compile(r"--.*|\/\*[\s\S]*?\*\/.*")
+
 
 if __name__ == '__main__':
 
