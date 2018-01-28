@@ -90,7 +90,9 @@ class ModuleBody(VdmslNode):
     def toPy(self):
         stmt_list = []
         stmt_list += [pyast.Import([pyast.alias('vdmslfunc', None)])]
-        stmt_list += [pyast.Import([pyast.alias('typing', None)])]
+        # stmt_list += [pyast.Import([pyast.alias('typing', None)])]
+        stmt_list += [pyast.ImportFrom('typing', [pyast.alias('NewType', None)], 0)]
+        stmt_list += [pyast.ImportFrom('enum', [pyast.alias('Enum', None), pyast.alias('auto', None)], 0)]
         for block in self.blocks:
             if type(block) == TypeDefinitionGroup:
                 pass
@@ -108,6 +110,9 @@ class TypeDefinitionGroup(VdmslNode):
         self.type_definitions = type_definitions
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return [typedef.toPy() for typedef in self.type_definitions] 
 
 class TypeDefinition(VdmslNode):
     """ 型定義 """
@@ -119,7 +124,18 @@ class TypeDefinition(VdmslNode):
         self.inv_cond = inv_cond
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-        
+    
+    def toPy(self):
+        if type(self.type) == MergerType:
+            # Enum型を作る処理
+            return pyast.Pass()
+        else:
+            # NewTypeを作る処理
+            targets = [pyast.Name(self.id, pyast.Store())]
+            func = pyast.Name('NewType', pyast.Load())
+            args = [pyast.Str(self.id), pyast.Name(self.type.value, pyast.Load())]
+            value = pyast.Call(func, args, [])
+            return pyast.Assign(targets, value)
 
 # 基本データ型
 class BasicDataType(VdmslNode):
@@ -1033,7 +1049,10 @@ class ColEnumExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self): 
-        elts = [ e.toPy() for e in self.expr_list ]
+        if self.expr_list:
+            elts = [ e.toPy() for e in self.expr_list ]
+        else:
+            elts = []
         return pyast.List(elts, pyast.Load())
 
 class ColCompExpression(VdmslNode):
@@ -1401,8 +1420,11 @@ class ColEnumPattern(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        elts = [ ptn.toPy() for ptn in self.ptn_list ]
-        return List(elts, pyast.Load())
+        if self.ptn_list:
+            elts = [ ptn.toPy() for ptn in self.ptn_list.patterns ]
+        else:
+            elts = []
+        return pyast.List(elts, pyast.Load())
 
 class ColLinkPattern(VdmslNode):
     """ 列連結パターン """
@@ -1820,6 +1842,29 @@ class ExpandExpOpeDefinition(VdmslNode):
         pre_stmt = option_stmt(self.pre_expr)
         post_stmt = option_stmt(self.post_expr)
         exception_stmt = option_stmt(self.exception)
+
+        # 返り値のチェック
+        if self.ident_type_pair_list:
+            ret_name_list = [ ident_type_pair.ident for ident_type_pair in self.ident_type_pair_list.ident_type_pairs ]
+        else:
+            ret_name_list = ['ret']
+        
+        def make_ret_stmt(id_list, call_expr):
+            if len(id_list) == 1:
+                targets = [pyast.Name(id_list[0], ctx)]
+            else:
+                name_list = [ pyast.Name(id, ctx) for id in id_list ]
+                targets = [pyast.Tuple(name_list, ctx)]
+            return pyast.Assign(targets, call_expr)
+
+        def make_return_stmt(id_list):
+            if len(id_list) == 1:
+                return pyast.Return(pyast.Name(id_list[0], ctx))
+            else:
+                elts = [ pyast.Name(id, ctx) for id in id_list ]
+                value = pyast.Tuple(elts, ctx)
+                return pyast.Return(value)
+
         # メインルーチン
         func_name = self.ident
         sub_func_name = func_name + "_subroutine"
@@ -1832,8 +1877,8 @@ class ExpandExpOpeDefinition(VdmslNode):
         else:
             func_args = pyast.arguments([], None, [], [], None, [])
         call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
-        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
-        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        ret_stmt = make_ret_stmt(ret_name_list, call_expr)
+        return_stmt = make_return_stmt(ret_name_list)
         main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
         main_func_body[1:1] = old_name_stmts
         main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
