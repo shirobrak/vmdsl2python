@@ -304,6 +304,9 @@ class VdmAstGenerator():
         """ シンボルリテラル ノード作成 """
         return SymbolLiteral(tokens[1], tokens.lineno, tokens.lexpos)
 
+    def make_result(self, tokens):
+        """ 予約語 RESULT ノード作成 """
+        return Result(tokens[1], tokens.lineno, tokens.lexpos)
     def make_bool_ltr(self, tokens):
         """ ブールリテラル ノード作成 """
         return VdmBool(tokens[1], tokens.lineno, tokens.lexpos)
@@ -461,7 +464,7 @@ class VdmAstGenerator():
 
     # 状態定義
     def make_state_definition(self, tokens):
-        return StateDefinition(tokens[2], tokens[3], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
+        return StateDefinition(tokens[2], tokens[4], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_inv_condition(self, tokens):
         return InvCondition(tokens[2], tokens.lineno, tokens.lexpos)
@@ -503,7 +506,7 @@ class VdmAstGenerator():
 
     def make_implicit_function_definition(self, tokens):
         """ 陰関数定義 ノード作成 """
-        return ImpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[7], tokens.lineno, tokens.lexpos)
+        return ImpFuncDefinition(tokens[1], tokens[2], tokens[3], tokens[4], tokens[5], tokens[6], tokens.lineno, tokens.lexpos)
 
     def make_expanded_explicit_function_definition(self, tokens):
         """ 拡張陽関数定義 ノード作成 """
@@ -543,6 +546,14 @@ class VdmAstGenerator():
             return FunctionBody(tokens[1], tokens.lineno, tokens.lexpos)
         else:
             return FunctionBody("".join(tokens[1:]), tokens.lineno, tokens.lexpos)
+    
+    def make_pre_condition(self, tokens):
+        """ 事前条件 """
+        return PreCondition(tokens[2], tokens.lineno, tokens.lexpos)
+
+    def make_post_condition(self, tokens):
+        """ 事後条件 """
+        return PostCondition(tokens[2], tokens.lineno, tokens.lexpos)
 
     # 操作定義
     def make_operation_definition_group(self, tokens):
@@ -562,7 +573,7 @@ class VdmAstGenerator():
 
     def make_implicit_operation_body(self, tokens):
         """ 陰操作本体 ノード作成 """
-        return ImpOpeBody(tokens[1], tokens[2], tokens[4], tokens[5], tokens.lineno, tokens.lexpos)
+        return ImpOpeBody(tokens[1], tokens[2], tokens[3], tokens[4], tokens.lineno, tokens.lexpos)
 
     def make_expanded_explicit_operation_definition(self, tokens):
         """ 拡張陽操作定義 ノード作成 """

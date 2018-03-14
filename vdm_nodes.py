@@ -50,7 +50,28 @@ class VdmslNode(object):
                         output += self._p(value, indent + 2)
         output += self._p(')', indent)
         return output
-    
+
+    def search_node(self, NodeType):
+        """ ノードを探索し, 該当するノードのリストを返す """
+        nodes = []
+        for field in self._fields:
+            value = getattr(self, field)
+            if type(value) == list:
+                for value2 in value:
+                    if isinstance(value2, VdmslNode):
+                        nodes.extend(value2.search_node(NodeType))
+                    else:
+                        pass
+            elif type(value) == NodeType:
+                nodes.extend([value])
+            else:
+                if value:
+                    if isinstance(value, VdmslNode):
+                        nodes.extend(value.search_node(NodeType))
+                    else:
+                        pass
+        return nodes
+
     def toPy(self):
         """ this func is converter VDM-SL Node to Python Node of ast module """
         return pyast.AST
@@ -68,8 +89,15 @@ class ModuleBody(VdmslNode):
     
     def toPy(self):
         stmt_list = []
+        stmt_list += [pyast.Import([pyast.alias('vdmslfunc', None)])]
+        # stmt_list += [pyast.Import([pyast.alias('typing', None)])]
+        stmt_list += [pyast.ImportFrom('typing', [pyast.alias('NewType', None)], 0)]
+        stmt_list += [pyast.ImportFrom('enum', [pyast.alias('Enum', None), pyast.alias('auto', None)], 0)]
         for block in self.blocks:
-            stmt_list += block.toPy()
+            if type(block) == TypeDefinitionGroup:
+                pass
+            else:
+                stmt_list += block.toPy()
         return pyast.Module(stmt_list)
 
 # データ型定義
@@ -82,6 +110,9 @@ class TypeDefinitionGroup(VdmslNode):
         self.type_definitions = type_definitions
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        return [typedef.toPy() for typedef in self.type_definitions] 
 
 class TypeDefinition(VdmslNode):
     """ 型定義 """
@@ -93,7 +124,18 @@ class TypeDefinition(VdmslNode):
         self.inv_cond = inv_cond
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
-        
+    
+    def toPy(self):
+        if type(self.type) == MergerType:
+            # Enum型を作る処理
+            return pyast.Pass()
+        else:
+            # NewTypeを作る処理
+            targets = [pyast.Name(self.id, pyast.Store())]
+            func = pyast.Name('NewType', pyast.Load())
+            args = [pyast.Str(self.id), pyast.Name(self.type.value, pyast.Load())]
+            value = pyast.Call(func, args, [])
+            return pyast.Assign(targets, value)
 
 # 基本データ型
 class BasicDataType(VdmslNode):
@@ -287,12 +329,23 @@ class Name(NameBase):
 
 class OldName(NameBase):
     """ 旧名称 """
+    # ~ はPythonでは不正な文字列なので, _ に変更.
+    def __init__(self, id, lineno, lexpos):
+        self.id = "_"+id.replace("~", "")
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+
     def toPy(self):
         return pyast.Name(self.id, pyast.Load())
 
 class SymbolLiteral(NameBase):
     """ 記号リテラル """
     pass
+
+class Result(NameBase):
+    """ 予約語 RESULT """
+    def toPy(self):
+        return pyast.Name('ret', pyast.Load())
 
 class VdmBool(NameBase):
     """ ブールリテラル """
@@ -936,8 +989,11 @@ class SetEnumExpression(VdmslNode):
     def toPy(self):
         # 集合の集合対策してない. 
         # リストの対策も. 
-        elts = [ e.toPy() for e in self.expr_list ]
-        return pyast.Set(elts)
+        if self.expr_list:
+            elts = [ e.toPy() for e in self.expr_list ]
+            return pyast.Set(elts)
+        else:
+            return pyast.Call(pyast.Name('set', pyast.Load()), [], [])
 
 class SetCompExpression(VdmslNode):
     """ 集合内包 """
@@ -993,7 +1049,10 @@ class ColEnumExpression(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self): 
-        elts = [ e.toPy() for e in self.expr_list ]
+        if self.expr_list:
+            elts = [ e.toPy() for e in self.expr_list ]
+        else:
+            elts = []
         return pyast.List(elts, pyast.Load())
 
 class ColCompExpression(VdmslNode):
@@ -1162,7 +1221,10 @@ class AppExpression(VdmslNode):
     
     def toPy(self):
         func = self.body.toPy()
-        args = [ e.toPy() for e in self.expr_list ]
+        if self.expr_list:
+            args = [ e.toPy() for e in self.expr_list ]
+        else:
+            args = []
         return pyast.Call(func, args, [])
 
 class ItemChoice(VdmslNode):
@@ -1358,8 +1420,11 @@ class ColEnumPattern(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        elts = [ ptn.toPy() for ptn in self.ptn_list ]
-        return List(elts, pyast.Load())
+        if self.ptn_list:
+            elts = [ ptn.toPy() for ptn in self.ptn_list.patterns ]
+        else:
+            elts = []
+        return pyast.List(elts, pyast.Load())
 
 class ColLinkPattern(VdmslNode):
     """ 列連結パターン """
@@ -1535,10 +1600,12 @@ class ValueDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        if self.type == None:
-            return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
-        else:
-            return pyast.AnnAssign(self.pattern.toPy(), self.type.toPy(), self.expr.toPy(), 1)
+        return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
+        # Annotation Ver
+        # if self.type == None:
+        #     return pyast.Assign([self.pattern.toPy()], self.expr.toPy())
+        # else:
+        #     return pyast.AnnAssign(self.pattern.toPy(), self.type.toPy(), self.expr.toPy(), 1)
         
 
 # 状態定義
@@ -1553,6 +1620,21 @@ class StateDefinition(VdmslNode):
         self.init = init
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+
+    def toPy(self):
+        def make_assign_stmt(target, value):
+            return pyast.Assign([target], value)    
+        # init が存在する場合初期化を行う記述を生成する.
+        if self.init:
+            targets = [ pyast.Name(item.ident, pyast.Load()) for item in self.item_list ]
+            expr_list = self.init.inv_condition_init_function.expr.value.right.value.expr_list
+            values = [ expr.value.toPy() for expr in expr_list ]
+            if len(targets) == len(values):
+                return [ make_assign_stmt(t, v) for t, v in zip(targets, values)]
+            else:
+                return []
+        else:
+            return []
 
 class InvCondition(VdmslNode):
     """ 不変条件 """
@@ -1627,13 +1709,36 @@ class ExpOpeDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
-    def toPy(self):
+    def toPy(self):             
+        # 制約条件
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        if self.post_expr:
+            post_stmt = self.post_expr.toPy()
+        else:
+            post_stmt = None
+        # メインルーチン
+        ctx = pyast.Load()
         func_name = self.ope_ident
-        func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
-        ope_body = self.ope_body.toPy()
-        decorator_list = []
-        returns = None                  
-        return [pyast.FunctionDef(func_name, func_args, ope_body, decorator_list, returns)]
+        sub_func_name = func_name + "_subroutine"
+        if self.param_group.pattern_list:
+            call_args = [pyast.Name(e.ptn_id, ctx) for e in self.param_group.pattern_list.patterns]
+            func_args = pyast.arguments([pyast.arg(e.ptn_id, None) for e in self.param_group.pattern_list.patterns], None, [], [], None, [])
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+            call_args = []
+        call_func = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_func)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = self.ope_body.toPy()
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpOpeDefinition(VdmslNode):
     """ 陰操作定義 """
@@ -1648,11 +1753,39 @@ class ImpOpeDefinition(VdmslNode):
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
     
-    def toPy(self):
-        name = self.ident
-        args = self.param_type.toPy()
-        body = [pyast.Pass()]
-        return pyast.FunctionDef(name, args, body, [], None)
+    def toPy(self): 
+        ctx = pyast.Load()
+        # 制約条件
+        if self.imp_body.pre_expr:
+            pre_stmt = self.imp_body.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        post_stmt = self.imp_body.post_expr.toPy()
+        # メインルーチン
+        func_name = self.param_ident
+        sub_func_name = func_name + "_subroutine"
+        call_args = []
+        if self.param_type.pattern_type_pair_list:
+            func_args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+        call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], call_expr)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+
+        # サブルーチン
+        global_stmt = []
+        if self.imp_body.ext_sec:
+            global_stmt = [self.imp_body.ext_sec.toPy()]
+        sub_func_body = global_stmt+[pyast.Pass()]
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpOpeBody(VdmslNode):
     """ 陰操作本体 """
@@ -1683,6 +1816,76 @@ class ExpandExpOpeDefinition(VdmslNode):
         self.exception = exception
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):       
+        def option_stmt(node):
+            """ オプション処理関数 """
+            if node:
+                return node.toPy()
+            else:
+                return None
+            
+        ctx = pyast.Load()
+
+        # 旧名称を探索し, 退避する記述作成
+        old_name_stmts = []
+        if self.post_expr:
+            old_names = self.post_expr.search_node(OldName)
+            if old_names != []:
+                for old_name in old_names:
+                    name_id = old_name.id.replace("_", "")
+                    value = pyast.Name(name_id, pyast.Load())
+                    targets = [pyast.Name(old_name.id, pyast.Store())]
+                    old_name_stmts.append(pyast.Assign(targets, value))
+        # 制約条件
+        global_stmt = option_stmt(self.ext_sec)
+        pre_stmt = option_stmt(self.pre_expr)
+        post_stmt = option_stmt(self.post_expr)
+        exception_stmt = option_stmt(self.exception)
+
+        # 返り値のチェック
+        if self.ident_type_pair_list:
+            ret_name_list = [ ident_type_pair.ident for ident_type_pair in self.ident_type_pair_list.ident_type_pairs ]
+        else:
+            ret_name_list = ['ret']
+        
+        def make_ret_stmt(id_list, call_expr):
+            if len(id_list) == 1:
+                targets = [pyast.Name(id_list[0], ctx)]
+            else:
+                name_list = [ pyast.Name(id, ctx) for id in id_list ]
+                targets = [pyast.Tuple(name_list, ctx)]
+            return pyast.Assign(targets, call_expr)
+
+        def make_return_stmt(id_list):
+            if len(id_list) == 1:
+                return pyast.Return(pyast.Name(id_list[0], ctx))
+            else:
+                elts = [ pyast.Name(id, ctx) for id in id_list ]
+                value = pyast.Tuple(elts, ctx)
+                return pyast.Return(value)
+
+        # メインルーチン
+        func_name = self.ident
+        sub_func_name = func_name + "_subroutine"
+        call_args = []
+        if self.param_type.pattern_type_pair_list:
+            func_args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+        call_expr = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = make_ret_stmt(ret_name_list, call_expr)
+        return_stmt = make_return_stmt(ret_name_list)
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_func_body[1:1] = old_name_stmts
+        main_routine = pyast.FunctionDef(func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = [global_stmt] + self.ope_body.toPy()
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+        return [main_routine, sub_routine]       
 
 class OperationType(VdmslNode):
     """ 操作型 """
@@ -1737,6 +1940,15 @@ class ExtSection(VdmslNode):
         self.var_infos = var_infos
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        var_infos = []
+        for var_info in self.var_infos:
+            var_infos += var_info.toPy()
+        if len(var_infos) == 0:
+            return None
+        else:
+            return pyast.Global(var_infos)
 
 class VarInfo(VdmslNode):
     """ var 情報 """
@@ -1748,6 +1960,12 @@ class VarInfo(VdmslNode):
         self.type = type
         self.__setattr__('lineno', lineno)
         self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        if self.mode == 'wr':
+            return self.name_list.idents
+        else:
+            return []
 
 class NameList(VdmslNode):
     """ 名称リスト """
@@ -1799,7 +2017,10 @@ class FuncDefinitionGroup(VdmslNode):
     
      # 出力 stmt* body
     def toPy(self):
-        return [stmt.toPy() for stmt in self.function_definitions]
+        stmts = []
+        for stmt in self.function_definitions:
+            stmts += stmt.toPy()
+        return stmts
 
 class FuncDefinition(VdmslNode):
     """ 関数定義 """
@@ -1833,12 +2054,38 @@ class ExpFuncDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        func_name = self.ident1
-        func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
-        func_body = [pyast.Return(self.func_body.expression.toPy())]
-        decorator_list = []
-        returns = None
-        return pyast.FunctionDef(func_name, func_args, func_body, decorator_list, returns)
+        ctx = pyast.Load()
+        # 制約条件
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        if self.post_expr:
+            post_stmt = self.post_expr.toPy()
+        else:
+            post_stmt = None
+        
+        # 引数処理
+        if self.param_list:
+            func_args = pyast.arguments([pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns], None, [], [], None, [])
+            call_args = [pyast.Name(e.ptn_id, pyast.Load()) for e in self.param_list[0].pattern_list.patterns]
+        else:
+            func_args = pyast.arguments([], None, [], [], None, [])
+            call_args = []    
+
+        # メインルーチン
+        main_func_name = self.ident1
+        sub_func_name = main_func_name + "_subroutine"
+        value = pyast.Call(pyast.Name(sub_func_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], value)
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        main_func_body = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(main_func_name, func_args, main_func_body, [], None)
+        # サブルーチン
+        sub_func_body = [pyast.Return(self.func_body.expression.toPy())]
+        sub_routine = pyast.FunctionDef(sub_func_name, func_args, sub_func_body, [], None)
+
+        return [main_routine, sub_routine]
 
 class ImpFuncDefinition(VdmslNode):
     """ 陰関数定義 """
@@ -1857,10 +2104,37 @@ class ImpFuncDefinition(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
     def toPy(self):
-        name = self.ident
-        args = self.param_type.toPy()
-        body = [pyast.Pass()]
-        return pyast.FunctionDef(name, args, body, [], None)
+        ctx = pyast.Load()
+        func_name = self.ident
+        sub_routine_name = func_name + "_subroutine"
+        call_args = []
+        if self.param_type.pattern_type_pair_list:
+            args = self.param_type.toPy()
+            for ptn_type_pair in self.param_type.pattern_type_pair_list.pattern_type_pairs:
+                for ptn_list in ptn_type_pair.pattern_list.patterns:
+                    call_args += [pyast.Name(ptn_list.ptn_id, ctx)]            
+        else:
+            args = []
+            call_args = []
+        # 事前, 事後条件
+        if self.pre_expr:
+            pre_stmt = self.pre_expr.toPy()
+        else:
+            pre_stmt = None
+        post_stmt = self.post_expr.toPy()
+        # return 文
+        return_stmt = pyast.Return(pyast.Name('ret', ctx))
+        # サブルーチン処理の文作成
+        value = pyast.Call(pyast.Name(sub_routine_name, ctx), call_args, [])
+        ret_stmt = pyast.Assign([pyast.Name('ret', ctx)], value)
+        # メインルーチン
+        main_stmts = [pre_stmt, ret_stmt, post_stmt, return_stmt]
+        main_routine = pyast.FunctionDef(func_name, args, main_stmts, [], None)
+        # サブルーチン
+        sub_stmts = [pyast.Pass()]
+        sub_routine = pyast.FunctionDef(sub_routine_name, args, sub_stmts, [], None)
+
+        return [main_routine, sub_routine]
 
 class ExpandExpFuncDefinition(VdmslNode):
     """ 拡張陽関数定義 """
@@ -2069,10 +2343,13 @@ class AssignDefinition(VdmslNode):
     
     def toPy(self):
         target = pyast.Name(self.ident, pyast.Store())
-        annotation = pyast.Name(self.type.toPy(), pyast.Load())
+        # annotation = pyast.Name(self.type.toPy(), pyast.Load())
         value = self.expr.toPy()
-        simple = 1
-        return pyast.AnnAssign(target, annotation, value, simple)
+        # simple = 1
+        return pyast.Assign([target], value)
+        
+        # Annotation Ver
+        # return pyast.AnnAssign(target, annotation, value, simple)
 
 # 代入文
 class GeneralAssignStatement(VdmslNode):
@@ -2165,16 +2442,19 @@ class IfStatement(VdmslNode):
         self.__setattr__('lexpos', lexpos)
     
     def toPy(self):
-        el = self.else_stmt
+        if self.else_stmt:
+            else_stmt = self.else_stmt.toPy()
+        else:
+            else_stmt = []
         def make_orelse_stmt(elifs):
             if elifs == []:
-                return el.toPy()
+                return else_stmt
             elif len(elifs) == 1:
-                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), el.toPy())
+                return [pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), else_stmt)]
             else:
-                return pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])
+                return [pyast.If(elifs[0].cond.toPy(), elifs[0].body.toPy(), [make_orelse_stmt(elifs[1:])])]
 
-        return [pyast.If(self.cond.toPy(), self.body.toPy(), [make_orelse_stmt(self.elseif_stmts)])]
+        return [pyast.If(self.cond.toPy(), self.body.toPy(), make_orelse_stmt(self.elseif_stmts))]
 
 class ElseIfStatement(VdmslNode):
     """ elseif文 """
@@ -2337,7 +2617,10 @@ class CallStatement(VdmslNode):
     def toPy(self):
         ctx_load = pyast.Load()
         opname = self.opename
-        args = [ expr.toPy() for expr in self.expr_list ]
+        if self.expr_list:
+            args = [ expr.toPy() for expr in self.expr_list ]
+        else:
+            args = []
         return [pyast.Expr(pyast.Call(opname, args, []))]
 
 # return文
@@ -2440,6 +2723,34 @@ class Skip(VdmslNode):
     def toPy(self):
         return pyast.Pass()
 
+# 事前条件
+class PreCondition(VdmslNode):
+    """ 事前条件 """
+    _fields = ('cond',)
+
+    def __init__(self, cond, lineno, lexpos):
+        self.cond = cond
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        msg = pyast.Str("Pre Condition Error.")
+        return pyast.Assert(self.cond.toPy(), msg)
+    
+# 事後条件
+class PostCondition(VdmslNode):
+    """ 事後条件 """
+    _fields = ('cond',)
+
+    def __init__(self, cond, lineno, lexpos):
+        self.cond = cond
+        self.__setattr__('lineno', lineno)
+        self.__setattr__('lexpos', lexpos)
+    
+    def toPy(self):
+        msg = pyast.Str("Post Condition Error.")
+        return pyast.Assert(self.cond.toPy(), msg)
+
 # 仕様記述文
 class SpecDecriptionStatement(VdmslNode):
     """ 仕様記述文 """
@@ -2470,18 +2781,7 @@ class Block(VdmslNode):
         self.__setattr__('lexpos', lexpos)
 
 
-    
-    
-
-
 
 # デバッグ用記述
 if __name__ == '__main__':
     pass
-
-
-    
-
-
-
-    

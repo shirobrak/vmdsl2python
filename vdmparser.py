@@ -356,8 +356,12 @@ def p_explicit_function_definition_option1(p):
 
 # 陰関数定義 = 識別子, [ 型変数リスト ], パラメーター型, 識別子型ペアリスト, [ ‘pre’, 式 ], ‘post’, 式 ;
 def p_implicit_function_definition(p):
-    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option POST expression """
+    """ implicit_function_definition : IDENT type_variable_list_option param_type ident_type_pair_list pre_cond_option post_condition """
     p[0] = ast.make_implicit_function_definition(p)
+
+def p_post_condition(p):
+    """ post_condition : POST expression """
+    p[0] = ast.make_post_condition(p)
 
 # 拡張陽関数定義 = 識別子, [ 型変数リスト ],パラメーター型, 識別子型ペアリスト, ‘==’, 関数本体, [ ‘pre’, 式 ], [ ‘post’, 式 ] ;
 def p_expanded_explicit_function_definition(p):
@@ -369,14 +373,18 @@ def p_pre_cond_option(p):
     """ pre_cond_option : PRE expression
                         | empty """
     if len(p) == 3:
-        p[0] = p[2]
+        p[0] = ast.make_pre_condition(p)
+    else:
+        p[0] = None
 
 # 事後条件オプション
 def p_post_cond_option(p):
     """ post_cond_option : POST expression
                          | empty """
     if len(p) == 3:
-        p[0] = p[2]
+        p[0] = ast.make_post_condition(p)
+    else:
+        p[0] = None
 
 # 型変数リスト = ‘[’, 型変数識別子, { ‘,’, 型変数識別子 }, ‘]’ ;
 def p_type_variable_list(p):
@@ -537,9 +545,14 @@ def p_ident_type_pair_list_option(p):
 
 # 陰操作本体 = [ 外部節 ], [ ‘pre’, 式 ], ‘post’, 式, [ 例外 ] ;
 def p_implicit_operation_body(p):
-    """ implicit_operation_body : ext_section_option pre_cond_option POST expression exception_option """
+    """ implicit_operation_body : ext_section_option pre_cond_option post_condition exception_option """
     p[0] = ast.make_implicit_operation_body(p)
 
+# 拡張陽操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], ‘==’, 操作本体, [ 外部節 ], [ ‘pre’, 式 ], [ ‘post’, 式 ], [ 例外 ] ;
+def p_expanded_explicit_operation_definition(p):
+    """ expanded_explicit_operation_definition : IDENT param_type ident_type_pair_list_option WEQUAL operation_body ext_section_option pre_cond_option post_cond_option exception_option """
+    p[0] = ast.make_expanded_explicit_operation_definition(p)
+    
 # 外部節オプション
 def p_ext_section_option(p):
     """ ext_section_option : ext_section 
@@ -551,10 +564,6 @@ def p_exception_option(p):
                          | empty """
     p[0] = p[1]
 
-# 拡張陽操作定義 = 識別子, パラメーター型, [ 識別子型ペアリスト ], ‘==’, 操作本体, [ 外部節 ], [ ‘pre’, 式 ], [ ‘post’, 式 ], [ 例外 ] ;
-def p_expanded_explicit_operation_definition(p):
-    """ expanded_explicit_operation_definition : IDENT param_type ident_type_pair_list_option WEQUAL operation_body ext_section_option pre_cond_option post_cond_option exception_option """
-    p[0] = ast.make_expanded_explicit_operation_definition(p)
 
 # 操作型 = 任意の型, ‘==>’, 任意の型 ;
 def p_operation_type(p):
@@ -610,7 +619,7 @@ def p_name_list_part(p):
         else:
             p[0] = p[1] + [p[3]]
     else:
-        p[0] = p[1]
+        p[0] = []
 
 # 例外 = ‘errs’, エラーリスト ;
 def p_exception(p):
@@ -1047,8 +1056,12 @@ def p_pre_condition_expression(p):
 
 # 名称
 def p_name(p):
-    """ name : IDENT """
-    p[0] = ast.make_name(p)
+    """ name : IDENT 
+             | RESULT """
+    if p[1] == 'RESULT':
+        p[0] = ast.make_result(p)
+    else:     
+        p[0] = ast.make_name(p)
 
 # 旧名称
 def p_oldname(p):
@@ -1691,7 +1704,8 @@ def p_optional_reverse(p):
                     
 # 演算子優先度
 precedence = (
-        ('nonassoc', 'LTEQGT', 'EQARROW', 'OR', 'AND', 'NOT'),
+        ('nonassoc', 'LTEQGT', 'EQARROW', 'NOT'),
+        ('left', 'AND', 'OR'),
         ('nonassoc', 'LTEQ', 'LT', 'GTEQ', 'GT', 'EQUAL', 'LTGT', 'SUBSET', 'PSUBSET', 'INSET', 'NOTINSET'),
         ('right', 'ARROW', 'PARROW'),
         ('left', 'VERTICAL'),
@@ -1727,7 +1741,7 @@ if __name__ == '__main__':
     grammer = input('start grammer > ')
     # 構文解析器の構築
     if grammer == '':
-        debug_parser = yacc.yacc(start='expression')
+        debug_parser = yacc.yacc(start='module_body')
     else:
         debug_parser = yacc.yacc(start=grammer) 
 
